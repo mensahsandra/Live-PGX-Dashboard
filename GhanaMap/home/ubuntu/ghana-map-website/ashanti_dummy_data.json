@@ -1,0 +1,985 @@
+{
+  "region": "Ashanti",
+  "districts": [
+    {
+      "name": "Kumasi Metro",
+      "location_type": "Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Industrial",
+          "smart_meters": 17,
+          "three_phase_meters": 10,
+          "meters": [
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Commercial",
+          "smart_meters": 12,
+          "three_phase_meters": 10,
+          "meters": [
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Industrial",
+          "smart_meters": 6,
+          "three_phase_meters": 8,
+          "meters": [
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Obuasi Municipal",
+      "location_type": "Rural",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Commercial",
+          "smart_meters": 17,
+          "three_phase_meters": 4,
+          "meters": [
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Disconnected"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 19,
+          "three_phase_meters": 6,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Industrial",
+          "smart_meters": 14,
+          "three_phase_meters": 3,
+          "meters": [
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bekwai Municipal",
+      "location_type": "Rural",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Industrial",
+          "smart_meters": 20,
+          "three_phase_meters": 7,
+          "meters": [
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Fault"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Commercial",
+          "smart_meters": 19,
+          "three_phase_meters": 7,
+          "meters": [
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Tampered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mampong Municipal",
+      "location_type": "Peri-Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Residential",
+          "smart_meters": 14,
+          "three_phase_meters": 1,
+          "meters": [
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 17,
+          "three_phase_meters": 3,
+          "meters": [
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ejisu Municipal",
+      "location_type": "Peri-Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Residential",
+          "smart_meters": 16,
+          "three_phase_meters": 2,
+          "meters": [
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0006",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Industrial",
+          "smart_meters": 7,
+          "three_phase_meters": 3,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Commercial",
+          "smart_meters": 19,
+          "three_phase_meters": 5,
+          "meters": [
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Fault"
+            }
+          ]
+        },
+        {
+          "id": "TR-A004",
+          "load_type": "Commercial",
+          "smart_meters": 7,
+          "three_phase_meters": 7,
+          "meters": [
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Asante Akim Central",
+      "location_type": "Peri-Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Residential",
+          "smart_meters": 7,
+          "three_phase_meters": 10,
+          "meters": [
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 9,
+          "three_phase_meters": 6,
+          "meters": [
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Commercial",
+          "smart_meters": 21,
+          "three_phase_meters": 2,
+          "meters": [
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-505-5555",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Disconnected"
+            }
+          ]
+        },
+        {
+          "id": "TR-A004",
+          "load_type": "Industrial",
+          "smart_meters": 14,
+          "three_phase_meters": 5,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Offinso Municipal",
+      "location_type": "Peri-Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Residential",
+          "smart_meters": 24,
+          "three_phase_meters": 9,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 6,
+          "three_phase_meters": 5,
+          "meters": [
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Industrial",
+          "smart_meters": 12,
+          "three_phase_meters": 4,
+          "meters": [
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Atwima Nwabiagya",
+      "location_type": "Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Residential",
+          "smart_meters": 20,
+          "three_phase_meters": 4,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 22,
+          "three_phase_meters": 5,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Ama Nyarko",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Residential",
+          "smart_meters": 9,
+          "three_phase_meters": 6,
+          "meters": [
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kofi Owusu",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Disconnected"
+            }
+          ]
+        },
+        {
+          "id": "TR-A004",
+          "load_type": "Industrial",
+          "smart_meters": 11,
+          "three_phase_meters": 3,
+          "meters": [
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Active"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bosomtwe",
+      "location_type": "Peri-Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Commercial",
+          "smart_meters": 8,
+          "three_phase_meters": 9,
+          "meters": [
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Residential",
+          "smart_meters": 21,
+          "three_phase_meters": 6,
+          "meters": [
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-707-3333",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Akua Boateng",
+              "gps_address": "AK-111-9999",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-404-6666",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Fault"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Kwabre East",
+      "location_type": "Urban",
+      "transformers": [
+        {
+          "id": "TR-A001",
+          "load_type": "Industrial",
+          "smart_meters": 8,
+          "three_phase_meters": 2,
+          "meters": [
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Disconnected"
+            },
+            {
+              "customer_name": "Yaw Adu",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A002",
+          "load_type": "Industrial",
+          "smart_meters": 12,
+          "three_phase_meters": 10,
+          "meters": [
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-808-2222",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-204-1234",
+              "meter_number": "PGX-MTR-0005",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Abena Serwaa",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0006",
+              "status": "Tampered"
+            }
+          ]
+        },
+        {
+          "id": "TR-A003",
+          "load_type": "Residential",
+          "smart_meters": 10,
+          "three_phase_meters": 5,
+          "meters": [
+            {
+              "customer_name": "Yaw Mensah",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Esi Asantewaa",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Active"
+            },
+            {
+              "customer_name": "Kwame Nkrumah",
+              "gps_address": "AK-606-4444",
+              "meter_number": "PGX-MTR-0003",
+              "status": "Tampered"
+            },
+            {
+              "customer_name": "Kojo Antwi",
+              "gps_address": "AK-103-4567",
+              "meter_number": "PGX-MTR-0004",
+              "status": "Active"
+            }
+          ]
+        },
+        {
+          "id": "TR-A004",
+          "load_type": "Industrial",
+          "smart_meters": 10,
+          "three_phase_meters": 7,
+          "meters": [
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-303-7777",
+              "meter_number": "PGX-MTR-0001",
+              "status": "Fault"
+            },
+            {
+              "customer_name": "Afia Kwartemaa",
+              "gps_address": "AK-222-8888",
+              "meter_number": "PGX-MTR-0002",
+              "status": "Disconnected"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
