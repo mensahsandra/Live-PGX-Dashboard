@@ -1,0 +1,463 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  background-color: #222222;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* PowerGridX Header */
+.pgx-header {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  border-bottom: 2px solid #F97316;
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(249, 115, 22, 0.1);
+  border-radius: 8px;
+  border: 1px solid #F97316;
+}
+
+.logo-text h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.logo-text span {
+  font-size: 12px;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+.header-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #D1D5DB;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.nav-btn.active {
+  background: #F97316;
+  border-color: #F97316;
+  color: #ffffff;
+}
+
+.nav-btn i {
+  font-size: 16px;
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 72px);
+}
+
+#chartdiv {
+  width: 70%;
+  height: 100%;
+  position: relative;
+}
+
+#sidebar {
+  width: 30%;
+  height: 100%;
+  background-color: #333333;
+  color: white;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-left: 2px solid #555555;
+}
+
+#sidebar h2 {
+  margin-top: 0;
+  color: #ffffff;
+  border-bottom: 2px solid #555555;
+  padding-bottom: 10px;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  margin-bottom: 15px;
+  font-size: 11px;
+  color: #888888;
+}
+
+.breadcrumb-link {
+  color: #4CAF50;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.breadcrumb-link:hover {
+  color: #66BB6A;
+}
+
+.breadcrumb-current {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+
+.status-active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.status-available {
+  background-color: #2196F3;
+  color: white;
+}
+
+.status-in-progress {
+  background-color: #FF9800;
+  color: white;
+}
+
+.status-coming-soon {
+  background-color: #9E9E9E;
+  color: white;
+}
+
+.status-inactive {
+  background-color: #F44336;
+  color: white;
+}
+
+/* District Items */
+.district-item,
+.zone-item,
+.place-item {
+  background-color: #444444;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.district-item.clickable:hover,
+.zone-item.clickable:hover,
+.place-item.clickable:hover {
+  background-color: #555555;
+  cursor: pointer;
+}
+
+.district-item.disabled,
+.zone-item.disabled,
+.place-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.district-name,
+.zone-name,
+.place-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Transformer Items */
+.transformer-item {
+  background-color: #444444;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.transformer-item.clickable:hover {
+  background-color: #555555;
+  cursor: pointer;
+}
+
+.transformer-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.transformer-icon {
+  font-size: 24px;
+  margin-right: 15px;
+  width: 30px;
+  text-align: center;
+}
+
+.transformer-info {
+  flex: 1;
+}
+
+.transformer-name {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.transformer-id {
+  font-size: 11px;
+  color: #888888;
+}
+
+.transformer-details {
+  margin-left: 45px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  font-size: 11px;
+}
+
+.detail-label {
+  color: #888888;
+  font-weight: bold;
+}
+
+.detail-value {
+  color: #ffffff;
+}
+
+/* Transformer Detail View */
+.transformer-detail-view {
+  text-align: center;
+}
+
+.transformer-icon-large {
+  font-size: 48px;
+  margin: 20px 0;
+}
+
+.detail-section {
+  margin: 25px 0;
+  text-align: left;
+}
+
+.detail-section h4 {
+  color: #4CAF50;
+  border-bottom: 1px solid #555555;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #555555;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.device-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.device-item {
+  display: flex;
+  align-items: center;
+  background-color: #555555;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.device-icon {
+  font-size: 24px;
+  margin-right: 15px;
+  width: 30px;
+  text-align: center;
+}
+
+.device-info {
+  flex: 1;
+}
+
+.device-name {
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.device-count {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+/* No Selection State */
+.no-selection {
+  text-align: center;
+  color: #888888;
+  margin-top: 50px;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #chartdiv {
+    width: 100vw;
+    height: 60vh;
+  }
+
+  #sidebar {
+    width: 100vw;
+    height: 40vh;
+    border-left: none;
+    border-top: 2px solid #555555;
+  }
+
+  .device-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}/* 
+Flaticon icon styles */
+.device-icon i {
+  display: block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+}
+
+.transformer-icon i {
+  font-size: 24px !important;
+}
+
+.transformer-icon-large i {
+  font-size: 48px !important;
+}
+
+/* Ensure icons are properly aligned */
+.device-item {
+  align-items: center;
+}
+
+.transformer-header {
+  align-items: center;
+}/* Custo
+m Transformer Icon */
+.transformer-icon-custom {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #6B7280 0%, #9CA3AF 100%);
+  border-radius: 4px;
+  position: relative;
+  border: 2px solid #4B5563;
+}
+
+.transformer-icon-custom::before {
+  content: '⚡';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #FCD34D;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.transformer-icon-custom.large {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 3px solid #4B5563;
+}
+
+.transformer-icon-custom.large::before {
+  font-size: 24px;
+}
+
+/* Transformer icon lines (representing electrical connections) */
+.transformer-icon-custom::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 8px;
+  background: #4B5563;
+}

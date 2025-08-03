@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PowerGridX - Ghana Infrastructure Map</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PowerGridX Ghana Infrastructure Map - Real-time power grid monitoring and management">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="favicon/favicon.ico" sizes="32x32">
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="favicon/apple-touch-icon.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    
+    <!-- amCharts -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/ghanaLow.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Flaticon CSS -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="pgx-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- PowerGridX Logo - Exact Match -->
+                        <g>
+                            <!-- Left side circuit lines -->
+                            <rect x="8" y="12" width="20" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="20" width="16" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="28" width="18" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="36" width="14" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="44" width="22" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="52" width="12" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="60" width="20" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="68" width="16" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="76" width="18" height="4" rx="2" fill="#374151"/>
+                            <rect x="8" y="84" width="14" height="4" rx="2" fill="#374151"/>
+                            
+                            <!-- Right side circuit lines -->
+                            <rect x="72" y="12" width="20" height="4" rx="2" fill="#374151"/>
+                            <rect x="76" y="20" width="16" height="4" rx="2" fill="#374151"/>
+                            <rect x="74" y="28" width="18" height="4" rx="2" fill="#374151"/>
+                            <rect x="78" y="36" width="14" height="4" rx="2" fill="#374151"/>
+                            <rect x="70" y="44" width="22" height="4" rx="2" fill="#374151"/>
+                            <rect x="80" y="52" width="12" height="4" rx="2" fill="#374151"/>
+                            <rect x="72" y="60" width="20" height="4" rx="2" fill="#374151"/>
+                            <rect x="76" y="68" width="16" height="4" rx="2" fill="#374151"/>
+                            <rect x="74" y="76" width="18" height="4" rx="2" fill="#374151"/>
+                            <rect x="78" y="84" width="14" height="4" rx="2" fill="#374151"/>
+                            
+                            <!-- Corner dots -->
+                            <circle cx="15" cy="15" r="2.5" fill="#374151"/>
+                            <circle cx="85" cy="15" r="2.5" fill="#374151"/>
+                            <circle cx="15" cy="85" r="2.5" fill="#374151"/>
+                            <circle cx="85" cy="85" r="2.5" fill="#374151"/>
+                            
+                            <!-- Central lightning bolt - matching your logo exactly -->
+                            <path d="M58 15 L42 45 H52 L38 85 L62 55 H52 L66 15 H58 Z" fill="#F97316"/>
+                        </g>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>PowerGridX</h1>
+                    <span>Ghana Infrastructure Map</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" onclick="showMapView()">
+                    <i class="fi fi-rr-map"></i>
+                    Infrastructure Map
+                </button>
+                <button class="nav-btn" onclick="showLiveSimulation()">
+                    <i class="fi fi-rr-dashboard"></i>
+                    Live Simulation
+                </button>
+                <button class="nav-btn" onclick="showAdmin()">
+                    <i class="fi fi-rr-settings"></i>
+                    Admin
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div id="chartdiv"></div>
+        <div id="sidebar">
+            <h2>Region Info</h2>
+            <div id="district-info"></div>
+        </div>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+

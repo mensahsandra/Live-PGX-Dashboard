@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ghana Map Test - Data Only</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="chartdiv"
+        style="display: flex; align-items: center; justify-content: center; background: #333; color: white;">
+        <div style="text-align: center;">
+            <h2>Map Loading...</h2>
+            <p>Testing data functionality without map dependency</p>
+            <button onclick="showRegionDistricts('GH-AA')"
+                style="margin: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Test
+                Greater Accra</button>
+            <button onclick="showRegionDistricts('GH-AH')"
+                style="margin: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Test
+                Ashanti</button>
+        </div>
+    </div>
+    <div id="sidebar">
+        <h2>Region Info</h2>
+        <div id="district-info"></div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Initialize without map
+        document.addEventListener('DOMContentLoaded', function () {
+            showNoSelection();
+            setTimeout(() => {
+                addTestButtons();
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

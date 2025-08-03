@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Switching Test</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; }
+        .header { background: #333; color: white; padding: 10px; }
+        .nav-btn { background: #555; color: white; border: none; padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .nav-btn.active { background: #F97316; }
+        .main-content { position: relative; height: calc(100vh - 60px); overflow: hidden; }
+        
+        .view-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: white;
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+            z-index: -1;
+        }
+        
+        .view-container.active {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            z-index: 10 !important;
+        }
+        
+        .test-content { padding: 50px; font-size: 24px; text-align: center; }
+        #dashboard-view { background: #e3f2fd; }
+        #grid-view { background: #f3e5f5; }
+        #transformers-view { background: #e8f5e8; }
+        #audit-view { background: #fff3e0; }
+        #dispatch-view { background: #fce4ec; }
+        
+        .fake-map { width: 70%; height: 400px; background: #333; color: white; display: inline-block; margin: 20px; }
+        .fake-sidebar { width: 25%; height: 400px; background: #555; color: white; display: inline-block; margin: 20px; vertical-align: top; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="nav-btn active" onclick="showView('dashboard')">Dashboard</button>
+        <button class="nav-btn" onclick="showView('grid')">Smart Grid</button>
+        <button class="nav-btn" onclick="showView('transformers')">Transformers</button>
+        <button class="nav-btn" onclick="showView('audit')">Audit Log</button>
+        <button class="nav-btn" onclick="showView('dispatch')">Dispatch</button>
+    </div>
+    
+    <div class="main-content">
+        <div id="dashboard-view" class="view-container active">
+            <div class="test-content">
+                <h2>Dashboard View</h2>
+                <p>This is the dashboard content. Should be isolated from other views.</p>
+            </div>
+        </div>
+        
+        <div id="grid-view" class="view-container">
+            <div class="test-content">
+                <h2>Smart Grid Management</h2>
+                <div class="fake-map">FAKE MAP AREA</div>
+                <div class="fake-sidebar">FAKE SIDEBAR</div>
+                <p>Map and sidebar should only show in this view.</p>
+            </div>
+        </div>
+        
+        <div id="transformers-view" class="view-container">
+            <div class="test-content">
+                <h2>Transformers View</h2>
+                <p>This is the transformers content. Should be completely isolated.</p>
+            </div>
+        </div>
+        
+        <div id="audit-view" class="view-container">
+            <div class="test-content">
+                <h2>Audit Log View</h2>
+                <p>This is the audit log content. Should not show map or other content.</p>
+            </div>
+        </div>
+        
+        <div id="dispatch-view" class="view-container">
+            <div class="test-content">
+                <h2>Dispatch Request View</h2>
+                <p>This is the dispatch content. Should be completely isolated.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'dashboard';
+        
+        function showView(viewName) {
+            console.log('Switching to:', viewName);
+            
+            // Update navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Hide all views
+            document.querySelectorAll('.view-container').forEach(view => {
+                view.classList.remove('active');
+                view.style.display = 'none';
+                view.style.opacity = '0';
+                view.style.visibility = 'hidden';
+                view.style.zIndex = '-1';
+            });
+            
+            // Show target view
+            setTimeout(() => {
+                const targetView = document.getElementById(viewName + '-view');
+                if (targetView) {
+                    targetView.style.display = 'block';
+                    targetView.style.opacity = '1';
+                    targetView.style.visibility = 'visible';
+                    targetView.style.zIndex = '10';
+                    targetView.classList.add('active');
+                }
+                currentView = viewName;
+                console.log('Switched to:', viewName);
+            }, 50);
+        }
+    </script>
+</body>
+</html>

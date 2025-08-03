@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sidebar Test</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f0f0f0; }
+        .container { display: flex; height: 100vh; }
+        .map-area { width: 70%; background: #4CAF50; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }
+        .sidebar { width: 30%; background: #1a1a1a; color: white; padding: 20px; overflow-y: auto; }
+        .region-card { 
+            padding: 20px; 
+            background: linear-gradient(135deg, #2a2a2a, #333); 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border: 2px solid transparent;
+            margin-bottom: 16px;
+        }
+        .region-card:hover { 
+            border-color: #F97316; 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(249, 115, 22, 0.3);
+        }
+        .region-icon { 
+            width: 50px; 
+            height: 50px; 
+            background: linear-gradient(135deg, #F97316, #FF6B35); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .region-name { font-weight: bold; font-size: 18px; margin-bottom: 4px; }
+        .region-desc { font-size: 13px; color: #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="map-area">
+            GHANA MAP AREA<br>
+            <small>This should show the amCharts map</small>
+        </div>
+        <div class="sidebar">
+            <h2 style="color: #F97316; text-align: center; margin-bottom: 30px;">🇬🇭 Ghana Regions</h2>
+            
+            <div class="region-card" onclick="alert('Greater Accra clicked!')">
+                <div class="region-icon">🏙️</div>
+                <div class="region-name">Greater Accra</div>
+                <div class="region-desc">Capital Region • 342 Transformers</div>
+            </div>
+            
+            <div class="region-card" onclick="alert('Ashanti clicked!')">
+                <div class="region-icon" style="background: linear-gradient(135deg, #4CAF50, #66BB6A);">⛏️</div>
+                <div class="region-name">Ashanti</div>
+                <div class="region-desc">Mining Region • 298 Transformers</div>
+            </div>
+            
+            <div class="region-card" onclick="alert('Western clicked!')">
+                <div class="region-icon" style="background: linear-gradient(135deg, #2196F3, #42A5F5);">🚢</div>
+                <div class="region-name">Western</div>
+                <div class="region-desc">Coastal Region • 156 Transformers</div>
+            </div>
+            
+            <div style="margin-top: 25px; padding: 16px; background: #1a1a1a; border-radius: 8px; border-left: 4px solid #F97316;">
+                <p style="margin: 0; color: #ccc; font-size: 14px; line-height: 1.5;">
+                    <strong style="color: #F97316;">💡 Test:</strong><br>
+                    This is a simple test to see if the sidebar design works without any complex JavaScript or amCharts interference.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
