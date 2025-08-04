@@ -1,0 +1,72 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#1F2937" stroke="#FF6B00" stroke-width="2"/>
+  
+  <!-- Grid pattern background -->
+  <defs>
+    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="#374151" stroke-width="0.5"/>
+    </pattern>
+    
+    <!-- Lightning gradient -->
+    <linearGradient id="lightningGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF8533;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E55A00;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Power lines gradient -->
+    <linearGradient id="linesGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#3B82F6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Grid background -->
+  <circle cx="50" cy="50" r="45" fill="url(#grid)" opacity="0.3"/>
+  
+  <!-- Power transmission lines -->
+  <g stroke="url(#linesGradient)" stroke-width="2" fill="none">
+    <!-- Horizontal lines -->
+    <line x1="15" y1="35" x2="85" y2="35" opacity="0.7"/>
+    <line x1="15" y1="50" x2="85" y2="50" opacity="0.9"/>
+    <line x1="15" y1="65" x2="85" y2="65" opacity="0.7"/>
+    
+    <!-- Vertical lines -->
+    <line x1="25" y1="20" x2="25" y2="80" opacity="0.6"/>
+    <line x1="50" y1="15" x2="50" y2="85" opacity="0.8"/>
+    <line x1="75" y1="20" x2="75" y2="80" opacity="0.6"/>
+  </g>
+  
+  <!-- Connection nodes -->
+  <g fill="#10B981">
+    <circle cx="25" cy="35" r="2"/>
+    <circle cx="50" cy="35" r="2"/>
+    <circle cx="75" cy="35" r="2"/>
+    <circle cx="25" cy="50" r="3"/>
+    <circle cx="75" cy="50" r="3"/>
+    <circle cx="25" cy="65" r="2"/>
+    <circle cx="50" cy="65" r="2"/>
+    <circle cx="75" cy="65" r="2"/>
+  </g>
+  
+  <!-- Central lightning bolt -->
+  <path d="M55 20 L40 48 H48 L35 80 L65 52 H57 L70 20 H55 Z" fill="url(#lightningGradient)"/>
+  
+  <!-- Power symbols -->
+  <g fill="#FF6B00" font-family="Arial, sans-serif" font-size="8" font-weight="bold">
+    <text x="15" y="15" text-anchor="middle">⚡</text>
+    <text x="85" y="15" text-anchor="middle">⚡</text>
+    <text x="15" y="90" text-anchor="middle">⚡</text>
+    <text x="85" y="90" text-anchor="middle">⚡</text>
+  </g>
+  
+  <!-- Africa outline (simplified) -->
+  <g stroke="#FF6B00" stroke-width="1" fill="none" opacity="0.4">
+    <path d="M20 25 Q30 20 40 25 Q50 15 60 25 Q70 20 80 30 Q85 40 80 50 Q85 60 75 70 Q65 80 50 75 Q35 80 25 70 Q15 60 20 50 Q15 40 20 25"/>
+  </g>
+  
+  <!-- Glow effect -->
+  <circle cx="50" cy="50" r="47" fill="none" stroke="#FF6B00" stroke-width="1" opacity="0.3"/>
+</svg>

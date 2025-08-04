@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Grid Management - PowerGridX</title>
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pgx-orange': '#FF6B00',
+                        'pgx-orange-light': '#FF8533',
+                        'pgx-orange-dark': '#E55A00'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Map container */
+        #map {
+            height: calc(100vh - 120px);
+            width: 100%;
+        }
+        
+        /* Custom animations */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse-dot {
+            animation: pulse-dot 2s infinite;
+        }
+        
+        /* Navigation styles */
+        .nav-active {
+            background-color: #FF6B00 !important;
+            color: white !important;
+        }
+        
+        .nav-inactive {
+            background-color: #64748b;
+            color: white;
+        }
+        
+        .nav-inactive:hover {
+            background-color: #475569;
+        }
+        
+        /* Map controls */
+        .map-controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Transformer marker styles */
+        .transformer-marker {
+            background: transparent;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-4">
+                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
+                    <div>
+                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
+                        <p class="text-sm text-gray-300">Smart Infrastructure Platform</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-2">
+                    <a href="index.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="smart-grid.html" class="nav-active px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Smart Grid Management
+                    </a>
+                    <a href="transformers.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Transformers
+                    </a>
+                    <a href="audit-log.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Audit Log
+                    </a>
+                    <a href="dispatch.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dispatch Request
+                    </a>
+                </nav>
+                
+                <!-- Status -->
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative">
+        <!-- Map Container -->
+        <div id="map"></div>
+        
+        <!-- Map Controls -->
+        <div class="absolute top-4 right-4 space-y-3">
+            <!-- Layer Controls -->
+            <div class="map-controls p-4 rounded-lg shadow-lg">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3">Map Layers</h4>
+                <div class="space-y-2">
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                        <input type="checkbox" id="transformers-layer" checked class="rounded text-pgx-orange">
+                        <span class="text-gray-700">Transformers</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                        <input type="checkbox" id="smart-meters-layer" class="rounded text-pgx-orange">
+                        <span class="text-gray-700">Smart Meters</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                        <input type="checkbox" id="power-lines-layer" checked class="rounded text-pgx-orange">
+                        <span class="text-gray-700">Power Lines</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                        <input type="checkbox" id="alerts-layer" checked class="rounded text-pgx-orange">
+                        <span class="text-gray-700">Active Alerts</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="map-controls p-4 rounded-lg shadow-lg">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3">Status Legend</h4>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span class="text-gray-700">Operational</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span class="text-gray-700">Warning</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span class="text-gray-700">Critical</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                        <span class="text-gray-700">Offline</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="map-controls p-4 rounded-lg shadow-lg">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3">Quick Stats</h4>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Total Transformers:</span>
+                        <span class="font-semibold text-gray-800" id="total-transformers">247</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Active:</span>
+                        <span class="font-semibold text-green-600" id="active-transformers">234</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Alerts:</span>
+                        <span class="font-semibold text-red-600" id="alert-count">7</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Coverage:</span>
+                        <span class="font-semibold text-blue-600" id="coverage-percent">87%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Info Panel (appears when clicking on map items) -->
+        <div id="info-panel" class="absolute bottom-4 left-4 w-80 bg-white rounded-lg shadow-lg p-4 hidden">
+            <div id="info-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Region Selector -->
+        <div class="absolute top-4 left-4">
+            <div class="map-controls p-4 rounded-lg shadow-lg">
+                <h4 class="text-sm font-semibold text-gray-800 mb-3">Select Region</h4>
+                <select id="region-selector" class="w-full p-2 border border-gray-300 rounded text-sm">
+                    <option value="all">All Regions</option>
+                    <option value="ashanti" selected>Ashanti Region</option>
+                    <option value="greater-accra">Greater Accra</option>
+                    <option value="central">Central Region</option>
+                    <option value="western">Western Region</option>
+                    <option value="eastern">Eastern Region</option>
+                    <option value="northern">Northern Region</option>
+                </select>
+                
+                <div class="mt-3 text-xs text-gray-600">
+                    <div>Districts: <span id="district-count">5</span></div>
+                    <div>Population: <span id="region-population">5.8M</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="absolute top-20 left-4">
+            <div class="map-controls p-3 rounded-lg shadow-lg">
+                <input type="text" id="search-input" placeholder="Search transformers, locations..." 
+                       class="w-64 p-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-pgx-orange">
+                <div id="search-results" class="mt-2 max-h-40 overflow-y-auto hidden">
+                    <!-- Search results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Smart Grid JS -->
+    <script src="smart-grid.js"></script>
+</body>
+</html>

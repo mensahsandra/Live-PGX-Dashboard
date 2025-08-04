@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGridX Dashboard - Smart Infrastructure for Africa</title>
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pgx-orange': '#FF6B00',
+                        'pgx-orange-light': '#FF8533',
+                        'pgx-orange-dark': '#E55A00',
+                        'pgx-blue': '#3B82F6',
+                        'pgx-green': '#10B981',
+                        'pgx-red': '#EF4444',
+                        'pgx-yellow': '#F59E0B'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom animations */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse-dot {
+            animation: pulse-dot 2s infinite;
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FF6B00;
+            border-radius: 3px;
+        }
+        
+        /* Card hover effects */
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        /* Navigation active state */
+        .nav-active {
+            background-color: #FF6B00 !important;
+            color: white !important;
+        }
+        
+        .nav-inactive {
+            background-color: #64748b;
+            color: white;
+        }
+        
+        .nav-inactive:hover {
+            background-color: #475569;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-4">
+                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">PowerGridX Dashboard</h1>
+                        <p class="text-sm text-gray-500">Real-time IoT monitoring and analytics</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-1 pulse-dot"></span>
+                        LIVE
+                    </span>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-2">
+                    <a href="index.html" class="nav-active px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="smart-grid.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Smart Grid Management
+                    </a>
+                    <a href="transformers.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Transformers
+                    </a>
+                    <a href="audit-log.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Audit Log
+                    </a>
+                    <a href="dispatch.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dispatch Request
+                    </a>
+                </nav>
+                
+                <!-- Status -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-500">
+                        Last updated: <span id="last-update">3:50:01 AM</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        <span class="text-sm text-gray-600">Cloud Connected • Live Data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Energy Tracked -->
+            <div class="metric-card bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Total Energy Tracked</h3>
+                    <span class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">2.1% from last hour</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900" id="total-energy">1934.5 kWh</div>
+            </div>
+            
+            <!-- Energy Theft Detected -->
+            <div class="metric-card bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Energy Theft Detected</h3>
+                    <span class="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">0.8% from last hour</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900" id="theft-detected">5.5%</div>
+            </div>
+            
+            <!-- Smart Poles Connected -->
+            <div class="metric-card bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Smart Poles Connected</h3>
+                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">1.2% from last hour</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900" id="smart-poles">69</div>
+            </div>
+            
+            <!-- Active Alerts -->
+            <div class="metric-card bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-500">Active Alerts</h3>
+                    <span class="text-xs text-gray-600">Current system notifications</span>
+                </div>
+                <div class="text-3xl font-bold text-gray-900" id="active-alerts">7</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Energy Tracking Chart -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Energy Tracking (24h)</h3>
+                    <span class="text-sm text-gray-500">Total energy tracked vs theft detected</span>
+                </div>
+                <div class="h-80">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Theft Detection by Region -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Theft Detection by Region</h3>
+                    <span class="text-sm text-gray-500">Percentage of theft incidents by location</span>
+                </div>
+                <div class="h-80 flex items-center justify-center">
+                    <div class="relative">
+                        <canvas id="theftChart" width="300" height="300"></canvas>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-900">12.6%</div>
+                                <div class="text-sm text-gray-500">total theft</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Legend -->
+                    <div class="ml-8 space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <span class="text-sm text-gray-700">Greater Accra</span>
+                            <span class="text-sm text-gray-500">45%</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <span class="text-sm text-gray-700">Ashanti</span>
+                            <span class="text-sm text-gray-500">28%</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span class="text-sm text-gray-700">Central</span>
+                            <span class="text-sm text-gray-500">16%</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-gray-700">Western</span>
+                            <span class="text-sm text-gray-500">11%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Recent System Activity</h3>
+            </div>
+            <div class="p-6">
+                <div id="activity-feed" class="space-y-4 max-h-64 overflow-y-auto custom-scrollbar">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="dashboard.js"></script>
+</body>
+</html>

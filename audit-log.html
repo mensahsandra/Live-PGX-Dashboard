@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log - PowerGridX</title>
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pgx-orange': '#FF6B00',
+                        'pgx-orange-light': '#FF8533',
+                        'pgx-orange-dark': '#E55A00'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom animations */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse-dot {
+            animation: pulse-dot 2s infinite;
+        }
+        
+        /* Navigation styles */
+        .nav-active {
+            background-color: #FF6B00 !important;
+            color: white !important;
+        }
+        
+        .nav-inactive {
+            background-color: #64748b;
+            color: white;
+        }
+        
+        .nav-inactive:hover {
+            background-color: #475569;
+        }
+        
+        /* Activity type badges */
+        .badge-critical {
+            background-color: #FEE2E2;
+            color: #DC2626;
+        }
+        
+        .badge-maintenance {
+            background-color: #D1FAE5;
+            color: #059669;
+        }
+        
+        .badge-installation {
+            background-color: #DBEAFE;
+            color: #2563EB;
+        }
+        
+        .badge-fault {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FF6B00;
+            border-radius: 3px;
+        }
+        
+        /* Activity item hover */
+        .activity-item {
+            transition: all 0.2s ease;
+        }
+        
+        .activity-item:hover {
+            background-color: #f8fafc;
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-slate-700 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-4">
+                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
+                    <div>
+                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
+                        <p class="text-sm text-gray-300">Smart Infrastructure Platform</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex space-x-2">
+                    <a href="index.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dashboard
+                    </a>
+                    <a href="smart-grid.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Smart Grid Management
+                    </a>
+                    <a href="transformers.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Transformers
+                    </a>
+                    <a href="audit-log.html" class="nav-active px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Audit Log
+                    </a>
+                    <a href="dispatch.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Dispatch Request
+                    </a>
+                </nav>
+                
+                <!-- Status -->
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Audit Log</h1>
+                <p class="text-gray-600">Blockchain-secured activity tracking and system monitoring</p>
+            </div>
+            
+            <!-- Controls -->
+            <div class="flex items-center space-x-4">
+                <select id="activity-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="all">All Activities</option>
+                    <option value="critical">Critical Events</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="installation">Installations</option>
+                    <option value="fault">Faults</option>
+                </select>
+                
+                <input type="date" id="date-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                
+                <button class="bg-pgx-orange text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="text-3xl font-bold text-gray-900 mb-2">1,247</div>
+                <div class="text-sm text-gray-600">Total Activities</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="text-3xl font-bold text-red-600 mb-2">23</div>
+                <div class="text-sm text-gray-600">Critical Events</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2">156</div>
+                <div class="text-sm text-gray-600">Maintenance Tasks</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2">89</div>
+                <div class="text-sm text-gray-600">Installations</div>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Recent Activities</h3>
+            </div>
+            <div class="divide-y divide-gray-200">
+                <!-- Activity Item 1 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-critical px-2 py-1 rounded-full text-xs font-medium">CRITICAL</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Tampering detected at TR-ACC-001 (Osu Primary Transformer)</h4>
+                                <span class="text-xs text-gray-500">2024-01-31 14:23:15</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Unauthorized access attempt detected. Security protocols activated.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Greater Accra → Accra Metropolitan → Osu Zone</span>
+                                <span>System Alert</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Item 2 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-maintenance px-2 py-1 rounded-full text-xs font-medium">MAINTENANCE</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Scheduled maintenance completed on TR-KMA-001</h4>
+                                <span class="text-xs text-gray-500">2024-01-31 13:45:32</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Routine inspection and oil level check completed successfully.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Ashanti → Kumasi Metropolitan → Kumasi Central Zone</span>
+                                <span>Contractor: John Mensah</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Item 3 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-installation px-2 py-1 rounded-full text-xs font-medium">INSTALLATION</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">New smart meter installed at Labadi Beach Area</h4>
+                                <span class="text-xs text-gray-500">2024-01-31 12:20:18</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Smart meter SM-LAB-045 successfully installed and configured.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Greater Accra → Accra Metropolitan → Osu Zone</span>
+                                <span>Contractor: Sarah Asante</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Item 4 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-fault px-2 py-1 rounded-full text-xs font-medium">FAULT</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Power outage reported in Effia-Kuma Village</h4>
+                                <span class="text-xs text-gray-500">2024-01-31 09:15:44</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Transformer TR-WR-003 experiencing load issues. Repair team dispatched.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Western → Sekondi-Takoradi Metropolitan → Takoradi Industrial Zone</span>
+                                <span>Customer Report</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Item 5 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-installation px-2 py-1 rounded-full text-xs font-medium">INSTALLATION</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Smart pole activated with monitoring nodes</h4>
+                                <span class="text-xs text-gray-500">2024-01-30 16:30:22</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">Smart pole SP-ASH-012 now online with full sensor suite.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Ashanti → Kumasi Metropolitan → Kumasi Central Zone</span>
+                                <span>Contractor: Michael Osei</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Item 6 -->
+                <div class="activity-item p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="badge-maintenance px-2 py-1 rounded-full text-xs font-medium">MAINTENANCE</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-medium text-gray-900">Monitoring nodes calibration completed</h4>
+                                <span class="text-xs text-gray-500">2024-01-30 14:12:50</span>
+                            </div>
+                            <p class="mt-1 text-sm text-gray-600">All sensor nodes in Tema Industrial Zone recalibrated for optimal performance.</p>
+                            <div class="mt-2 flex items-center space-x-4 text-xs text-gray-500">
+                                <span>Greater Accra → Tema Metropolitan → Tema Industrial Zone</span>
+                                <span>Contractor: Grace Adjei</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Load More -->
+            <div class="px-6 py-4 border-t border-gray-200 text-center">
+                <button class="text-pgx-orange hover:text-pgx-orange-dark font-medium text-sm">
+                    Load More Activities
+                </button>
+            </div>
+        </div>
+
+        <!-- Blockchain Verification -->
+        <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-500 p-2 rounded-lg">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Blockchain Verification</h3>
+                    <p class="text-sm text-gray-600">All activities are cryptographically secured and immutable</p>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white rounded-lg p-3">
+                    <div class="text-gray-600">Last Block Hash:</div>
+                    <div class="font-mono text-xs text-gray-800 break-all">0x7f9a2b8c...d4e5f6a7</div>
+                </div>
+                <div class="bg-white rounded-lg p-3">
+                    <div class="text-gray-600">Block Height:</div>
+                    <div class="font-semibold text-gray-800">247,891</div>
+                </div>
+                <div class="bg-white rounded-lg p-3">
+                    <div class="text-gray-600">Network Status:</div>
+                    <div class="flex items-center space-x-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                        <span class="font-semibold text-green-600">Synchronized</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="audit-log.js"></script>
+</body>
+</html>

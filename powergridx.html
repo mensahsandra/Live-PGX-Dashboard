@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGridX - Smart Infrastructure for Africa</title>
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pgx-orange': '#FF6B00',
+                        'pgx-orange-light': '#FF8533',
+                        'pgx-orange-dark': '#E55A00',
+                        'pgx-gray': '#1F2937',
+                        'pgx-gray-light': '#374151',
+                        'pgx-gray-dark': '#111827'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom animations and styles */
+        @keyframes pulse-orange {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse-orange {
+            animation: pulse-orange 2s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* Map container */
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #374151;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #FF6B00;
+            border-radius: 3px;
+        }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+        }
+        
+        /* Navigation styles */
+        .nav-btn {
+            color: #9CA3AF;
+        }
+        
+        .nav-btn.active {
+            background: #FF6B00;
+            color: white;
+        }
+        
+        .nav-btn:hover:not(.active) {
+            background: rgba(255, 107, 0, 0.1);
+            color: #FF6B00;
+        }
+        
+        /* Panel transitions */
+        .panel {
+            transition: all 0.3s ease;
+        }
+        
+        .panel.hidden {
+            display: none;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        /* Transformer marker styles */
+        .transformer-marker {
+            background: transparent;
+            border: none;
+        }
+        
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 107, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: #FF6B00;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-pgx-gray-dark text-white font-sans">
+    <!-- Header -->
+    <header class="bg-pgx-gray border-b border-pgx-orange/20 px-6 py-4">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <!-- Logo and Brand -->
+            <div class="flex items-center space-x-4">
+                <img src="logo.svg" alt="PowerGridX" class="w-10 h-10">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">PowerGridX</h1>
+                    <p class="text-sm text-gray-400">Smart Infrastructure for Africa</p>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="hidden md:flex space-x-6">
+                <button id="nav-overview" class="nav-btn active px-4 py-2 rounded-lg transition-colors">
+                    📊 Overview
+                </button>
+                <button id="nav-monitoring" class="nav-btn px-4 py-2 rounded-lg transition-colors">
+                    📡 Live Monitoring
+                </button>
+                <button id="nav-analytics" class="nav-btn px-4 py-2 rounded-lg transition-colors">
+                    📈 Analytics
+                </button>
+                <button id="nav-alerts" class="nav-btn px-4 py-2 rounded-lg transition-colors">
+                    🚨 Alerts
+                </button>
+            </nav>
+            
+            <!-- Status Indicator -->
+            <div class="flex items-center space-x-2">
+                <div class="w-3 h-3 bg-green-500 rounded-full pulse-orange"></div>
+                <span class="text-sm text-gray-300">Live System</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-80 bg-pgx-gray-light border-r border-pgx-orange/20 overflow-y-auto custom-scrollbar">
+            <!-- Overview Panel -->
+            <div id="overview-panel" class="panel active p-6">
+                <h2 class="text-xl font-bold mb-4 text-pgx-orange">🌍 Ashanti Region Overview</h2>
+                
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-pgx-orange/20">
+                        <div class="text-2xl font-bold text-pgx-orange" id="total-transformers">247</div>
+                        <div class="text-sm text-gray-400">⚡ Transformers</div>
+                    </div>
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-green-500/20">
+                        <div class="text-2xl font-bold text-green-500" id="active-nodes">234</div>
+                        <div class="text-sm text-gray-400">🟢 Active Nodes</div>
+                    </div>
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-blue-500/20">
+                        <div class="text-2xl font-bold text-blue-500" id="smart-meters">15,847</div>
+                        <div class="text-sm text-gray-400">📊 Smart Meters</div>
+                    </div>
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-yellow-500/20">
+                        <div class="text-2xl font-bold text-yellow-500" id="coverage-percent">87%</div>
+                        <div class="text-sm text-gray-400">📡 Coverage</div>
+                    </div>
+                </div>
+                
+                <!-- Districts List -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">🏘️ Districts</h3>
+                    <div id="districts-list" class="space-y-2">
+                        <!-- Districts will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Impact Metrics -->
+                <div class="bg-gradient-to-r from-pgx-orange/20 to-pgx-orange-light/20 p-4 rounded-lg border border-pgx-orange/30">
+                    <h3 class="text-lg font-semibold mb-2 text-pgx-orange">🎯 Impact Metrics</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>⚡ Fault Detection Time</span>
+                            <span class="text-green-500 font-bold">-73%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>🔧 Service Reliability</span>
+                            <span class="text-green-500 font-bold">+45%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>🛡️ Energy Theft Reduction</span>
+                            <span class="text-green-500 font-bold">-28%</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>⏱️ Response Time</span>
+                            <span class="text-green-500 font-bold">-65%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mission Statement -->
+                <div class="mt-6 p-4 bg-pgx-gray rounded-lg border border-pgx-orange/20">
+                    <h4 class="font-semibold text-pgx-orange mb-2">🚀 Our Mission</h4>
+                    <p class="text-sm text-gray-300 leading-relaxed">
+                        Rebuilding trust in Africa's electricity systems by making infrastructure visible, smart, and secure. 
+                        Starting in Ghana, expanding across Africa.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Monitoring Panel -->
+            <div id="monitoring-panel" class="panel hidden p-6">
+                <h2 class="text-xl font-bold mb-4 text-pgx-orange">📡 Live Monitoring</h2>
+
+                <!-- Real-time Chart -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">⚡ Grid Load (MW)</h3>
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-pgx-orange/20">
+                        <canvas id="loadChart" width="300" height="150"></canvas>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">🔧 System Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-pgx-gray rounded-lg border border-green-500/20">
+                            <span>🔄 Grid Frequency</span>
+                            <span class="text-green-500 font-mono">50.02 Hz</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-pgx-gray rounded-lg border border-blue-500/20">
+                            <span>⚡ Total Load</span>
+                            <span class="text-blue-500 font-mono" id="current-load">1,247 MW</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-pgx-gray rounded-lg border border-yellow-500/20">
+                            <span>📈 Peak Demand</span>
+                            <span class="text-yellow-500 font-mono">1,890 MW</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-pgx-gray rounded-lg border border-pgx-orange/20">
+                            <span>🔋 Grid Efficiency</span>
+                            <span class="text-pgx-orange font-mono">87.3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">📋 Recent Activity</h3>
+                    <div id="activity-feed" class="space-y-2 text-sm max-h-64 overflow-y-auto custom-scrollbar">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Panel -->
+            <div id="analytics-panel" class="panel hidden p-6">
+                <h2 class="text-xl font-bold mb-4 text-pgx-orange">📈 Analytics & Insights</h2>
+
+                <!-- Predictive Insights -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">🔮 Predictive Insights</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
+                            <div class="font-semibold text-yellow-400">⚠️ Potential Overload</div>
+                            <div class="text-sm text-gray-300 mt-1">Kumasi Metro - Transformer KM-247</div>
+                            <div class="text-xs text-gray-400 mt-2">🕐 Predicted in 2.3 hours</div>
+                        </div>
+                        <div class="p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                            <div class="font-semibold text-blue-400">🔧 Maintenance Due</div>
+                            <div class="text-sm text-gray-300 mt-1">Obuasi District - 3 transformers</div>
+                            <div class="text-xs text-gray-400 mt-2">📅 Within 7 days</div>
+                        </div>
+                        <div class="p-3 bg-green-500/20 border border-green-500/30 rounded-lg">
+                            <div class="font-semibold text-green-400">✅ Optimization Opportunity</div>
+                            <div class="text-sm text-gray-300 mt-1">Load balancing in Ejisu district</div>
+                            <div class="text-xs text-gray-400 mt-2">💡 Potential 12% efficiency gain</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Trends -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">📊 Performance Trends</h3>
+                    <div class="bg-pgx-gray p-4 rounded-lg border border-pgx-orange/20">
+                        <canvas id="trendsChart" width="300" height="150"></canvas>
+                    </div>
+                </div>
+
+                <!-- Efficiency Metrics -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-pgx-orange">⚡ Efficiency Metrics</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span>🔋 Grid Efficiency</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-600 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 87%"></div>
+                                </div>
+                                <span class="text-sm">87%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>⏱️ Uptime</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-600 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 94%"></div>
+                                </div>
+                                <span class="text-sm">94%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>🚀 Response Time</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-600 rounded-full h-2">
+                                    <div class="bg-pgx-orange h-2 rounded-full" style="width: 76%"></div>
+                                </div>
+                                <span class="text-sm">76%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Panel -->
+            <div id="alerts-panel" class="panel hidden p-6">
+                <h2 class="text-xl font-bold mb-4 text-pgx-orange">🚨 Active Alerts</h2>
+
+                <!-- Alert Summary -->
+                <div class="grid grid-cols-3 gap-2 mb-6">
+                    <div class="bg-red-500/20 p-3 rounded-lg text-center border border-red-500/30">
+                        <div class="text-lg font-bold text-red-400" id="critical-alerts">3</div>
+                        <div class="text-xs text-gray-400">🔴 Critical</div>
+                    </div>
+                    <div class="bg-yellow-500/20 p-3 rounded-lg text-center border border-yellow-500/30">
+                        <div class="text-lg font-bold text-yellow-400" id="warning-alerts">7</div>
+                        <div class="text-xs text-gray-400">🟡 Warning</div>
+                    </div>
+                    <div class="bg-blue-500/20 p-3 rounded-lg text-center border border-blue-500/30">
+                        <div class="text-lg font-bold text-blue-400" id="info-alerts">12</div>
+                        <div class="text-xs text-gray-400">🔵 Info</div>
+                    </div>
+                </div>
+
+                <!-- Alerts List -->
+                <div id="alerts-list" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+
+                <!-- Alert Actions -->
+                <div class="mt-6 p-4 bg-pgx-gray rounded-lg border border-pgx-orange/20">
+                    <h4 class="font-semibold text-pgx-orange mb-2">🛠️ Quick Actions</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                            🚨 Emergency Response
+                        </button>
+                        <button class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                            📞 Dispatch Team
+                        </button>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                            📋 Generate Report
+                        </button>
+                        <button class="bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm transition-colors">
+                            ✅ Mark Resolved
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Map Container -->
+        <div class="flex-1 relative">
+            <div id="map"></div>
+            
+            <!-- Map Controls -->
+            <div class="absolute top-4 right-4 space-y-2">
+                <!-- Layer Controls -->
+                <div class="glass-dark p-3 rounded-lg">
+                    <h4 class="text-sm font-semibold mb-2 text-pgx-orange">🗂️ Layers</h4>
+                    <div class="space-y-1">
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="transformers-layer" checked class="rounded text-pgx-orange">
+                            <span>⚡ Transformers</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="meters-layer" class="rounded text-pgx-orange">
+                            <span>📊 Smart Meters</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="faults-layer" checked class="rounded text-pgx-orange">
+                            <span>🚨 Faults</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Legend -->
+                <div class="glass-dark p-3 rounded-lg">
+                    <h4 class="text-sm font-semibold mb-2 text-pgx-orange">🎨 Legend</h4>
+                    <div class="space-y-1 text-xs">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span>Healthy</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <span>Warning</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <span>Critical</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Info Panel (appears when clicking on map items) -->
+            <div id="info-panel" class="absolute bottom-4 left-4 w-80 glass-dark p-4 rounded-lg hidden slide-in">
+                <div id="info-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                <div class="loading mb-2"></div>
+                <div class="text-pgx-orange">Loading PowerGridX...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Main Application Script -->
+    <script src="powergridx.js"></script>
+</body>
+</html>
