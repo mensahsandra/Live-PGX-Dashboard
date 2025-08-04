@@ -6,115 +6,384 @@ let powerLineLayer;
 let alertLayer;
 let currentInfoPanel = null;
 
-// Ghana regions data with coordinates
-const ghanaRegions = {
-    'ashanti': {
-        name: 'Ashanti Region',
-        center: [6.7, -1.6],
-        zoom: 9,
-        districts: 5,
-        population: '5.8M',
-        transformers: 89
-    },
-    'greater-accra': {
-        name: 'Greater Accra',
-        center: [5.6, -0.2],
-        zoom: 10,
-        districts: 8,
-        population: '4.2M',
-        transformers: 156
-    },
-    'central': {
-        name: 'Central Region',
-        center: [5.3, -1.0],
-        zoom: 9,
-        districts: 4,
+// Ashanti Region districts data
+const ashantiDistricts = {
+    'kumasi': {
+        name: 'Kumasi Metropolitan',
+        center: [6.6885, -1.6244],
+        zoom: 11,
         population: '2.8M',
-        transformers: 67
+        type: 'Urban',
+        transformers: 24,
+        smartMeters: 8047,
+        coverage: 94,
+        status: 'active'
     },
-    'western': {
-        name: 'Western Region',
-        center: [5.0, -2.5],
-        zoom: 9,
-        districts: 6,
-        population: '3.1M',
-        transformers: 78
+    'obuasi': {
+        name: 'Obuasi Municipal',
+        center: [6.2027, -1.6708],
+        zoom: 11,
+        population: '175K',
+        type: 'Urban',
+        transformers: 18,
+        smartMeters: 2350,
+        coverage: 87,
+        status: 'active'
+    },
+    'ejisu': {
+        name: 'Ejisu',
+        center: [6.7500, -1.3667],
+        zoom: 11,
+        population: '143K',
+        type: 'Peri-Urban',
+        transformers: 15,
+        smartMeters: 1890,
+        coverage: 92,
+        status: 'active'
+    },
+    'asante-akim-north': {
+        name: 'Asante Akim North',
+        center: [6.8167, -1.0833],
+        zoom: 11,
+        population: '98K',
+        type: 'Rural',
+        transformers: 12,
+        smartMeters: 1456,
+        coverage: 78,
+        status: 'warning'
+    },
+    'bosomtwe': {
+        name: 'Bosomtwe',
+        center: [6.5000, -1.4167],
+        zoom: 11,
+        population: '89K',
+        type: 'Rural',
+        transformers: 8,
+        smartMeters: 1058,
+        coverage: 65,
+        status: 'critical'
     }
 };
 
-// Sample transformer data
+// Ashanti Region transformer data
 const transformerData = [
+    // Kumasi Metropolitan
     {
-        id: 'TR-ACC-001',
-        name: 'Osu Primary Transformer',
-        lat: 5.5558,
-        lng: -0.1826,
-        status: 'active',
-        capacity: '500 kVA',
-        load: 78,
-        efficiency: 94,
-        district: 'Accra Metropolitan',
-        type: 'Urban'
-    },
-    {
-        id: 'TR-ACC-002',
-        name: 'Tema Industrial Transformer',
-        lat: 5.6698,
-        lng: 0.0166,
-        status: 'active',
-        capacity: '1000 kVA',
-        load: 85,
-        efficiency: 91,
-        district: 'Tema Metropolitan',
-        type: 'Industrial'
-    },
-    {
-        id: 'TR-GAE-001',
-        name: 'Madina Central Transformer',
-        lat: 5.6837,
-        lng: -0.1668,
-        status: 'active',
-        capacity: '400 kVA',
-        load: 72,
-        efficiency: 89,
-        district: 'Ga East Municipal',
-        type: 'Peri-Urban'
-    },
-    {
-        id: 'TR-ASH-001',
+        id: 'TR-KMA-001',
         name: 'Kumasi Central Transformer',
         lat: 6.6885,
         lng: -1.6244,
-        status: 'maintenance',
-        capacity: '750 kVA',
-        load: 0,
-        efficiency: 0,
+        status: 'active',
+        capacity: '1000 kVA',
+        load: 85,
+        efficiency: 94,
         district: 'Kumasi Metropolitan',
+        districtKey: 'kumasi',
         type: 'Urban'
     },
     {
-        id: 'TR-WR-001',
-        name: 'Takoradi Port Transformer',
-        lat: 4.8845,
-        lng: -1.7554,
+        id: 'TR-KMA-002',
+        name: 'Adum Commercial Transformer',
+        lat: 6.6950,
+        lng: -1.6200,
+        status: 'active',
+        capacity: '750 kVA',
+        load: 78,
+        efficiency: 92,
+        district: 'Kumasi Metropolitan',
+        districtKey: 'kumasi',
+        type: 'Commercial'
+    },
+    {
+        id: 'TR-KMA-003',
+        name: 'KNUST Campus Transformer',
+        lat: 6.6745,
+        lng: -1.5716,
+        status: 'active',
+        capacity: '500 kVA',
+        load: 72,
+        efficiency: 89,
+        district: 'Kumasi Metropolitan',
+        districtKey: 'kumasi',
+        type: 'Educational'
+    },
+    // Obuasi Municipal
+    {
+        id: 'TR-OBU-001',
+        name: 'Obuasi Main Transformer',
+        lat: 6.2027,
+        lng: -1.6708,
         status: 'active',
         capacity: '800 kVA',
-        load: 92,
+        load: 82,
         efficiency: 87,
-        district: 'Sekondi-Takoradi Metropolitan',
+        district: 'Obuasi Municipal',
+        districtKey: 'obuasi',
+        type: 'Urban'
+    },
+    {
+        id: 'TR-OBU-002',
+        name: 'Mining Area Transformer',
+        lat: 6.1950,
+        lng: -1.6650,
+        status: 'maintenance',
+        capacity: '600 kVA',
+        load: 0,
+        efficiency: 0,
+        district: 'Obuasi Municipal',
+        districtKey: 'obuasi',
         type: 'Industrial'
+    },
+    // Ejisu
+    {
+        id: 'TR-EJI-001',
+        name: 'Ejisu Town Transformer',
+        lat: 6.7500,
+        lng: -1.3667,
+        status: 'active',
+        capacity: '400 kVA',
+        load: 75,
+        efficiency: 92,
+        district: 'Ejisu',
+        districtKey: 'ejisu',
+        type: 'Peri-Urban'
+    },
+    {
+        id: 'TR-EJI-002',
+        name: 'Bonwire Transformer',
+        lat: 6.7800,
+        lng: -1.3500,
+        status: 'active',
+        capacity: '300 kVA',
+        load: 68,
+        efficiency: 88,
+        district: 'Ejisu',
+        districtKey: 'ejisu',
+        type: 'Rural'
+    },
+    // Asante Akim North
+    {
+        id: 'TR-AAN-001',
+        name: 'Agogo Main Transformer',
+        lat: 6.8167,
+        lng: -1.0833,
+        status: 'active',
+        capacity: '350 kVA',
+        load: 65,
+        efficiency: 78,
+        district: 'Asante Akim North',
+        districtKey: 'asante-akim-north',
+        type: 'Rural'
+    },
+    {
+        id: 'TR-AAN-002',
+        name: 'Konongo Transformer',
+        lat: 6.6167,
+        lng: -1.2167,
+        status: 'fault',
+        capacity: '250 kVA',
+        load: 0,
+        efficiency: 0,
+        district: 'Asante Akim North',
+        districtKey: 'asante-akim-north',
+        type: 'Rural'
+    },
+    // Bosomtwe
+    {
+        id: 'TR-BOS-001',
+        name: 'Kuntanase Transformer',
+        lat: 6.5000,
+        lng: -1.4167,
+        status: 'active',
+        capacity: '200 kVA',
+        load: 58,
+        efficiency: 65,
+        district: 'Bosomtwe',
+        districtKey: 'bosomtwe',
+        type: 'Rural'
+    },
+    {
+        id: 'TR-BOS-002',
+        name: 'Abono Transformer',
+        lat: 6.4800,
+        lng: -1.4000,
+        status: 'offline',
+        capacity: '150 kVA',
+        load: 0,
+        efficiency: 0,
+        district: 'Bosomtwe',
+        districtKey: 'bosomtwe',
+        type: 'Rural'
     }
 ];
+
+// Dispatch Request Functions
+function dispatchRequest(lat, lng, type, message) {
+    // Store dispatch request data in sessionStorage for the dispatch page
+    const dispatchData = {
+        location: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        type: type,
+        message: message,
+        timestamp: new Date().toISOString(),
+        priority: type === 'critical' ? 'high' : type === 'maintenance' ? 'medium' : 'low'
+    };
+
+    sessionStorage.setItem('pendingDispatchRequest', JSON.stringify(dispatchData));
+
+    // Redirect to dispatch request page
+    window.location.href = 'dispatch.html';
+}
+
+function createDispatchModal(lat, lng, type, message) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg p-6 w-96 max-w-90vw">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Dispatch Request</h3>
+                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
+                    <input type="text" value="${type.toUpperCase()}" readonly
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input type="text" value="Lat: ${lat}, Lng: ${lng}" readonly
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea readonly class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 h-20">${message}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Assign Personnel</label>
+                    <select id="personnel-select" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="">Select qualified personnel...</option>
+                        <option value="john-doe">John Doe - Senior Technician (Available)</option>
+                        <option value="jane-smith">Jane Smith - Electrical Engineer (Available)</option>
+                        <option value="mike-johnson">Mike Johnson - Maintenance Specialist (Available)</option>
+                        <option value="sarah-wilson">Sarah Wilson - Field Technician (Available)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority Level</label>
+                    <select id="priority-select" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="high" ${type === 'critical' ? 'selected' : ''}>High Priority</option>
+                        <option value="medium" ${type === 'maintenance' ? 'selected' : ''}>Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                    <textarea id="dispatch-notes" placeholder="Enter any additional instructions or notes..."
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md h-20"></textarea>
+                </div>
+            </div>
+
+            <div class="flex space-x-3 mt-6">
+                <button onclick="submitDispatchRequest('${lat}', '${lng}', '${type}', '${message}')"
+                        class="flex-1 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors">
+                    Submit Dispatch Request
+                </button>
+                <button onclick="this.closest('.fixed').remove()"
+                        class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    `;
+    return modal;
+}
+
+function submitDispatchRequest(lat, lng, type, message) {
+    const personnel = document.getElementById('personnel-select').value;
+    const priority = document.getElementById('priority-select').value;
+    const notes = document.getElementById('dispatch-notes').value;
+
+    if (!personnel) {
+        alert('Please select personnel to assign to this request.');
+        return;
+    }
+
+    // Create dispatch log entry
+    const dispatchLog = {
+        id: 'DISP-' + Date.now(),
+        timestamp: new Date().toISOString(),
+        location: { lat: parseFloat(lat), lng: parseFloat(lng) },
+        type: type,
+        message: message,
+        assignedPersonnel: personnel,
+        priority: priority,
+        notes: notes,
+        status: 'dispatched',
+        dateTime: new Date().toLocaleString()
+    };
+
+    // Store in localStorage (in real app, this would go to backend)
+    let dispatchLogs = JSON.parse(localStorage.getItem('dispatchLogs') || '[]');
+    dispatchLogs.push(dispatchLog);
+    localStorage.setItem('dispatchLogs', JSON.stringify(dispatchLogs));
+
+    // Show success message
+    alert(`Dispatch request submitted successfully!\nRequest ID: ${dispatchLog.id}\nAssigned to: ${getPersonnelName(personnel)}`);
+
+    // Close modal
+    document.querySelector('.fixed.inset-0').remove();
+
+    // Optionally redirect to dispatch page
+    // window.location.href = 'dispatch.html';
+}
+
+function getPersonnelName(personnelId) {
+    const personnelMap = {
+        'john-doe': 'John Doe',
+        'jane-smith': 'Jane Smith',
+        'mike-johnson': 'Mike Johnson',
+        'sarah-wilson': 'Sarah Wilson'
+    };
+    return personnelMap[personnelId] || personnelId;
+}
+
+// View Details Functions
+function viewAlertDetails(lat, lng) {
+    // Redirect to audit log with location filter
+    window.location.href = `audit-log.html?location=${lat},${lng}&type=alert`;
+}
+
+function viewTransformerAuditLog(transformerId) {
+    // Redirect to audit log with transformer filter
+    window.location.href = `audit-log.html?transformer=${transformerId}&status=completed`;
+}
+
+function viewTransformerDetails(transformerId) {
+    // Redirect to transformer details page
+    window.location.href = `transformers.html?id=${transformerId}`;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
     setupEventListeners();
     updateQuickStats();
+    setupDistrictInteractions();
+    updateRegionOverview();
 });
 
 function initializeMap() {
-    // Initialize map centered on Ghana
-    map = L.map('map').setView([7.9465, -1.0232], 7);
+    // Initialize map centered on Ashanti region
+    map = L.map('map').setView([6.6885, -1.6244], 9);
     
     // Add tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -223,31 +492,37 @@ function createTransformerMarker(transformer) {
                     <span class="font-medium">${transformer.district}</span>
                 </div>
             </div>
-            <button onclick="showTransformerDetails('${transformer.id}')" 
-                    class="mt-3 w-full bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600">
-                View Details
-            </button>
+            ${getTransformerActionButtons(transformer)}
         </div>
     `;
     
     marker.bindPopup(popupContent);
     
+    // Store transformer reference for highlighting
+    marker.transformer = transformer;
+
     // Add click event for info panel
     marker.on('click', () => {
         showInfoPanel(transformer);
+        // Also focus on the district
+        if (transformer.districtKey) {
+            updateDistrictSelection(transformer.districtKey);
+        }
     });
-    
+
     return marker;
 }
 
 function addPowerLines() {
-    // Add sample power lines connecting transformers
+    // Add power lines connecting Ashanti region transformers
     const connections = [
-        [[5.5558, -0.1826], [5.6698, 0.0166]], // Osu to Tema
-        [[5.6698, 0.0166], [5.6837, -0.1668]], // Tema to Madina
-        [[6.6885, -1.6244], [4.8845, -1.7554]] // Kumasi to Takoradi
+        [[6.6885, -1.6244], [6.2027, -1.6708]], // Kumasi to Obuasi
+        [[6.6885, -1.6244], [6.7500, -1.3667]], // Kumasi to Ejisu
+        [[6.6885, -1.6244], [6.8167, -1.0833]], // Kumasi to Asante Akim North
+        [[6.6885, -1.6244], [6.5000, -1.4167]], // Kumasi to Bosomtwe
+        [[6.7500, -1.3667], [6.8167, -1.0833]], // Ejisu to Asante Akim North
     ];
-    
+
     connections.forEach(connection => {
         L.polyline(connection, {
             color: '#3B82F6',
@@ -259,97 +534,365 @@ function addPowerLines() {
 }
 
 function addAlerts() {
-    // Add sample alert markers
+    // Add Ashanti region alert markers
     const alerts = [
         {
-            lat: 5.5558,
-            lng: -0.1826,
-            type: 'critical',
-            message: 'High load detected'
+            lat: 6.2027,
+            lng: -1.6708,
+            type: 'maintenance',
+            message: 'Obuasi Mining Area - Scheduled maintenance'
         },
         {
-            lat: 6.6885,
-            lng: -1.6244,
-            type: 'maintenance',
-            message: 'Scheduled maintenance'
+            lat: 6.6167,
+            lng: -1.2167,
+            type: 'critical',
+            message: 'Konongo Transformer - Fault detected'
+        },
+        {
+            lat: 6.4800,
+            lng: -1.4000,
+            type: 'critical',
+            message: 'Abono Transformer - Offline'
         }
     ];
     
     alerts.forEach(alert => {
         const color = alert.type === 'critical' ? '#EF4444' : '#F59E0B';
-        
-        L.circleMarker([alert.lat, alert.lng], {
-            radius: 12,
-            fillColor: color,
-            color: '#ffffff',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.9
-        }).bindPopup(`
-            <div class="p-2">
-                <h4 class="font-semibold text-gray-900">${alert.type.toUpperCase()}</h4>
-                <p class="text-sm text-gray-600">${alert.message}</p>
-            </div>
-        `).addTo(alertLayer);
+
+        if (alert.type === 'critical') {
+            // Create custom HTML for critical alerts with blinking exclamation
+            const criticalIcon = L.divIcon({
+                className: 'critical-alert-marker',
+                html: `
+                    <div style="
+                        width: 24px;
+                        height: 24px;
+                        background-color: ${color};
+                        border: 2px solid white;
+                        border-radius: 50%;
+                        position: relative;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            color: white;
+                            font-weight: bold;
+                            font-size: 14px;
+                            animation: blink 1s infinite;
+                        ">!</div>
+                    </div>
+                `,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+
+            L.marker([alert.lat, alert.lng], { icon: criticalIcon })
+                .bindPopup(`
+                    <div class="p-3 min-w-64">
+                        <h4 class="font-semibold text-gray-900 mb-2">${alert.type.toUpperCase()}</h4>
+                        <p class="text-sm text-gray-600 mb-3">${alert.message}</p>
+                        <div class="flex space-x-2">
+                            <button onclick="dispatchRequest('${alert.lat}', '${alert.lng}', '${alert.type}', '${alert.message}')"
+                                    class="flex-1 bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-colors">
+                                🚨 Dispatch Request
+                            </button>
+                            <button onclick="viewAlertDetails('${alert.lat}', '${alert.lng}')"
+                                    class="flex-1 bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition-colors">
+                                📋 View Details
+                            </button>
+                        </div>
+                    </div>
+                `)
+                .addTo(alertLayer);
+        } else {
+            // Regular circle marker for non-critical alerts
+            L.circleMarker([alert.lat, alert.lng], {
+                radius: 12,
+                fillColor: color,
+                color: '#ffffff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.9
+            }).bindPopup(`
+                <div class="p-3 min-w-64">
+                    <h4 class="font-semibold text-gray-900 mb-2">${alert.type.toUpperCase()}</h4>
+                    <p class="text-sm text-gray-600 mb-3">${alert.message}</p>
+                    <div class="flex space-x-2">
+                        <button onclick="dispatchRequest('${alert.lat}', '${alert.lng}', '${alert.type}', '${alert.message}')"
+                                class="flex-1 bg-orange-600 text-white px-3 py-1 rounded text-xs hover:bg-orange-700 transition-colors">
+                            🔧 Dispatch Request
+                        </button>
+                        <button onclick="viewAlertDetails('${alert.lat}', '${alert.lng}')"
+                                class="flex-1 bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition-colors">
+                            📋 View Details
+                        </button>
+                    </div>
+                </div>
+            `).addTo(alertLayer);
+        }
     });
 }
 
 function setupEventListeners() {
-    // Region selector
-    document.getElementById('region-selector').addEventListener('change', function(e) {
-        const regionKey = e.target.value;
-        if (regionKey === 'all') {
-            map.setView([7.9465, -1.0232], 7);
-            updateRegionInfo('all');
-        } else if (ghanaRegions[regionKey]) {
-            const region = ghanaRegions[regionKey];
-            map.setView(region.center, region.zoom);
-            updateRegionInfo(regionKey);
-        }
-    });
-    
     // Layer toggles
-    document.getElementById('transformers-layer').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            map.addLayer(transformerLayer);
-        } else {
-            map.removeLayer(transformerLayer);
-        }
-    });
-    
-    document.getElementById('smart-meters-layer').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            map.addLayer(smartMeterLayer);
-        } else {
-            map.removeLayer(smartMeterLayer);
-        }
-    });
-    
-    document.getElementById('power-lines-layer').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            map.addLayer(powerLineLayer);
-        } else {
-            map.removeLayer(powerLineLayer);
-        }
-    });
-    
-    document.getElementById('alerts-layer').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            map.addLayer(alertLayer);
-        } else {
-            map.removeLayer(alertLayer);
-        }
-    });
-    
+    const transformersLayerToggle = document.getElementById('transformers-layer');
+    if (transformersLayerToggle) {
+        transformersLayerToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(transformerLayer);
+            } else {
+                map.removeLayer(transformerLayer);
+            }
+        });
+    }
+
+    const smartMetersLayerToggle = document.getElementById('smart-meters-layer');
+    if (smartMetersLayerToggle) {
+        smartMetersLayerToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(smartMeterLayer);
+            } else {
+                map.removeLayer(smartMeterLayer);
+            }
+        });
+    }
+
+    const powerLinesLayerToggle = document.getElementById('power-lines-layer');
+    if (powerLinesLayerToggle) {
+        powerLinesLayerToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(powerLineLayer);
+            } else {
+                map.removeLayer(powerLineLayer);
+            }
+        });
+    }
+
+    const alertsLayerToggle = document.getElementById('alerts-layer');
+    if (alertsLayerToggle) {
+        alertsLayerToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(alertLayer);
+            } else {
+                map.removeLayer(alertLayer);
+            }
+        });
+    }
+
+    // Region selector
+    const regionSelector = document.getElementById('region-selector');
+    if (regionSelector) {
+        regionSelector.addEventListener('change', function(e) {
+            const regionKey = e.target.value;
+            if (regionKey === 'ashanti') {
+                map.setView([6.6885, -1.6244], 9);
+            } else if (regionKey === 'all') {
+                map.setView([7.9465, -1.0232], 7);
+            }
+        });
+    }
+
+    // District selector
+    const districtSelector = document.getElementById('district-selector');
+    if (districtSelector) {
+        districtSelector.addEventListener('change', function(e) {
+            const districtKey = e.target.value;
+            if (districtKey === 'all') {
+                map.setView([6.6885, -1.6244], 9);
+                resetDistrictSelection();
+            } else {
+                focusOnDistrict(districtKey);
+                updateDistrictSelection(districtKey);
+            }
+        });
+    }
+
     // Search functionality
-    document.getElementById('search-input').addEventListener('input', function(e) {
-        const query = e.target.value.toLowerCase();
-        if (query.length > 2) {
-            searchTransformers(query);
-        } else {
-            hideSearchResults();
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                searchTransformers(query);
+            } else {
+                hideSearchResults();
+            }
+        });
+    }
+}
+
+function setupDistrictInteractions() {
+    // Add click event listeners to district items in the left panel
+    const districtItems = document.querySelectorAll('.district-item');
+    districtItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const districtKey = this.getAttribute('data-district');
+            focusOnDistrict(districtKey);
+            updateDistrictSelection(districtKey);
+
+            // Update district selector dropdown
+            const districtSelector = document.getElementById('district-selector');
+            if (districtSelector) {
+                districtSelector.value = districtKey;
+            }
+        });
+    });
+}
+
+function focusOnDistrict(districtKey) {
+    if (ashantiDistricts[districtKey]) {
+        const district = ashantiDistricts[districtKey];
+        map.setView(district.center, district.zoom);
+
+        // Highlight transformers in this district
+        highlightDistrictTransformers(districtKey);
+
+        // Update panel with district details
+        updateDistrictDetails(districtKey);
+    }
+}
+
+function highlightDistrictTransformers(districtKey) {
+    // Reset all transformer markers to normal style
+    transformerLayer.eachLayer(layer => {
+        if (layer.options) {
+            layer.setStyle({
+                radius: 8,
+                weight: 2
+            });
         }
     });
+
+    // Highlight transformers in the selected district
+    transformerLayer.eachLayer(layer => {
+        if (layer.options && layer.transformer) {
+            const transformer = layer.transformer;
+            if (transformer.districtKey === districtKey) {
+                layer.setStyle({
+                    radius: 12,
+                    weight: 4
+                });
+            }
+        }
+    });
+}
+
+function updateDistrictSelection(districtKey) {
+    // Remove active class from all district items
+    document.querySelectorAll('.district-item').forEach(item => {
+        item.classList.remove('bg-slate-500');
+        item.classList.add('bg-slate-600');
+    });
+
+    // Add active class to selected district
+    const selectedItem = document.querySelector(`[data-district="${districtKey}"]`);
+    if (selectedItem) {
+        selectedItem.classList.remove('bg-slate-600');
+        selectedItem.classList.add('bg-slate-500');
+    }
+
+    // Update district selector
+    const districtSelector = document.getElementById('district-selector');
+    if (districtSelector) {
+        districtSelector.value = districtKey;
+    }
+}
+
+function resetDistrictSelection() {
+    // Remove active class from all district items
+    document.querySelectorAll('.district-item').forEach(item => {
+        item.classList.remove('bg-slate-500');
+        item.classList.add('bg-slate-600');
+    });
+
+    // Reset all transformer markers to normal style
+    transformerLayer.eachLayer(layer => {
+        if (layer.options) {
+            layer.setStyle({
+                radius: 8,
+                weight: 2
+            });
+        }
+    });
+
+    // Reset overview metrics to region totals
+    updateRegionOverview();
+}
+
+function updateRegionOverview() {
+    // Calculate totals for entire Ashanti region
+    const totalTransformers = Object.values(ashantiDistricts).reduce((sum, district) => sum + district.transformers, 0);
+    const totalSmartMeters = Object.values(ashantiDistricts).reduce((sum, district) => sum + district.smartMeters, 0);
+    const activeTransformers = transformerData.filter(t => t.status === 'active').length;
+    const totalAlerts = transformerData.filter(t => t.status === 'fault' || t.status === 'maintenance' || t.status === 'offline').length;
+    const averageCoverage = Math.round(Object.values(ashantiDistricts).reduce((sum, district) => sum + district.coverage, 0) / Object.values(ashantiDistricts).length);
+
+    // Update the Quick Stats section
+    const totalTransformersEl = document.getElementById('total-transformers');
+    const activeTransformersEl = document.getElementById('active-transformers');
+    const alertCountEl = document.getElementById('alert-count');
+    const coveragePercentEl = document.getElementById('coverage-percent');
+
+    if (totalTransformersEl) totalTransformersEl.textContent = totalTransformers;
+    if (activeTransformersEl) activeTransformersEl.textContent = activeTransformers;
+    if (alertCountEl) alertCountEl.textContent = totalAlerts;
+    if (coveragePercentEl) coveragePercentEl.textContent = `${averageCoverage}%`;
+
+    // Update the left panel overview section with region totals
+    const transformersCount = document.querySelector('.text-orange-500.text-2xl');
+    const activeNodesCount = document.querySelector('.text-green-500.text-2xl');
+    const smartMetersCount = document.querySelector('.text-blue-500.text-2xl');
+    const coveragePercent = document.querySelectorAll('.text-green-500.text-2xl')[1];
+
+    if (transformersCount) transformersCount.textContent = totalTransformers;
+    if (activeNodesCount) activeNodesCount.textContent = activeTransformers;
+    if (smartMetersCount) smartMetersCount.textContent = totalSmartMeters.toLocaleString();
+    if (coveragePercent) coveragePercent.textContent = `${averageCoverage}%`;
+}
+
+function updateDistrictDetails(districtKey) {
+    const district = ashantiDistricts[districtKey];
+    if (!district) return;
+
+    // Update the Quick Stats section with district-specific data
+    const totalTransformersEl = document.getElementById('total-transformers');
+    const activeTransformersEl = document.getElementById('active-transformers');
+    const alertCountEl = document.getElementById('alert-count');
+    const coveragePercentEl = document.getElementById('coverage-percent');
+
+    if (totalTransformersEl) totalTransformersEl.textContent = district.transformers;
+    if (activeTransformersEl) {
+        const activeTransformers = transformerData.filter(t =>
+            t.districtKey === districtKey && t.status === 'active'
+        ).length;
+        activeTransformersEl.textContent = activeTransformers;
+    }
+    if (alertCountEl) {
+        const districtAlerts = transformerData.filter(t =>
+            t.districtKey === districtKey && (t.status === 'fault' || t.status === 'maintenance' || t.status === 'offline')
+        ).length;
+        alertCountEl.textContent = districtAlerts;
+    }
+    if (coveragePercentEl) coveragePercentEl.textContent = `${district.coverage}%`;
+
+    // Also update the left panel overview metrics
+    const transformersCount = document.querySelector('.text-orange-500.text-2xl');
+    const activeNodesCount = document.querySelector('.text-green-500.text-2xl');
+    const smartMetersCount = document.querySelector('.text-blue-500.text-2xl');
+    const coveragePercent = document.querySelectorAll('.text-green-500.text-2xl')[1];
+
+    if (transformersCount) transformersCount.textContent = district.transformers;
+    if (activeNodesCount) {
+        const activeTransformers = transformerData.filter(t =>
+            t.districtKey === districtKey && t.status === 'active'
+        ).length;
+        activeNodesCount.textContent = activeTransformers;
+    }
+    if (smartMetersCount) smartMetersCount.textContent = district.smartMeters.toLocaleString();
+    if (coveragePercent) coveragePercent.textContent = `${district.coverage}%`;
 }
 
 function updateRegionInfo(regionKey) {
@@ -363,15 +906,70 @@ function updateRegionInfo(regionKey) {
     }
 }
 
+function getTransformerActionButtons(transformer) {
+    const status = transformer.status.toLowerCase();
+
+    if (status === 'active' || status === 'operational') {
+        // Green/Operational status - View Details button to audit log
+        return `
+            <button onclick="viewTransformerAuditLog('${transformer.id}')"
+                    class="mt-3 w-full bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 transition-colors">
+                ✅ View Audit Log
+            </button>
+        `;
+    } else if (status === 'fault' || status === 'offline' || status === 'critical') {
+        // Critical status - Dispatch Request button
+        return `
+            <div class="mt-3 space-y-2">
+                <button onclick="dispatchRequest('${transformer.lat}', '${transformer.lng}', 'critical', 'Transformer ${transformer.id} requires immediate attention')"
+                        class="w-full bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
+                    🚨 Dispatch Request
+                </button>
+                <button onclick="viewTransformerDetails('${transformer.id}')"
+                        class="w-full bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors">
+                    📋 View Details
+                </button>
+            </div>
+        `;
+    } else if (status === 'maintenance' || status === 'warning') {
+        // Maintenance/Warning status - Dispatch Request button
+        return `
+            <div class="mt-3 space-y-2">
+                <button onclick="dispatchRequest('${transformer.lat}', '${transformer.lng}', 'maintenance', 'Transformer ${transformer.id} requires maintenance')"
+                        class="w-full bg-orange-600 text-white px-3 py-1 rounded text-sm hover:bg-orange-700 transition-colors">
+                    🔧 Dispatch Request
+                </button>
+                <button onclick="viewTransformerDetails('${transformer.id}')"
+                        class="w-full bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700 transition-colors">
+                    📋 View Details
+                </button>
+            </div>
+        `;
+    } else {
+        // Default - View Details button
+        return `
+            <button onclick="viewTransformerDetails('${transformer.id}')"
+                    class="mt-3 w-full bg-orange-500 text-white px-3 py-1 rounded text-sm hover:bg-orange-600 transition-colors">
+                📋 View Details
+            </button>
+        `;
+    }
+}
+
 function updateQuickStats() {
     const activeTransformers = transformerData.filter(t => t.status === 'active').length;
     const totalTransformers = transformerData.length;
-    const alerts = 2; // Sample alert count
-    
-    document.getElementById('total-transformers').textContent = totalTransformers;
-    document.getElementById('active-transformers').textContent = activeTransformers;
-    document.getElementById('alert-count').textContent = alerts;
-    document.getElementById('coverage-percent').textContent = '87%';
+    const alerts = 3; // Updated alert count for Ashanti region
+
+    const totalTransformersEl = document.getElementById('total-transformers');
+    const activeTransformersEl = document.getElementById('active-transformers');
+    const alertCountEl = document.getElementById('alert-count');
+    const coveragePercentEl = document.getElementById('coverage-percent');
+
+    if (totalTransformersEl) totalTransformersEl.textContent = totalTransformers;
+    if (activeTransformersEl) activeTransformersEl.textContent = activeTransformers;
+    if (alertCountEl) alertCountEl.textContent = alerts;
+    if (coveragePercentEl) coveragePercentEl.textContent = '87%';
 }
 
 function searchTransformers(query) {

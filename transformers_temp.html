@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -87,51 +87,15 @@
             border-radius: 3px;
         }
     </style>
+
+    <!-- Header Loader -->
+    <script src="header-loader.js"></script>
 </head>
 <body class="bg-gray-50 font-sans">
-    <!-- Fixed Navigation Header -->
-    <header class="bg-slate-700 shadow-sm fixed top-0 left-0 right-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo and Title -->
-                <div class="flex items-center space-x-4">
-                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
-                    <div>
-                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
-                        <p class="text-sm text-gray-300">Smart Infrastructure Platform</p>
-                    </div>
-                </div>
-
-                <!-- Navigation -->
-                <nav class="hidden md:flex space-x-2">
-                    <a href="index.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Dashboard
-                    </a>
-                    <a href="smart-grid.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Smart Grid
-                    </a>
-                    <a href="transformers.html" class="bg-pgx-orange text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Transformers
-                    </a>
-                    <a href="audit-log.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Audit Log
-                    </a>
-                    <a href="dispatch.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Dispatch Request
-                    </a>
-                </nav>
-
-                <!-- Status -->
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Header will be loaded dynamically -->
 
     <!-- Main Content -->
-    <main class="flex h-screen pt-16">
+    <main class="flex h-screen">
         <!-- Left Dashboard Panel -->
         <div class="w-80 bg-slate-700 text-white flex-shrink-0 overflow-y-auto">
             <!-- Panel Header -->
@@ -236,10 +200,10 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         <button onclick="window.location.href='smart-grid.html'" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                            â† Back to Map
+                            ← Back to Map
                         </button>
                         <button onclick="exportTransformerData()" class="bg-pgx-orange text-white px-4 py-2 rounded-lg text-sm hover:bg-pgx-orange-dark transition-colors">
-                            ðŸ“Š Export Data
+                            📊 Export Data
                         </button>
                     </div>
                 </div>
@@ -253,43 +217,35 @@
             </div>
 
             <!-- Transformer Details Modal -->
-            <div id="transformer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50" style="z-index: 9999;">
-                <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                    <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-                        <!-- Modal Header -->
-                        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
-                            <h3 class="text-xl font-semibold text-gray-900" id="modal-title">Transformer Details</h3>
-                            <button onclick="closeTransformerModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full p-2 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <!-- Modal Content -->
-                        <div class="overflow-y-auto max-h-[calc(90vh-120px)] px-6 py-4" id="modal-content">
-                            <!-- Content will be populated by JavaScript -->
-                        </div>
+            <div id="transformer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-90vh overflow-y-auto m-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900" id="modal-title">Transformer Details</h3>
+                        <button onclick="closeTransformerModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modal-content">
+                        <!-- Content will be populated by JavaScript -->
                     </div>
                 </div>
             </div>
 
             <!-- Customer List Modal -->
-            <div id="customer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50" style="z-index: 9999;">
-                <div class="flex items-center justify-center min-h-screen px-4 py-8">
-                    <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
-                        <!-- Modal Header -->
-                        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
-                            <h3 class="text-xl font-semibold text-gray-900" id="customer-modal-title">Customer List</h3>
-                            <button onclick="closeCustomerModal()" class="text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded-full p-2 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <!-- Modal Content -->
-                        <div class="overflow-y-auto max-h-[calc(90vh-120px)] px-6 py-4" id="customer-modal-content">
-                            <!-- Content will be populated by JavaScript -->
-                        </div>
+            <div id="customer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-6 w-full max-w-6xl max-h-90vh overflow-y-auto m-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900" id="customer-modal-title">Customer List</h3>
+                        <button onclick="closeCustomerModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="customer-modal-content">
+                        <!-- Content will be populated by JavaScript -->
                     </div>
                 </div>
             </div>

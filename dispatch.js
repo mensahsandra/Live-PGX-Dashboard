@@ -1,495 +1,362 @@
 // Dispatch Request JavaScript for PowerGridX
-let allRequests = [];
-let allContractors = [];
-let currentFilters = {
-    status: 'all',
-    region: 'all',
-    type: 'all'
-};
+// Handles personnel assignment and dispatch request management
 
+// Personnel database with detailed information
+const personnelDatabase = [
+    {
+        id: 'PGX-001',
+        username: 'john.doe',
+        name: 'John Doe',
+        phone: '+233-24-123-4567',
+        district: 'kumasi',
+        districtName: 'Kumasi Metropolitan',
+        specialization: 'electrical',
+        certifications: ['ECG Licensed', 'High Voltage Certified'],
+        experience: '8 years',
+        status: 'available',
+        currentLocation: 'Kumasi Central',
+        rating: 4.8,
+        completedTasks: 156
+    },
+    {
+        id: 'PGX-002',
+        username: 'jane.smith',
+        name: 'Jane Smith',
+        phone: '+233-24-234-5678',
+        district: 'obuasi',
+        districtName: 'Obuasi Municipal',
+        specialization: 'electrical',
+        certifications: ['Electrical Engineer', 'Safety Inspector'],
+        experience: '12 years',
+        status: 'available',
+        currentLocation: 'Obuasi Mining Area',
+        rating: 4.9,
+        completedTasks: 203
+    },
+    {
+        id: 'PGX-003',
+        username: 'mike.johnson',
+        name: 'Mike Johnson',
+        phone: '+233-24-345-6789',
+        district: 'ejisu',
+        districtName: 'Ejisu',
+        specialization: 'mechanical',
+        certifications: ['Maintenance Specialist', 'Equipment Technician'],
+        experience: '6 years',
+        status: 'on-assignment',
+        currentLocation: 'Ejisu Industrial Zone',
+        rating: 4.6,
+        completedTasks: 98
+    },
+    {
+        id: 'PGX-004',
+        username: 'sarah.wilson',
+        name: 'Sarah Wilson',
+        phone: '+233-24-456-7890',
+        district: 'asante-akim-north',
+        districtName: 'Asante Akim North',
+        specialization: 'maintenance',
+        certifications: ['Field Technician', 'Emergency Response'],
+        experience: '4 years',
+        status: 'available',
+        currentLocation: 'Agogo Township',
+        rating: 4.7,
+        completedTasks: 67
+    },
+    {
+        id: 'PGX-005',
+        username: 'kwame.asante',
+        name: 'Kwame Asante',
+        phone: '+233-24-567-8901',
+        district: 'bosomtwe',
+        districtName: 'Bosomtwe',
+        specialization: 'inspection',
+        certifications: ['Quality Inspector', 'Safety Coordinator'],
+        experience: '10 years',
+        status: 'available',
+        currentLocation: 'Kuntanase',
+        rating: 4.8,
+        completedTasks: 134
+    },
+    {
+        id: 'PGX-006',
+        username: 'ama.osei',
+        name: 'Ama Osei',
+        phone: '+233-24-678-9012',
+        district: 'kumasi',
+        districtName: 'Kumasi Metropolitan',
+        specialization: 'electrical',
+        certifications: ['Senior Technician', 'Training Supervisor'],
+        experience: '15 years',
+        status: 'available',
+        currentLocation: 'Kumasi Tech Park',
+        rating: 4.9,
+        completedTasks: 287
+    }
+];
+
+let selectedPersonnel = null;
+let pendingRequest = null;
+
+// Initialize dispatch page
 document.addEventListener('DOMContentLoaded', function() {
-    initializeDispatchPage();
+    loadPendingRequest();
+    displayPersonnel();
     setupEventListeners();
-    loadDispatchRequests();
-    loadContractors();
 });
 
-function initializeDispatchPage() {
-    console.log('Dispatch Request page initialized');
-    startRealTimeUpdates();
+function loadPendingRequest() {
+    const requestData = sessionStorage.getItem('pendingDispatchRequest');
+    if (requestData) {
+        pendingRequest = JSON.parse(requestData);
+        
+        // Show alert
+        const alertDiv = document.getElementById('pending-request-alert');
+        const alertDetails = document.getElementById('alert-details');
+        
+        if (alertDiv && alertDetails) {
+            alertDiv.classList.remove('hidden');
+            alertDetails.textContent = `${pendingRequest.type.toUpperCase()} alert at coordinates ${pendingRequest.location.lat}, ${pendingRequest.location.lng}`;
+        }
+        
+        // Populate form fields
+        populateRequestForm();
+    }
+}
+
+function populateRequestForm() {
+    if (!pendingRequest) return;
+    
+    document.getElementById('issue-type').value = pendingRequest.type.toUpperCase();
+    document.getElementById('priority-level').value = pendingRequest.priority;
+    document.getElementById('location-coords').value = `Lat: ${pendingRequest.location.lat}, Lng: ${pendingRequest.location.lng}`;
+    document.getElementById('issue-description').value = pendingRequest.message;
+}
+
+function displayPersonnel(filteredPersonnel = null) {
+    const personnel = filteredPersonnel || personnelDatabase;
+    const container = document.getElementById('personnel-list');
+    
+    if (!container) return;
+    
+    container.innerHTML = personnel.map(person => createPersonnelCard(person)).join('');
+    
+    // Add click events
+    container.querySelectorAll('.personnel-card').forEach((card, index) => {
+        card.addEventListener('click', () => selectPersonnel(personnel[index]));
+    });
+}
+
+function createPersonnelCard(person) {
+    const statusColor = person.status === 'available' ? 'green' : 
+                       person.status === 'on-assignment' ? 'yellow' : 'red';
+    
+    const statusText = person.status === 'available' ? 'Available' :
+                      person.status === 'on-assignment' ? 'On Assignment' : 'Unavailable';
+    
+    return `
+        <div class="personnel-card border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors ${person.status !== 'available' ? 'opacity-60 cursor-not-allowed' : ''}" 
+             data-personnel-id="${person.id}">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        ${person.name.split(' ').map(n => n[0]).join('')}
+                    </div>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-1">
+                        <h3 class="text-sm font-semibold text-gray-900">${person.name}</h3>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-${statusColor}-100 text-${statusColor}-800">
+                            ${statusText}
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-1 text-xs text-gray-600">
+                        <div class="flex justify-between">
+                            <span class="font-medium">ID:</span>
+                            <span>${person.id}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Username:</span>
+                            <span>${person.username}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Phone:</span>
+                            <span>${person.phone}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">District:</span>
+                            <span>${person.districtName}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Specialization:</span>
+                            <span class="capitalize">${person.specialization}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Experience:</span>
+                            <span>${person.experience}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Rating:</span>
+                            <span>⭐ ${person.rating}/5.0 (${person.completedTasks} tasks)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <div class="text-xs text-gray-500 mb-1">Certifications:</div>
+                        <div class="flex flex-wrap gap-1">
+                            ${person.certifications.map(cert => 
+                                `<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${cert}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2 text-xs text-gray-500">
+                        📍 Current Location: ${person.currentLocation}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function selectPersonnel(person) {
+    if (person.status !== 'available') {
+        alert(`${person.name} is currently ${person.status.replace('-', ' ')} and cannot be assigned to new tasks.`);
+        return;
+    }
+
+    selectedPersonnel = person;
+
+    // Update UI to show selection
+    document.querySelectorAll('.personnel-card').forEach(card => {
+        card.classList.remove('border-blue-500', 'bg-blue-100');
+        card.classList.add('border-gray-200');
+    });
+
+    const selectedCard = document.querySelector(`[data-personnel-id="${person.id}"]`);
+    if (selectedCard) {
+        selectedCard.classList.remove('border-gray-200');
+        selectedCard.classList.add('border-blue-500', 'bg-blue-100');
+    }
+
+    // Show selected personnel summary
+    showSelectedPersonnelSummary();
+
+    // Enable submit button
+    const submitBtn = document.getElementById('submit-dispatch');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.className = 'flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors cursor-pointer';
+        submitBtn.textContent = 'Submit Dispatch Request';
+    }
+}
+
+function showSelectedPersonnelSummary() {
+    const summaryDiv = document.getElementById('selected-personnel');
+    const detailsDiv = document.getElementById('selected-personnel-details');
+
+    if (summaryDiv && detailsDiv && selectedPersonnel) {
+        summaryDiv.classList.remove('hidden');
+        detailsDiv.innerHTML = `
+            <div class="flex items-center space-x-3 mb-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                    ${selectedPersonnel.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                    <div class="font-medium">${selectedPersonnel.name} (${selectedPersonnel.id})</div>
+                    <div class="text-xs">${selectedPersonnel.phone} • ${selectedPersonnel.districtName}</div>
+                </div>
+            </div>
+            <div class="text-xs">
+                <strong>Specialization:</strong> ${selectedPersonnel.specialization.charAt(0).toUpperCase() + selectedPersonnel.specialization.slice(1)} •
+                <strong>Experience:</strong> ${selectedPersonnel.experience} •
+                <strong>Rating:</strong> ⭐ ${selectedPersonnel.rating}/5.0
+            </div>
+        `;
+    }
 }
 
 function setupEventListeners() {
-    // Filter event listeners
-    document.getElementById('request-filter').addEventListener('change', function(e) {
-        currentFilters.status = e.target.value;
-        filterRequests();
-    });
-    
-    document.getElementById('region-filter').addEventListener('change', function(e) {
-        currentFilters.region = e.target.value;
-        filterRequests();
-    });
-    
-    document.getElementById('type-filter').addEventListener('change', function(e) {
-        currentFilters.type = e.target.value;
-        filterRequests();
-    });
-    
-    // New request button
-    document.querySelector('button:contains("New Dispatch Request")').addEventListener('click', showNewRequestModal);
-    
-    // Load more button
-    document.querySelector('button:contains("Load More")').addEventListener('click', loadMoreRequests);
-    
-    // Add event listeners to existing buttons
-    setupRequestButtons();
-}
-
-function setupRequestButtons() {
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach(button => {
-        if (button.textContent.includes('View Details')) {
-            button.addEventListener('click', handleViewDetails);
-        } else if (button.textContent.includes('Assign Contractor')) {
-            button.addEventListener('click', handleAssignContractor);
-        } else if (button.textContent.includes('Track Progress')) {
-            button.addEventListener('click', handleTrackProgress);
-        } else if (button.textContent.includes('View Report')) {
-            button.addEventListener('click', handleViewReport);
-        }
-    });
-}
-
-function loadDispatchRequests() {
-    allRequests = [
-        {
-            id: 'DR-2024-0156',
-            title: 'Transformer Fault Repair',
-            description: 'Critical transformer fault detected. Power outage affecting 150+ households. Immediate repair required.',
-            location: 'TR-ACC-001, Osu Castle Area, Greater Accra',
-            priority: 'urgent',
-            status: 'pending',
-            type: 'repair',
-            created: '2024-01-31 14:23:15',
-            requestedBy: 'System Alert',
-            assignedTo: null,
-            estimatedDuration: '4 hours',
-            affectedCustomers: 150
-        },
-        {
-            id: 'DR-2024-0155',
-            title: 'Scheduled Maintenance',
-            description: 'Routine quarterly maintenance and inspection of transformer components.',
-            location: 'TR-KMA-002, Kumasi Central, Ashanti',
-            priority: 'normal',
-            status: 'assigned',
-            type: 'maintenance',
-            created: '2024-01-30 09:15:22',
-            requestedBy: 'Maintenance Schedule',
-            assignedTo: 'John Mensah (ECG Licensed)',
-            estimatedDuration: '6 hours',
-            affectedCustomers: 0
-        },
-        {
-            id: 'DR-2024-0154',
-            title: 'Smart Meter Installation',
-            description: 'Installation of new smart meter SM-LAB-045 completed successfully.',
-            location: 'Labadi Beach Area, Greater Accra',
-            priority: 'normal',
-            status: 'completed',
-            type: 'installation',
-            created: '2024-01-30 08:30:45',
-            requestedBy: 'Customer Request',
-            assignedTo: 'Sarah Asante (Licensed Contractor)',
-            estimatedDuration: '2 hours',
-            affectedCustomers: 1,
-            completedAt: '2024-01-30 16:45:33'
-        },
-        {
-            id: 'DR-2024-0153',
-            title: 'Routine Inspection',
-            description: 'Monthly visual inspection of power lines and equipment in Central Region.',
-            location: 'Multiple locations, Central Region',
-            priority: 'low',
-            status: 'pending',
-            type: 'inspection',
-            created: '2024-01-29 11:30:45',
-            requestedBy: 'Regional Manager',
-            assignedTo: null,
-            estimatedDuration: '8 hours',
-            affectedCustomers: 0
-        }
-    ];
-    
-    displayRequests(allRequests);
-    updateSummaryCards();
-}
-
-function loadContractors() {
-    allContractors = [
-        {
-            id: 'CONT-001',
-            name: 'John Mensah',
-            type: 'ECG Licensed',
-            specialization: 'Maintenance Specialist',
-            status: 'available',
-            rating: 4.8,
-            completedJobs: 156,
-            location: 'Ashanti Region'
-        },
-        {
-            id: 'CONT-002',
-            name: 'Sarah Asante',
-            type: 'Licensed Contractor',
-            specialization: 'Installation Expert',
-            status: 'on-assignment',
-            rating: 4.9,
-            completedJobs: 203,
-            location: 'Greater Accra'
-        },
-        {
-            id: 'CONT-003',
-            name: 'Michael Osei',
-            type: 'ECG Personnel',
-            specialization: 'Senior Technician',
-            status: 'available',
-            rating: 4.7,
-            completedJobs: 89,
-            location: 'Central Region'
-        }
-    ];
-}
-
-function displayRequests(requests) {
-    const container = document.querySelector('.space-y-4');
-    if (!container) return;
-    
-    // Keep the existing static requests and add dynamic ones
-    const existingRequests = container.children.length;
-    
-    // Clear dynamic requests (keep first 4 static ones)
-    while (container.children.length > 4) {
-        container.removeChild(container.lastChild);
+    // District filter
+    const districtFilter = document.getElementById('district-filter');
+    if (districtFilter) {
+        districtFilter.addEventListener('change', applyFilters);
     }
-    
-    // Add dynamic requests
-    requests.slice(4).forEach(request => {
-        const requestElement = createRequestHTML(request);
-        container.appendChild(requestElement);
-    });
+
+    // Skill filter
+    const skillFilter = document.getElementById('skill-filter');
+    if (skillFilter) {
+        skillFilter.addEventListener('change', applyFilters);
+    }
+
+    // Submit button
+    const submitBtn = document.getElementById('submit-dispatch');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', submitDispatchRequest);
+    }
 }
 
-function createRequestHTML(request) {
-    const priorityClass = getPriorityClass(request.priority);
-    const statusClass = getStatusClass(request.status);
-    const borderColor = getBorderColor(request.priority);
-    
-    const requestDiv = document.createElement('div');
-    requestDiv.className = `request-card bg-white rounded-lg shadow border-l-4 ${borderColor}`;
-    
-    requestDiv.innerHTML = `
-        <div class="p-6">
-            <div class="flex items-start justify-between">
-                <div class="flex-1">
-                    <div class="flex items-center space-x-3 mb-2">
-                        <span class="text-sm font-medium text-gray-900">${request.id}</span>
-                        <span class="${priorityClass} px-2 py-1 rounded-full text-xs font-medium">${request.priority.toUpperCase()}</span>
-                        <span class="${statusClass} px-2 py-1 rounded-full text-xs font-medium">${request.status.toUpperCase()}</span>
-                    </div>
-                    
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${request.title}</h3>
-                    
-                    <div class="flex items-center space-x-2 mb-2">
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        <span class="text-sm text-gray-600">${request.location}</span>
-                    </div>
-                    
-                    <p class="text-sm text-gray-600 mb-3">${request.description}</p>
-                    
-                    <div class="flex items-center space-x-4 text-xs text-gray-500">
-                        <span>📅 Created: ${request.created}</span>
-                        <span>⚡ Requested by: ${request.requestedBy}</span>
-                        ${request.assignedTo ? `<span>👷 Assigned to: ${request.assignedTo}</span>` : ''}
-                    </div>
-                </div>
-                
-                <div class="flex flex-col space-y-2 ml-4">
-                    <button onclick="viewRequestDetails('${request.id}')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                        View Details
-                    </button>
-                    ${getActionButton(request)}
-                </div>
-            </div>
-        </div>
-    `;
-    
-    return requestDiv;
+function applyFilters() {
+    const districtFilter = document.getElementById('district-filter').value;
+    const skillFilter = document.getElementById('skill-filter').value;
+
+    let filtered = personnelDatabase;
+
+    if (districtFilter !== 'all') {
+        filtered = filtered.filter(person => person.district === districtFilter);
+    }
+
+    if (skillFilter !== 'all') {
+        filtered = filtered.filter(person => person.specialization === skillFilter);
+    }
+
+    displayPersonnel(filtered);
 }
 
-function getPriorityClass(priority) {
-    const classes = {
-        'urgent': 'priority-urgent',
-        'normal': 'priority-normal',
-        'low': 'priority-low'
+function submitDispatchRequest() {
+    if (!selectedPersonnel) {
+        alert('Please select personnel to assign to this request.');
+        return;
+    }
+
+    const additionalNotes = document.getElementById('additional-notes').value;
+    const estimatedDuration = document.getElementById('estimated-duration').value;
+
+    // Create dispatch request
+    const dispatchRequest = {
+        id: 'DISP-' + Date.now(),
+        timestamp: new Date().toISOString(),
+        dateTime: new Date().toLocaleString(),
+        location: pendingRequest ? pendingRequest.location : { lat: 0, lng: 0 },
+        type: pendingRequest ? pendingRequest.type : 'maintenance',
+        message: pendingRequest ? pendingRequest.message : 'Manual dispatch request',
+        assignedPersonnel: selectedPersonnel.id,
+        personnelName: selectedPersonnel.name,
+        personnelPhone: selectedPersonnel.phone,
+        priority: document.getElementById('priority-level').value,
+        notes: additionalNotes,
+        estimatedDuration: estimatedDuration,
+        status: 'dispatched'
     };
-    return classes[priority] || 'priority-normal';
-}
 
-function getStatusClass(status) {
-    const classes = {
-        'pending': 'status-pending',
-        'assigned': 'status-assigned',
-        'completed': 'status-completed'
-    };
-    return classes[status] || 'status-pending';
-}
+    // Store in localStorage
+    let dispatchLogs = JSON.parse(localStorage.getItem('dispatchLogs') || '[]');
+    dispatchLogs.push(dispatchRequest);
+    localStorage.setItem('dispatchLogs', JSON.stringify(dispatchLogs));
 
-function getBorderColor(priority) {
-    const colors = {
-        'urgent': 'border-red-500',
-        'normal': 'border-blue-500',
-        'low': 'border-gray-300'
-    };
-    return colors[priority] || 'border-blue-500';
-}
+    // Clear session storage
+    sessionStorage.removeItem('pendingDispatchRequest');
 
-function getActionButton(request) {
-    switch (request.status) {
-        case 'pending':
-            return `<button onclick="assignContractor('${request.id}')" class="bg-orange-500 text-white px-3 py-1 rounded text-sm font-medium hover:bg-orange-600 transition-colors">Assign Contractor</button>`;
-        case 'assigned':
-            return `<button onclick="trackProgress('${request.id}')" class="bg-green-100 text-green-700 px-3 py-1 rounded text-sm font-medium hover:bg-green-200 transition-colors">Track Progress</button>`;
-        case 'completed':
-            return `<button onclick="viewReport('${request.id}')" class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium hover:bg-gray-200 transition-colors">View Report</button>`;
-        default:
-            return '';
+    // Show success message
+    alert(`Dispatch request submitted successfully!\n\nRequest ID: ${dispatchRequest.id}\nAssigned to: ${selectedPersonnel.name} (${selectedPersonnel.id})\nPhone: ${selectedPersonnel.phone}\nDistrict: ${selectedPersonnel.districtName}\n\nThe personnel has been notified and will respond shortly.`);
+
+    // Redirect to audit log or back to map
+    const choice = confirm('Would you like to view the audit log to track this request?\n\nClick OK for Audit Log or Cancel to return to the map.');
+    if (choice) {
+        window.location.href = 'audit-log.html';
+    } else {
+        window.location.href = 'smart-grid.html';
     }
 }
-
-function filterRequests() {
-    let filtered = allRequests;
-    
-    if (currentFilters.status !== 'all') {
-        filtered = filtered.filter(request => request.status === currentFilters.status);
-    }
-    
-    if (currentFilters.region !== 'all') {
-        filtered = filtered.filter(request => 
-            request.location.toLowerCase().includes(currentFilters.region.replace('-', ' '))
-        );
-    }
-    
-    if (currentFilters.type !== 'all') {
-        filtered = filtered.filter(request => request.type === currentFilters.type);
-    }
-    
-    displayRequests(filtered);
-}
-
-function updateSummaryCards() {
-    const pending = allRequests.filter(r => r.status === 'pending').length;
-    const assigned = allRequests.filter(r => r.status === 'assigned').length;
-    const completed = allRequests.filter(r => r.status === 'completed').length;
-    const availableContractors = allContractors.filter(c => c.status === 'available').length;
-    
-    // Update summary cards
-    const summaryCards = document.querySelectorAll('.text-3xl.font-bold');
-    if (summaryCards.length >= 4) {
-        summaryCards[0].textContent = pending;
-        summaryCards[1].textContent = assigned;
-        summaryCards[2].textContent = completed;
-        summaryCards[3].textContent = availableContractors;
-    }
-}
-
-function showNewRequestModal() {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.innerHTML = `
-        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">New Dispatch Request</h2>
-            <form id="new-request-form" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                        <input type="text" class="w-full border border-gray-300 rounded px-3 py-2" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                        <select class="w-full border border-gray-300 rounded px-3 py-2">
-                            <option value="low">Low</option>
-                            <option value="normal" selected>Normal</option>
-                            <option value="urgent">Urgent</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                        <select class="w-full border border-gray-300 rounded px-3 py-2">
-                            <option value="maintenance">Maintenance</option>
-                            <option value="repair">Repair</option>
-                            <option value="installation">Installation</option>
-                            <option value="inspection">Inspection</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                        <input type="text" class="w-full border border-gray-300 rounded px-3 py-2" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea class="w-full border border-gray-300 rounded px-3 py-2 h-24" required></textarea>
-                </div>
-                <div class="flex space-x-3">
-                    <button type="submit" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                        Create Request
-                    </button>
-                    <button type="button" onclick="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Handle form submission
-    document.getElementById('new-request-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Handle form submission logic here
-        closeModal();
-        alert('New dispatch request created successfully!');
-    });
-}
-
-function closeModal() {
-    const modals = document.querySelectorAll('.fixed.inset-0');
-    modals.forEach(modal => modal.remove());
-}
-
-function viewRequestDetails(requestId) {
-    const request = allRequests.find(r => r.id === requestId);
-    if (!request) return;
-    
-    // Show detailed modal
-    console.log('View details for request:', requestId);
-    alert(`Viewing details for ${requestId}`);
-}
-
-function assignContractor(requestId) {
-    const availableContractors = allContractors.filter(c => c.status === 'available');
-    
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.innerHTML = `
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Assign Contractor</h2>
-            <div class="space-y-3">
-                ${availableContractors.map(contractor => `
-                    <div class="border border-gray-200 rounded p-3 cursor-pointer hover:bg-gray-50"
-                         onclick="selectContractor('${requestId}', '${contractor.id}')">
-                        <div class="font-medium">${contractor.name}</div>
-                        <div class="text-sm text-gray-600">${contractor.type} • ${contractor.specialization}</div>
-                        <div class="text-xs text-gray-500">Rating: ${contractor.rating}/5 • ${contractor.completedJobs} jobs completed</div>
-                    </div>
-                `).join('')}
-            </div>
-            <button onclick="closeModal()" class="mt-4 w-full bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600">
-                Cancel
-            </button>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function selectContractor(requestId, contractorId) {
-    const request = allRequests.find(r => r.id === requestId);
-    const contractor = allContractors.find(c => c.id === contractorId);
-    
-    if (request && contractor) {
-        request.status = 'assigned';
-        request.assignedTo = `${contractor.name} (${contractor.type})`;
-        contractor.status = 'on-assignment';
-        
-        filterRequests();
-        updateSummaryCards();
-        closeModal();
-        alert(`${contractor.name} has been assigned to ${requestId}`);
-    }
-}
-
-function trackProgress(requestId) {
-    console.log('Track progress for request:', requestId);
-    alert(`Tracking progress for ${requestId}`);
-}
-
-function viewReport(requestId) {
-    console.log('View report for request:', requestId);
-    alert(`Viewing report for ${requestId}`);
-}
-
-function loadMoreRequests() {
-    // Simulate loading more requests
-    const newRequests = [
-        {
-            id: `DR-2024-${String(allRequests.length + 1).padStart(4, '0')}`,
-            title: 'Cable Replacement',
-            description: 'Underground cable showing signs of wear and needs replacement.',
-            location: 'Tema Community 1, Greater Accra',
-            priority: 'normal',
-            status: 'pending',
-            type: 'maintenance',
-            created: new Date().toISOString().replace('T', ' ').substring(0, 19),
-            requestedBy: 'Field Inspector',
-            assignedTo: null,
-            estimatedDuration: '5 hours',
-            affectedCustomers: 45
-        }
-    ];
-    
-    allRequests = [...allRequests, ...newRequests];
-    filterRequests();
-    updateSummaryCards();
-}
-
-function startRealTimeUpdates() {
-    // Simulate real-time status updates
-    setInterval(() => {
-        // Randomly update request statuses
-        const pendingRequests = allRequests.filter(r => r.status === 'assigned');
-        if (pendingRequests.length > 0) {
-            const randomRequest = pendingRequests[Math.floor(Math.random() * pendingRequests.length)];
-            if (Math.random() < 0.1) { // 10% chance
-                randomRequest.status = 'completed';
-                randomRequest.completedAt = new Date().toISOString().replace('T', ' ').substring(0, 19);
-                
-                // Free up contractor
-                const contractor = allContractors.find(c => 
-                    randomRequest.assignedTo && randomRequest.assignedTo.includes(c.name)
-                );
-                if (contractor) {
-                    contractor.status = 'available';
-                }
-                
-                filterRequests();
-                updateSummaryCards();
-            }
-        }
-    }, 30000); // Check every 30 seconds
-}
-
-// Export functions for global access
-window.DispatchPage = {
-    viewRequestDetails,
-    assignContractor,
-    selectContractor,
-    trackProgress,
-    viewReport,
-    closeModal
-};

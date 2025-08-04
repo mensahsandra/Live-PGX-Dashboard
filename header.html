@@ -1,0 +1,110 @@
+<!-- PowerGridX Header Component -->
+<header class="bg-slate-600 shadow-sm">
+    <!-- Top Navigation Bar -->
+    <div class="px-4 py-3">
+        <div class="flex justify-between items-center">
+            <!-- Logo and Title -->
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-pgx-orange rounded flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">P</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white">PowerGridX</h1>
+                    <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <nav class="flex space-x-2">
+                <a href="index.html" id="nav-dashboard" class="nav-btn text-white px-4 py-2 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
+                    Dashboard
+                </a>
+                <a href="smart-grid.html" id="nav-smart-grid" class="nav-btn text-white px-4 py-2 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
+                    Smart Grid Management
+                </a>
+                <a href="transformers.html" id="nav-transformers" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                    Transformers
+                </a>
+                <a href="audit-log.html" id="nav-audit" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                    Audit Log
+                </a>
+                <a href="dispatch.html" id="nav-dispatch" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                    Dispatch Request
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Dashboard Status Bar -->
+    <div class="bg-gray-100 px-4 py-2 border-t border-slate-500">
+        <div class="flex justify-between items-center text-sm">
+            <div class="flex items-center space-x-4">
+                <span class="font-semibold text-gray-800">PowerGridX Dashboard</span>
+                <span class="flex items-center space-x-1">
+                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span class="text-green-600 font-medium">LIVE</span>
+                </span>
+                <span class="text-gray-600">Real-time IoT monitoring and analytics</span>
+            </div>
+            <div class="flex items-center space-x-4 text-gray-600">
+                <span class="flex items-center space-x-1">
+                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span>Cloud Connected</span>
+                </span>
+                <span>• Live Data</span>
+                <span>Last updated: <span id="last-updated">4:17 AM</span></span>
+                <span>• <span id="meters-online">1,249</span> meters online</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+// Header functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Update active navigation based on current page
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navButtons = document.querySelectorAll('.nav-btn');
+    
+    navButtons.forEach(btn => {
+        btn.classList.remove('bg-pgx-orange');
+        btn.classList.add('hover:bg-slate-500');
+        
+        const href = btn.getAttribute('href');
+        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+            btn.classList.add('bg-pgx-orange');
+            btn.classList.remove('hover:bg-slate-500');
+        }
+    });
+    
+    // Update timestamp every minute
+    function updateTimestamp() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        const timestampEl = document.getElementById('last-updated');
+        if (timestampEl) {
+            timestampEl.textContent = timeString;
+        }
+    }
+    
+    updateTimestamp();
+    setInterval(updateTimestamp, 60000); // Update every minute
+    
+    // Simulate live meter count updates
+    function updateMeterCount() {
+        const metersEl = document.getElementById('meters-online');
+        if (metersEl) {
+            const currentCount = parseInt(metersEl.textContent.replace(',', ''));
+            const variation = Math.floor(Math.random() * 10) - 5; // ±5 variation
+            const newCount = Math.max(1200, currentCount + variation);
+            metersEl.textContent = newCount.toLocaleString();
+        }
+    }
+    
+    setInterval(updateMeterCount, 30000); // Update every 30 seconds
+});
+</script>

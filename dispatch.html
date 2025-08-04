@@ -106,48 +106,12 @@
             border-radius: 3px;
         }
     </style>
+
+    <!-- Header Loader -->
+    <script src="header-loader.js"></script>
 </head>
 <body class="bg-gray-50 font-sans">
-    <!-- Header -->
-    <header class="bg-slate-700 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo and Title -->
-                <div class="flex items-center space-x-4">
-                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
-                    <div>
-                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
-                        <p class="text-sm text-gray-300">Smart Infrastructure Platform</p>
-                    </div>
-                </div>
-                
-                <!-- Navigation -->
-                <nav class="hidden md:flex space-x-2">
-                    <a href="index.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Dashboard
-                    </a>
-                    <a href="smart-grid.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Smart Grid Management
-                    </a>
-                    <a href="transformers.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Transformers
-                    </a>
-                    <a href="audit-log.html" class="nav-inactive px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Audit Log
-                    </a>
-                    <a href="dispatch.html" class="nav-active px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Dispatch Request
-                    </a>
-                </nav>
-                
-                <!-- Status -->
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- Header will be loaded dynamically -->
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -155,293 +119,140 @@
         <div class="flex items-center justify-between mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Dispatch Request</h1>
-                <p class="text-gray-600">Manage work orders and contractor assignments</p>
+                <p class="text-gray-600">Assign qualified personnel to field tasks</p>
             </div>
-            
-            <!-- New Request Button -->
-            <button class="bg-pgx-orange text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
-                + New Dispatch Request
+
+            <!-- Back to Map Button -->
+            <button onclick="window.location.href='smart-grid.html'" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors">
+                ← Back to Map
             </button>
         </div>
 
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6 text-center">
-                <div class="text-3xl font-bold text-yellow-600 mb-2">12</div>
-                <div class="text-sm text-gray-600">Pending Requests</div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-6 text-center">
-                <div class="text-3xl font-bold text-blue-600 mb-2">8</div>
-                <div class="text-sm text-gray-600">Active Dispatches</div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-6 text-center">
-                <div class="text-3xl font-bold text-green-600 mb-2">45</div>
-                <div class="text-sm text-gray-600">Completed Today</div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-6 text-center">
-                <div class="text-3xl font-bold text-purple-600 mb-2">23</div>
-                <div class="text-sm text-gray-600">Available Contractors</div>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="bg-white rounded-lg shadow p-4 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <select id="request-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    <option value="all">All Requests</option>
-                    <option value="pending">Pending</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="completed">Completed</option>
-                </select>
-                
-                <select id="region-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    <option value="all">All Regions</option>
-                    <option value="greater-accra">Greater Accra</option>
-                    <option value="ashanti">Ashanti</option>
-                    <option value="central">Central</option>
-                    <option value="western">Western</option>
-                </select>
-                
-                <select id="type-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                    <option value="all">All Types</option>
-                    <option value="maintenance">Maintenance</option>
-                    <option value="repair">Repair</option>
-                    <option value="installation">Installation</option>
-                    <option value="inspection">Inspection</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Dispatch Requests -->
-        <div class="space-y-4">
-            <!-- Request 1 - Urgent -->
-            <div class="request-card bg-white rounded-lg shadow border-l-4 border-red-500">
-                <div class="p-6">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="text-sm font-medium text-gray-900">#DR-2024-0156</span>
-                                <span class="priority-urgent px-2 py-1 rounded-full text-xs font-medium">URGENT</span>
-                                <span class="status-pending px-2 py-1 rounded-full text-xs font-medium">PENDING</span>
-                            </div>
-                            
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Transformer Fault Repair</h3>
-                            
-                            <div class="flex items-center space-x-2 mb-2">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                <span class="text-sm text-gray-600">TR-ACC-001, Osu Castle Area, Greater Accra</span>
-                            </div>
-                            
-                            <p class="text-sm text-gray-600 mb-3">Critical transformer fault detected. Power outage affecting 150+ households. Immediate repair required.</p>
-                            
-                            <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>📅 Created: 2024-01-31 14:23:15</span>
-                                <span>⚡ Requested by: System Alert</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col space-y-2 ml-4">
-                            <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                                View Details
-                            </button>
-                            <button class="bg-pgx-orange text-white px-3 py-1 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
-                                Assign Contractor
-                            </button>
-                        </div>
-                    </div>
+        <!-- Pending Request Alert (if coming from map) -->
+        <div id="pending-request-alert" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
                 </div>
-            </div>
-
-            <!-- Request 2 - Normal -->
-            <div class="request-card bg-white rounded-lg shadow border-l-4 border-blue-500">
-                <div class="p-6">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="text-sm font-medium text-gray-900">#DR-2024-0155</span>
-                                <span class="priority-normal px-2 py-1 rounded-full text-xs font-medium">NORMAL</span>
-                                <span class="status-assigned px-2 py-1 rounded-full text-xs font-medium">ASSIGNED</span>
-                            </div>
-                            
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Scheduled Maintenance</h3>
-                            
-                            <div class="flex items-center space-x-2 mb-2">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                <span class="text-sm text-gray-600">TR-KMA-002, Kumasi Central, Ashanti</span>
-                            </div>
-                            
-                            <p class="text-sm text-gray-600 mb-3">Routine quarterly maintenance and inspection of transformer components.</p>
-                            
-                            <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>📅 Created: 2024-01-30 09:15:22</span>
-                                <span>👷 Assigned to: John Mensah (ECG Licensed)</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col space-y-2 ml-4">
-                            <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                                View Details
-                            </button>
-                            <button class="bg-green-100 text-green-700 px-3 py-1 rounded text-sm font-medium hover:bg-green-200 transition-colors">
-                                Track Progress
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Request 3 - Completed -->
-            <div class="request-card bg-white rounded-lg shadow border-l-4 border-green-500">
-                <div class="p-6">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="text-sm font-medium text-gray-900">#DR-2024-0154</span>
-                                <span class="priority-normal px-2 py-1 rounded-full text-xs font-medium">NORMAL</span>
-                                <span class="status-completed px-2 py-1 rounded-full text-xs font-medium">COMPLETED</span>
-                            </div>
-                            
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Smart Meter Installation</h3>
-                            
-                            <div class="flex items-center space-x-2 mb-2">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                                <span class="text-sm text-gray-600">Labadi Beach Area, Greater Accra</span>
-                            </div>
-                            
-                            <p class="text-sm text-gray-600 mb-3">Installation of new smart meter SM-LAB-045 completed successfully.</p>
-                            
-                            <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>📅 Completed: 2024-01-30 16:45:33</span>
-                                <span>👷 Completed by: Sarah Asante (Licensed Contractor)</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col space-y-2 ml-4">
-                            <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                                View Report
-                            </button>
-                            <button class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium hover:bg-gray-200 transition-colors">
-                                Archive
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Request 4 - Low Priority -->
-            <div class="request-card bg-white rounded-lg shadow border-l-4 border-gray-300">
-                <div class="p-6">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="text-sm font-medium text-gray-900">#DR-2024-0153</span>
-                                <span class="priority-low px-2 py-1 rounded-full text-xs font-medium">LOW</span>
-                                <span class="status-pending px-2 py-1 rounded-full text-xs font-medium">PENDING</span>
-                            </div>
-                            
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Routine Inspection</h3>
-                            
-                            <div class="flex items-center space-x-2 mb-2">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span class="text-sm text-gray-600">Multiple locations, Central Region</span>
-                            </div>
-                            
-                            <p class="text-sm text-gray-600 mb-3">Monthly visual inspection of power lines and equipment in Central Region.</p>
-                            
-                            <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                <span>📅 Created: 2024-01-29 11:30:45</span>
-                                <span>⚡ Requested by: Regional Manager</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex flex-col space-y-2 ml-4">
-                            <button class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium hover:bg-blue-200 transition-colors">
-                                View Details
-                            </button>
-                            <button class="bg-pgx-orange text-white px-3 py-1 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
-                                Assign Contractor
-                            </button>
-                        </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800">Urgent Dispatch Request</h3>
+                    <div class="mt-2 text-sm text-red-700">
+                        <p id="alert-details">A critical alert requires immediate personnel assignment.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Load More -->
-        <div class="text-center mt-8">
-            <button class="text-pgx-orange hover:text-pgx-orange-dark font-medium text-sm">
-                Load More Requests
-            </button>
-        </div>
+        <!-- Dispatch Request Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Request Details -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Request Details</h2>
 
-        <!-- Available Contractors Panel -->
-        <div class="mt-8 bg-white rounded-lg shadow">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Available Contractors</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
+                            <input type="text" id="issue-type" readonly
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Priority Level</label>
+                            <select id="priority-level" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <option value="high">🔴 High Priority</option>
+                                <option value="medium">🟡 Medium Priority</option>
+                                <option value="low">🟢 Low Priority</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                            <input type="text" id="location-coords" readonly
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="issue-description" readonly
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 h-24"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                            <textarea id="additional-notes" placeholder="Enter any special instructions or requirements..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md h-20"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Duration</label>
+                            <select id="estimated-duration" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <option value="30min">30 minutes</option>
+                                <option value="1hour">1 hour</option>
+                                <option value="2hours">2 hours</option>
+                                <option value="4hours">4 hours</option>
+                                <option value="8hours">Full day</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                JM
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-gray-900">John Mensah</h4>
-                                <p class="text-sm text-gray-600">ECG Licensed • Maintenance Specialist</p>
-                                <div class="flex items-center space-x-1 mt-1">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                    <span class="text-xs text-green-600">Available</span>
-                                </div>
-                            </div>
+
+            <!-- Personnel Selection -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900">Available Personnel</h2>
+                        <div class="flex space-x-2">
+                            <select id="district-filter" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                <option value="all">All Districts</option>
+                                <option value="kumasi">Kumasi Metropolitan</option>
+                                <option value="obuasi">Obuasi Municipal</option>
+                                <option value="ejisu">Ejisu</option>
+                                <option value="asante-akim-north">Asante Akim North</option>
+                                <option value="bosomtwe">Bosomtwe</option>
+                            </select>
+                            <select id="skill-filter" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                <option value="all">All Skills</option>
+                                <option value="electrical">Electrical</option>
+                                <option value="mechanical">Mechanical</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="inspection">Inspection</option>
+                            </select>
                         </div>
                     </div>
-                    
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                SA
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-gray-900">Sarah Asante</h4>
-                                <p class="text-sm text-gray-600">Licensed Contractor • Installation Expert</p>
-                                <div class="flex items-center space-x-1 mt-1">
-                                    <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                    <span class="text-xs text-yellow-600">On Assignment</span>
-                                </div>
-                            </div>
+
+                    <div id="personnel-list" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                        <!-- Personnel cards will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Selected Personnel Summary -->
+                    <div id="selected-personnel" class="hidden mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h3 class="font-medium text-blue-900 mb-2">Selected Personnel</h3>
+                        <div id="selected-personnel-details" class="text-sm text-blue-800">
+                            <!-- Selected personnel details will appear here -->
                         </div>
                     </div>
-                    
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                MO
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-gray-900">Michael Osei</h4>
-                                <p class="text-sm text-gray-600">ECG Personnel • Senior Technician</p>
-                                <div class="flex items-center space-x-1 mt-1">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                    <span class="text-xs text-green-600">Available</span>
-                                </div>
-                            </div>
-                        </div>
+
+                    <!-- Submit Button -->
+                    <div class="mt-6 flex space-x-3">
+                        <button id="submit-dispatch" disabled
+                                class="flex-1 bg-gray-400 text-white px-4 py-2 rounded-lg font-medium cursor-not-allowed">
+                            Submit Dispatch Request
+                        </button>
+                        <button onclick="window.location.href='smart-grid.html'"
+                                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Scripts -->
     <script src="dispatch.js"></script>
 </body>
 </html>
+

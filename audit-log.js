@@ -42,6 +42,9 @@ function setupEventListeners() {
 }
 
 function loadActivities() {
+    // Load dispatch requests from localStorage
+    const dispatchLogs = JSON.parse(localStorage.getItem('dispatchLogs') || '[]');
+
     // Sample audit log data
     allActivities = [
         {
@@ -105,9 +108,39 @@ function loadActivities() {
             blockHash: '0xce5f7031...c9d1e2f6'
         }
     ];
-    
+
+    // Add dispatch logs to activities
+    dispatchLogs.forEach(log => {
+        allActivities.push({
+            id: log.id,
+            timestamp: log.dateTime,
+            type: log.type,
+            title: `Dispatch Request - ${log.type.toUpperCase()}`,
+            description: log.message || log.notes || 'Dispatch request submitted',
+            location: `Lat: ${log.location.lat}, Lng: ${log.location.lng}`,
+            source: `Personnel: ${getPersonnelName(log.assignedPersonnel)}`,
+            blockHash: '0x' + Math.random().toString(16).substr(2, 8) + '...' + Math.random().toString(16).substr(2, 8),
+            status: log.status,
+            priority: log.priority,
+            assignedPersonnel: log.assignedPersonnel
+        });
+    });
+
+    // Sort by timestamp (newest first)
+    allActivities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
     displayActivities(allActivities);
     updateSummaryCards();
+}
+
+function getPersonnelName(personnelId) {
+    const personnelMap = {
+        'john-doe': 'John Doe',
+        'jane-smith': 'Jane Smith',
+        'mike-johnson': 'Mike Johnson',
+        'sarah-wilson': 'Sarah Wilson'
+    };
+    return personnelMap[personnelId] || personnelId;
 }
 
 function displayActivities(activities) {
