@@ -4,6 +4,7 @@ let transformerLayer;
 let smartMeterLayer;
 let powerLineLayer;
 let alertLayer;
+let baseStationLayer;
 let currentInfoPanel = null;
 
 // Ashanti Region districts data
@@ -217,6 +218,80 @@ const transformerData = [
     }
 ];
 
+// LoRaWAN Base Station data for Ashanti Region
+const baseStationData = [
+    {
+        id: 'BS-KMA-001',
+        name: 'Kumasi Central Base Station',
+        lat: 6.6885,
+        lng: -1.6244,
+        status: 'active',
+        type: 'LoRaWAN Gateway',
+        coverage: '5km radius',
+        connectedDevices: 45,
+        signalStrength: 95,
+        district: 'Kumasi Metropolitan',
+        districtKey: 'kumasi-metropolitan',
+        telecomTower: 'MTN Tower KMA-01'
+    },
+    {
+        id: 'BS-OBU-001',
+        name: 'Obuasi Mining Base Station',
+        lat: 6.2027,
+        lng: -1.6708,
+        status: 'active',
+        type: 'LoRaWAN Gateway',
+        coverage: '8km radius',
+        connectedDevices: 32,
+        signalStrength: 88,
+        district: 'Obuasi Municipal',
+        districtKey: 'obuasi',
+        telecomTower: 'Vodafone Tower OBU-02'
+    },
+    {
+        id: 'BS-EJI-001',
+        name: 'Ejisu Base Station',
+        lat: 6.7500,
+        lng: -1.3667,
+        status: 'active',
+        type: 'LoRaWAN Gateway',
+        coverage: '6km radius',
+        connectedDevices: 28,
+        signalStrength: 92,
+        district: 'Ejisu',
+        districtKey: 'ejisu',
+        telecomTower: 'AirtelTigo Tower EJI-01'
+    },
+    {
+        id: 'BS-AAN-001',
+        name: 'Asante Akim North Base Station',
+        lat: 6.8167,
+        lng: -1.0833,
+        status: 'maintenance',
+        type: 'LoRaWAN Gateway',
+        coverage: '7km radius',
+        connectedDevices: 18,
+        signalStrength: 75,
+        district: 'Asante Akim North',
+        districtKey: 'asante-akim-north',
+        telecomTower: 'MTN Tower AAN-03'
+    },
+    {
+        id: 'BS-BOS-001',
+        name: 'Bosomtwe Base Station',
+        lat: 6.5000,
+        lng: -1.4167,
+        status: 'offline',
+        type: 'LoRaWAN Gateway',
+        coverage: '5km radius',
+        connectedDevices: 0,
+        signalStrength: 0,
+        district: 'Bosomtwe',
+        districtKey: 'bosomtwe',
+        telecomTower: 'Vodafone Tower BOS-01'
+    }
+];
+
 // Dispatch Request Functions
 function dispatchRequest(lat, lng, type, message) {
     // Store dispatch request data in sessionStorage for the dispatch page
@@ -373,6 +448,57 @@ function viewTransformerDetails(transformerId) {
     window.location.href = `transformers.html?id=${transformerId}`;
 }
 
+function viewBaseStationDetails(baseStationId) {
+    // Redirect to base station details page
+    window.location.href = `base-stations.html?id=${baseStationId}`;
+}
+
+function showBaseStationInfoPanel(baseStation) {
+    const infoPanel = document.getElementById('info-panel');
+    const infoContent = document.getElementById('info-content');
+
+    infoContent.innerHTML = `
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-gray-900">Base Station Info</h3>
+            <button onclick="hideInfoPanel()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="space-y-2 text-sm">
+            <div><strong>Name:</strong> ${baseStation.name}</div>
+            <div><strong>ID:</strong> ${baseStation.id}</div>
+            <div><strong>Status:</strong>
+                <span class="px-2 py-1 text-xs rounded-full ${
+                    baseStation.status === 'active' ? 'bg-purple-100 text-purple-800' :
+                    baseStation.status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800'
+                }">${baseStation.status.toUpperCase()}</span>
+            </div>
+            <div><strong>Type:</strong> ${baseStation.type}</div>
+            <div><strong>Coverage:</strong> ${baseStation.coverage}</div>
+            <div><strong>Connected Devices:</strong> ${baseStation.connectedDevices}</div>
+            <div><strong>Signal Strength:</strong> ${baseStation.signalStrength}%</div>
+            <div><strong>Telecom Tower:</strong> ${baseStation.telecomTower}</div>
+            <div><strong>District:</strong> ${baseStation.district}</div>
+        </div>
+        <div class="mt-4 flex space-x-2">
+            <button onclick="viewBaseStationDetails('${baseStation.id}')"
+                    class="flex-1 bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700 transition-colors">
+                📡 View Details
+            </button>
+            <button onclick="dispatchRequest(${baseStation.lat}, ${baseStation.lng}, 'maintenance', 'Base station service required')"
+                    class="flex-1 bg-gray-600 text-white px-3 py-2 rounded text-sm hover:bg-gray-700 transition-colors">
+                🔧 Service
+            </button>
+        </div>
+    `;
+
+    infoPanel.classList.remove('hidden');
+    currentInfoPanel = 'baseStation';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeMap();
     setupEventListeners();
@@ -395,10 +521,12 @@ function initializeMap() {
     smartMeterLayer = L.layerGroup();
     powerLineLayer = L.layerGroup().addTo(map);
     alertLayer = L.layerGroup().addTo(map);
+    baseStationLayer = L.layerGroup().addTo(map);
     
     // Load Ghana GeoJSON and add transformers
     loadGhanaMap();
     addTransformers();
+    addBaseStations();
     addPowerLines();
     addAlerts();
 }
@@ -440,6 +568,13 @@ function addTransformers() {
     transformerData.forEach(transformer => {
         const marker = createTransformerMarker(transformer);
         transformerLayer.addLayer(marker);
+    });
+}
+
+function addBaseStations() {
+    baseStationData.forEach(baseStation => {
+        const marker = createBaseStationMarker(baseStation);
+        baseStationLayer.addLayer(marker);
     });
 }
 
@@ -508,6 +643,94 @@ function createTransformerMarker(transformer) {
         if (transformer.districtKey) {
             updateDistrictSelection(transformer.districtKey);
         }
+    });
+
+    return marker;
+}
+
+function createBaseStationMarker(baseStation) {
+    const statusColors = {
+        'active': '#8B5CF6',
+        'maintenance': '#F59E0B',
+        'offline': '#6B7280'
+    };
+
+    const color = statusColors[baseStation.status] || '#6B7280';
+
+    // Create custom icon for base station
+    const baseStationIcon = L.divIcon({
+        className: 'base-station-marker',
+        html: `
+            <div style="
+                width: 16px;
+                height: 16px;
+                background-color: ${color};
+                border: 2px solid #ffffff;
+                border-radius: 50%;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                position: relative;
+            ">
+                <div style="
+                    position: absolute;
+                    top: -8px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0;
+                    height: 0;
+                    border-left: 4px solid transparent;
+                    border-right: 4px solid transparent;
+                    border-bottom: 8px solid ${color};
+                "></div>
+            </div>
+        `,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
+    });
+
+    const marker = L.marker([baseStation.lat, baseStation.lng], {
+        icon: baseStationIcon
+    });
+
+    const popupContent = `
+        <div class="p-3 min-w-64">
+            <div class="flex items-center justify-between mb-2">
+                <h4 class="font-semibold text-gray-900">${baseStation.name}</h4>
+                <span class="px-2 py-1 text-xs rounded-full ${
+                    baseStation.status === 'active' ? 'bg-purple-100 text-purple-800' :
+                    baseStation.status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800'
+                }">${baseStation.status.toUpperCase()}</span>
+            </div>
+            <div class="space-y-2 text-sm text-gray-600 mb-3">
+                <div><strong>ID:</strong> ${baseStation.id}</div>
+                <div><strong>Type:</strong> ${baseStation.type}</div>
+                <div><strong>Coverage:</strong> ${baseStation.coverage}</div>
+                <div><strong>Connected Devices:</strong> ${baseStation.connectedDevices}</div>
+                <div><strong>Signal Strength:</strong> ${baseStation.signalStrength}%</div>
+                <div><strong>Telecom Tower:</strong> ${baseStation.telecomTower}</div>
+                <div><strong>District:</strong> ${baseStation.district}</div>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="viewBaseStationDetails('${baseStation.id}')"
+                        class="flex-1 bg-purple-600 text-white px-3 py-1 rounded text-xs hover:bg-purple-700 transition-colors">
+                    📡 View Details
+                </button>
+                <button onclick="dispatchRequest(${baseStation.lat}, ${baseStation.lng}, 'maintenance', 'Base station maintenance required')"
+                        class="flex-1 bg-gray-600 text-white px-3 py-1 rounded text-xs hover:bg-gray-700 transition-colors">
+                    🔧 Request Service
+                </button>
+            </div>
+        </div>
+    `;
+
+    marker.bindPopup(popupContent);
+
+    // Store base station reference
+    marker.baseStation = baseStation;
+
+    // Add click event for info panel
+    marker.on('click', () => {
+        showBaseStationInfoPanel(baseStation);
     });
 
     return marker;
@@ -645,6 +868,17 @@ function setupEventListeners() {
                 map.addLayer(transformerLayer);
             } else {
                 map.removeLayer(transformerLayer);
+            }
+        });
+    }
+
+    const baseStationsLayerToggle = document.getElementById('base-stations-layer');
+    if (baseStationsLayerToggle) {
+        baseStationsLayerToggle.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(baseStationLayer);
+            } else {
+                map.removeLayer(baseStationLayer);
             }
         });
     }

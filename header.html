@@ -1,62 +1,54 @@
 <!-- PowerGridX Header Component -->
-<header class="bg-slate-600 shadow-sm">
+<header class="bg-slate-700 shadow-sm">
     <!-- Top Navigation Bar -->
-    <div class="px-4 py-3">
-        <div class="flex justify-between items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
             <!-- Logo and Title -->
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-pgx-orange rounded flex items-center justify-center">
-                    <span class="text-white font-bold text-sm">P</span>
-                </div>
-                <div>
-                    <h1 class="text-lg font-bold text-white">PowerGridX</h1>
-                    <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">⚡</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
+                        <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
-            <nav class="flex space-x-2">
-                <a href="index.html" id="nav-dashboard" class="nav-btn text-white px-4 py-2 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
+            <nav class="hidden md:flex space-x-1">
+                <a href="index.html" id="nav-dashboard" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Dashboard
                 </a>
-                <a href="smart-grid.html" id="nav-smart-grid" class="nav-btn text-white px-4 py-2 rounded text-sm font-medium hover:bg-pgx-orange-dark transition-colors">
+                <a href="smart-grid.html" id="nav-smart-grid" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Smart Grid Management
                 </a>
-                <a href="transformers.html" id="nav-transformers" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                <a href="transformers.html" id="nav-transformers" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Transformers
                 </a>
-                <a href="audit-log.html" id="nav-audit" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                <a href="audit-log.html" id="nav-audit" class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Audit Log
                 </a>
-                <a href="dispatch.html" id="nav-dispatch" class="nav-btn text-white px-3 py-2 text-sm hover:bg-slate-500 rounded transition-colors">
+                <a href="dispatch.html" id="nav-dispatch" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     Dispatch Request
                 </a>
             </nav>
+
+            <!-- Status -->
+            <div class="flex items-center space-x-4">
+                <div class="text-sm text-gray-300">
+                    Last updated: <span id="last-update">7:22:59 PM</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Dashboard Status Bar -->
-    <div class="bg-gray-100 px-4 py-2 border-t border-slate-500">
-        <div class="flex justify-between items-center text-sm">
-            <div class="flex items-center space-x-4">
-                <span class="font-semibold text-gray-800">PowerGridX Dashboard</span>
-                <span class="flex items-center space-x-1">
-                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span class="text-green-600 font-medium">LIVE</span>
-                </span>
-                <span class="text-gray-600">Real-time IoT monitoring and analytics</span>
-            </div>
-            <div class="flex items-center space-x-4 text-gray-600">
-                <span class="flex items-center space-x-1">
-                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                    <span>Cloud Connected</span>
-                </span>
-                <span>• Live Data</span>
-                <span>Last updated: <span id="last-updated">4:17 AM</span></span>
-                <span>• <span id="meters-online">1,249</span> meters online</span>
-            </div>
-        </div>
-    </div>
+
 </header>
 
 <script>
@@ -66,16 +58,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navButtons = document.querySelectorAll('.nav-btn');
     
-    navButtons.forEach(btn => {
-        btn.classList.remove('bg-pgx-orange');
-        btn.classList.add('hover:bg-slate-500');
-        
-        const href = btn.getAttribute('href');
-        if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-            btn.classList.add('bg-pgx-orange');
-            btn.classList.remove('hover:bg-slate-500');
-        }
+    // Remove active class from all nav items
+    document.querySelectorAll('nav a').forEach(btn => {
+        btn.classList.remove('bg-orange-500');
+        btn.classList.add('bg-slate-600', 'hover:bg-slate-500');
     });
+
+    // Add active class to current page nav item
+    let activeNavId = '';
+    switch(currentPage) {
+        case 'index.html':
+        case '':
+            activeNavId = 'nav-dashboard';
+            break;
+        case 'smart-grid.html':
+            activeNavId = 'nav-smart-grid';
+            break;
+        case 'transformers.html':
+            activeNavId = 'nav-transformers';
+            break;
+        case 'audit-log.html':
+            activeNavId = 'nav-audit';
+            break;
+        case 'dispatch.html':
+            activeNavId = 'nav-dispatch';
+            break;
+    }
+
+    if (activeNavId) {
+        const activeNav = document.getElementById(activeNavId);
+        if (activeNav) {
+            activeNav.classList.remove('bg-slate-600', 'hover:bg-slate-500');
+            activeNav.classList.add('bg-orange-500');
+        }
+    }
     
     // Update timestamp every minute
     function updateTimestamp() {

@@ -666,8 +666,176 @@ function closeCustomerModal() {
     document.body.style.overflow = 'auto'; // Re-enable body scroll
 }
 
+// Dashboard category toggle functionality
+function toggleCategory(categoryName) {
+    const content = document.getElementById(`${categoryName}-content`);
+    const arrow = document.getElementById(`${categoryName}-arrow`);
+
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        arrow.style.transform = 'rotate(0deg)';
+    } else {
+        content.style.display = 'none';
+        arrow.style.transform = 'rotate(-90deg)';
+    }
+}
+
+// Region selector functionality
+function initializeRegionSelector() {
+    const regionSelector = document.getElementById('region-selector');
+    if (regionSelector) {
+        regionSelector.addEventListener('change', function(e) {
+            const selectedRegion = e.target.value;
+            updateDashboardForRegion(selectedRegion);
+        });
+    }
+}
+
+function updateDashboardForRegion(regionValue) {
+    // Update dashboard metrics based on selected region
+    const regionData = getRegionData(regionValue);
+
+    // Update transformer counts
+    document.getElementById('active-transformers').textContent = regionData.transformers.active;
+    document.getElementById('inactive-transformers').textContent = regionData.transformers.inactive;
+
+    // Update customer counts
+    document.getElementById('single-phase-customers').textContent = regionData.customers.singlePhase.toLocaleString();
+    document.getElementById('three-phase-customers').textContent = regionData.customers.threePhase.toLocaleString();
+    document.getElementById('connected-customers').textContent = regionData.customers.connected.toLocaleString();
+    document.getElementById('suspicious-customers').textContent = regionData.customers.suspicious.toLocaleString();
+
+    // Update smart nodes
+    document.getElementById('connected-nodes').textContent = regionData.smartNodes.connected;
+    document.getElementById('disconnected-nodes').textContent = regionData.smartNodes.disconnected;
+
+    // Refresh the transformer grid
+    loadTransformersForRegion(regionValue);
+}
+
+function getRegionData(regionValue) {
+    const regionDataMap = {
+        'ashanti': {
+            transformers: { active: 5, inactive: 1 },
+            customers: { singlePhase: 4007, threePhase: 843, connected: 4656, suspicious: 194 },
+            smartNodes: { connected: 13, disconnected: 0 }
+        },
+        'greater-accra': {
+            transformers: { active: 12, inactive: 2 },
+            customers: { singlePhase: 8500, threePhase: 1200, connected: 9400, suspicious: 300 },
+            smartNodes: { connected: 25, disconnected: 1 }
+        },
+        'western': {
+            transformers: { active: 8, inactive: 1 },
+            customers: { singlePhase: 3200, threePhase: 650, connected: 3700, suspicious: 150 },
+            smartNodes: { connected: 18, disconnected: 0 }
+        },
+        'central': {
+            transformers: { active: 6, inactive: 0 },
+            customers: { singlePhase: 2800, threePhase: 420, connected: 3100, suspicious: 120 },
+            smartNodes: { connected: 15, disconnected: 0 }
+        },
+        'northern': {
+            transformers: { active: 4, inactive: 2 },
+            customers: { singlePhase: 1800, threePhase: 280, connected: 1950, suspicious: 130 },
+            smartNodes: { connected: 10, disconnected: 2 }
+        },
+        'eastern': {
+            transformers: { active: 7, inactive: 1 },
+            customers: { singlePhase: 3500, threePhase: 580, connected: 3900, suspicious: 180 },
+            smartNodes: { connected: 16, disconnected: 0 }
+        },
+        'volta': {
+            transformers: { active: 5, inactive: 1 },
+            customers: { singlePhase: 2200, threePhase: 350, connected: 2400, suspicious: 150 },
+            smartNodes: { connected: 12, disconnected: 1 }
+        },
+        'upper-east': {
+            transformers: { active: 3, inactive: 1 },
+            customers: { singlePhase: 1200, threePhase: 180, connected: 1300, suspicious: 80 },
+            smartNodes: { connected: 8, disconnected: 1 }
+        },
+        'upper-west': {
+            transformers: { active: 2, inactive: 1 },
+            customers: { singlePhase: 900, threePhase: 120, connected: 980, suspicious: 40 },
+            smartNodes: { connected: 6, disconnected: 1 }
+        },
+        'brong-ahafo': {
+            transformers: { active: 6, inactive: 0 },
+            customers: { singlePhase: 2800, threePhase: 450, connected: 3100, suspicious: 150 },
+            smartNodes: { connected: 14, disconnected: 0 }
+        }
+    };
+
+    return regionDataMap[regionValue] || regionDataMap['ashanti'];
+}
+
+function loadTransformersForRegion(regionValue) {
+    // This function would typically load transformer data for the selected region
+    // For now, we'll just refresh the existing transformer grid
+    // In a real application, this would make an API call to get region-specific data
+
+    console.log(`Loading transformers for region: ${regionValue}`);
+
+    // You could add region-specific transformer loading logic here
+    // For example:
+    // - Update transformer locations on the map
+    // - Filter transformer list by region
+    // - Update district information
+
+    // For demonstration, we'll just log the change
+    const regionNames = {
+        'ashanti': 'Ashanti Region',
+        'greater-accra': 'Greater Accra Region',
+        'western': 'Western Region',
+        'central': 'Central Region',
+        'northern': 'Northern Region',
+        'eastern': 'Eastern Region',
+        'volta': 'Volta Region',
+        'upper-east': 'Upper East Region',
+        'upper-west': 'Upper West Region',
+        'brong-ahafo': 'Brong Ahafo Region'
+    };
+
+    // Update page title or any region-specific UI elements
+    console.log(`Dashboard updated for: ${regionNames[regionValue]}`);
+}
+
+// Search functionality for dashboard
+function initializeDashboardSearch() {
+    const searchInput = document.getElementById('dashboard-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Filter transformers based on search term
+            filterTransformers(searchTerm);
+        });
+    }
+}
+
+function filterTransformers(searchTerm) {
+    const transformerCards = document.querySelectorAll('.transformer-card');
+    transformerCards.forEach(card => {
+        const transformerName = card.querySelector('.transformer-name')?.textContent.toLowerCase() || '';
+        const district = card.querySelector('.district')?.textContent.toLowerCase() || '';
+        const location = card.querySelector('.location')?.textContent.toLowerCase() || '';
+
+        if (transformerName.includes(searchTerm) ||
+            district.includes(searchTerm) ||
+            location.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 // Add event listeners for modal interactions
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard components
+    initializeRegionSelector();
+    initializeDashboardSearch();
+
     // ESC key to close modals
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
