@@ -68,6 +68,24 @@ const ashantiDistricts = {
 
 // Ashanti Region transformer data
 const transformerData = [
+    // CRITICAL ALERT - High Load Risk Transformer
+    {
+        id: 'T-14',
+        name: 'Abuakwa Tanoso Transformer',
+        lat: 6.7200,
+        lng: -1.5800,
+        status: 'critical',
+        capacity: '1500 kVA',
+        load: 94,
+        efficiency: 78,
+        district: 'Kumasi Metropolitan',
+        districtKey: 'kumasi',
+        type: 'Urban',
+        healthScore: 35,
+        temperature: 78,
+        alerts: ['High Load Risk', 'Temperature Warning', 'Maintenance Due'],
+        priority: 'CRITICAL'
+    },
     // Kumasi Metropolitan
     {
         id: 'TR-KMA-001',
@@ -87,13 +105,17 @@ const transformerData = [
         name: 'Adum Commercial Transformer',
         lat: 6.6950,
         lng: -1.6200,
-        status: 'active',
+        status: 'maintenance',
         capacity: '750 kVA',
         load: 78,
         efficiency: 92,
         district: 'Kumasi Metropolitan',
         districtKey: 'kumasi',
-        type: 'Commercial'
+        type: 'Commercial',
+        healthScore: 65,
+        temperature: 68,
+        alerts: ['Scheduled Maintenance'],
+        priority: 'MEDIUM'
     },
     {
         id: 'TR-KMA-003',
@@ -106,7 +128,11 @@ const transformerData = [
         efficiency: 89,
         district: 'Kumasi Metropolitan',
         districtKey: 'kumasi',
-        type: 'Educational'
+        type: 'Educational',
+        healthScore: 88,
+        temperature: 62,
+        alerts: [],
+        priority: 'NORMAL'
     },
     // Obuasi Municipal
     {
@@ -290,6 +316,43 @@ const baseStationData = [
         districtKey: 'bosomtwe',
         telecomTower: 'Vodafone Tower BOS-01'
     }
+];
+
+// Smart meter data for Ashanti region
+const smartMeterData = [
+    // Kumasi Metropolitan smart meters
+    { id: 'SM-001', lat: 6.6900, lng: -1.6250, status: 'active', consumption: 245, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-001' },
+    { id: 'SM-002', lat: 6.6850, lng: -1.6200, status: 'active', consumption: 189, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-001' },
+    { id: 'SM-003', lat: 6.6920, lng: -1.6180, status: 'active', consumption: 312, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-002' },
+    { id: 'SM-004', lat: 6.6980, lng: -1.6220, status: 'active', consumption: 156, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-002' },
+    { id: 'SM-005', lat: 6.7180, lng: -1.5820, status: 'active', consumption: 278, district: 'Kumasi Metropolitan', transformerId: 'T-14' },
+    { id: 'SM-006', lat: 6.7220, lng: -1.5780, status: 'active', consumption: 198, district: 'Kumasi Metropolitan', transformerId: 'T-14' },
+    { id: 'SM-007', lat: 6.6760, lng: -1.5700, status: 'active', consumption: 234, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-003' },
+    { id: 'SM-008', lat: 6.6730, lng: -1.5730, status: 'active', consumption: 167, district: 'Kumasi Metropolitan', transformerId: 'TR-KMA-003' },
+
+    // Obuasi smart meters
+    { id: 'SM-009', lat: 6.2050, lng: -1.6720, status: 'active', consumption: 145, district: 'Obuasi Municipal', transformerId: 'TR-OBU-001' },
+    { id: 'SM-010', lat: 6.2000, lng: -1.6690, status: 'active', consumption: 203, district: 'Obuasi Municipal', transformerId: 'TR-OBU-001' },
+    { id: 'SM-011', lat: 6.2080, lng: -1.6750, status: 'active', consumption: 189, district: 'Obuasi Municipal', transformerId: 'TR-OBU-002' },
+    { id: 'SM-012', lat: 6.2120, lng: -1.6680, status: 'active', consumption: 267, district: 'Obuasi Municipal', transformerId: 'TR-OBU-002' }
+];
+
+// Power line connections data
+const powerLineConnections = [
+    // Base station to transformer connections (purple dashed lines)
+    { from: { lat: 6.6885, lng: -1.6244 }, to: { lat: 6.6950, lng: -1.6200 }, type: 'base-to-transformer', color: '#8b5cf6' },
+    { from: { lat: 6.6885, lng: -1.6244 }, to: { lat: 6.7200, lng: -1.5800 }, type: 'base-to-transformer', color: '#8b5cf6' },
+    { from: { lat: 6.6885, lng: -1.6244 }, to: { lat: 6.6745, lng: -1.5716 }, type: 'base-to-transformer', color: '#8b5cf6' },
+
+    // Transformer to smart meter connections (blue dashed lines)
+    { from: { lat: 6.6885, lng: -1.6244 }, to: { lat: 6.6900, lng: -1.6250 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.6885, lng: -1.6244 }, to: { lat: 6.6850, lng: -1.6200 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.6950, lng: -1.6200 }, to: { lat: 6.6920, lng: -1.6180 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.6950, lng: -1.6200 }, to: { lat: 6.6980, lng: -1.6220 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.7200, lng: -1.5800 }, to: { lat: 6.7180, lng: -1.5820 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.7200, lng: -1.5800 }, to: { lat: 6.7220, lng: -1.5780 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.6745, lng: -1.5716 }, to: { lat: 6.6760, lng: -1.5700 }, type: 'transformer-to-meter', color: '#3b82f6' },
+    { from: { lat: 6.6745, lng: -1.5716 }, to: { lat: 6.6730, lng: -1.5730 }, type: 'transformer-to-meter', color: '#3b82f6' }
 ];
 
 // Dispatch Request Functions
@@ -500,21 +563,43 @@ function showBaseStationInfoPanel(baseStation) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    initializeMap();
-    setupEventListeners();
-    updateQuickStats();
-    setupDistrictInteractions();
-    updateRegionOverview();
+    console.log('Smart Grid: DOM Content Loaded');
+
+    // Wait a bit for header to load if needed
+    setTimeout(() => {
+        console.log('Smart Grid: Initializing map...');
+        initializeMap();
+        setupEventListeners();
+        updateQuickStats();
+        setupDistrictInteractions();
+        updateRegionOverview();
+        console.log('Smart Grid: Initialization complete');
+    }, 100);
 });
 
 function initializeMap() {
+    console.log('Initializing map...');
+
+    // Check if map container exists
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) {
+        console.error('Map container not found!');
+        return;
+    }
+
+    console.log('Map container found, creating Leaflet map...');
+
     // Initialize map centered on Ashanti region
     map = L.map('map').setView([6.6885, -1.6244], 9);
-    
+
+    console.log('Map created, adding tile layer...');
+
     // Add tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
+
+    console.log('Tile layer added successfully');
     
     // Initialize layers
     transformerLayer = L.layerGroup().addTo(map);
@@ -526,6 +611,7 @@ function initializeMap() {
     // Load Ghana GeoJSON and add transformers
     loadGhanaMap();
     addTransformers();
+    addSmartMeters();
     addBaseStations();
     addPowerLines();
     addAlerts();
@@ -571,6 +657,13 @@ function addTransformers() {
     });
 }
 
+function addSmartMeters() {
+    smartMeterData.forEach(meter => {
+        const marker = createSmartMeterMarker(meter);
+        smartMeterLayer.addLayer(marker);
+    });
+}
+
 function addBaseStations() {
     baseStationData.forEach(baseStation => {
         const marker = createBaseStationMarker(baseStation);
@@ -583,24 +676,39 @@ function createTransformerMarker(transformer) {
         'active': '#10B981',
         'maintenance': '#F59E0B',
         'fault': '#EF4444',
-        'offline': '#6B7280'
+        'offline': '#6B7280',
+        'critical': '#DC2626'
     };
-    
+
     const color = statusColors[transformer.status] || '#6B7280';
-    
+
+    // Make critical transformers with blinking exclamation mark
+    const isCritical = transformer.status === 'critical';
     const marker = L.circleMarker([transformer.lat, transformer.lng], {
-        radius: 8,
+        radius: isCritical ? 10 : 8,
         fillColor: color,
-        color: '#ffffff',
+        color: isCritical ? '#ffffff' : '#ffffff',
         weight: 2,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 0.9,
+        className: isCritical ? 'critical-marker' : ''
     });
     
-    // Add popup
+    // Add popup with enhanced information
+    const alertsHtml = transformer.alerts && transformer.alerts.length > 0 ?
+        `<div class="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+            <div class="text-xs font-medium text-red-800 mb-1">🚨 ALERTS:</div>
+            ${transformer.alerts.map(alert => `<div class="text-xs text-red-700">• ${alert}</div>`).join('')}
+        </div>` : '';
+
+    const healthColor = transformer.healthScore ?
+        (transformer.healthScore >= 80 ? '#10B981' :
+         transformer.healthScore >= 60 ? '#F59E0B' : '#EF4444') : '#6B7280';
+
     const popupContent = `
         <div class="p-3 min-w-64">
             <h3 class="font-semibold text-gray-900 mb-2">${transformer.name}</h3>
+            ${transformer.priority === 'CRITICAL' ? '<div class="bg-red-600 text-white text-xs px-2 py-1 rounded mb-2 font-bold">⚠️ CRITICAL PRIORITY</div>' : ''}
             <div class="space-y-1 text-sm">
                 <div class="flex justify-between">
                     <span class="text-gray-600">ID:</span>
@@ -616,17 +724,28 @@ function createTransformerMarker(transformer) {
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-600">Load:</span>
-                    <span class="font-medium">${transformer.load}%</span>
+                    <span class="font-medium ${transformer.load >= 90 ? 'text-red-600' : ''}">${transformer.load}%</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-600">Efficiency:</span>
                     <span class="font-medium">${transformer.efficiency}%</span>
                 </div>
+                ${transformer.healthScore ? `
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Health Score:</span>
+                    <span class="font-medium" style="color: ${healthColor}">${transformer.healthScore}/100</span>
+                </div>` : ''}
+                ${transformer.temperature ? `
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Temperature:</span>
+                    <span class="font-medium ${transformer.temperature >= 75 ? 'text-red-600' : ''}">${transformer.temperature}°C</span>
+                </div>` : ''}
                 <div class="flex justify-between">
                     <span class="text-gray-600">District:</span>
                     <span class="font-medium">${transformer.district}</span>
                 </div>
             </div>
+            ${alertsHtml}
             ${getTransformerActionButtons(transformer)}
         </div>
     `;
@@ -645,6 +764,50 @@ function createTransformerMarker(transformer) {
         }
     });
 
+    return marker;
+}
+
+function createSmartMeterMarker(meter) {
+    // Create orange square marker for smart meters
+    const marker = L.marker([meter.lat, meter.lng], {
+        icon: L.divIcon({
+            className: 'smart-meter-icon',
+            html: '<div style="width: 8px; height: 8px; background: #f97316; border: 1px solid white; transform: rotate(45deg);"></div>',
+            iconSize: [10, 10],
+            iconAnchor: [5, 5]
+        })
+    });
+
+    // Add popup for smart meter
+    const popupContent = `
+        <div class="p-3 min-w-48">
+            <h3 class="font-semibold text-gray-900 mb-2">Smart Meter</h3>
+            <div class="space-y-1 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-gray-600">ID:</span>
+                    <span class="font-medium">${meter.id}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Status:</span>
+                    <span class="font-medium text-green-600 capitalize">${meter.status}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Consumption:</span>
+                    <span class="font-medium">${meter.consumption} kWh</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Connected to:</span>
+                    <span class="font-medium">${meter.transformerId}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">District:</span>
+                    <span class="font-medium">${meter.district}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    marker.bindPopup(popupContent);
     return marker;
 }
 
@@ -737,8 +900,8 @@ function createBaseStationMarker(baseStation) {
 }
 
 function addPowerLines() {
-    // Add power lines connecting Ashanti region transformers
-    const connections = [
+    // Add main power lines connecting Ashanti region transformers
+    const mainConnections = [
         [[6.6885, -1.6244], [6.2027, -1.6708]], // Kumasi to Obuasi
         [[6.6885, -1.6244], [6.7500, -1.3667]], // Kumasi to Ejisu
         [[6.6885, -1.6244], [6.8167, -1.0833]], // Kumasi to Asante Akim North
@@ -746,13 +909,37 @@ function addPowerLines() {
         [[6.7500, -1.3667], [6.8167, -1.0833]], // Ejisu to Asante Akim North
     ];
 
-    connections.forEach(connection => {
+    mainConnections.forEach(connection => {
         L.polyline(connection, {
             color: '#3B82F6',
             weight: 3,
             opacity: 0.7,
             dashArray: '5, 10'
         }).addTo(powerLineLayer);
+    });
+
+    // Add detailed power line connections from data
+    powerLineConnections.forEach(connection => {
+        const line = L.polyline([
+            [connection.from.lat, connection.from.lng],
+            [connection.to.lat, connection.to.lng]
+        ], {
+            color: connection.color,
+            weight: connection.type === 'base-to-transformer' ? 2 : 1.5,
+            opacity: 0.8,
+            dashArray: connection.type === 'base-to-transformer' ? '8, 5' : '4, 3'
+        });
+
+        line.addTo(powerLineLayer);
+
+        // Add popup to show connection info
+        line.bindPopup(`
+            <div class="text-sm">
+                <strong>${connection.type === 'base-to-transformer' ? 'Base Station → Transformer' : 'Transformer → Smart Meter'}</strong><br>
+                Connection Type: ${connection.type}<br>
+                Status: Active
+            </div>
+        `);
     });
 }
 
@@ -1238,9 +1425,19 @@ function focusTransformer(transformerId) {
     if (transformer) {
         map.setView([transformer.lat, transformer.lng], 15);
         showInfoPanel(transformer);
+
+        // Find and open the transformer marker popup
+        transformerLayer.eachLayer(layer => {
+            if (layer.transformer && layer.transformer.id === transformerId) {
+                layer.openPopup();
+            }
+        });
     }
     hideSearchResults();
 }
+
+// Make focusTransformer available globally for the critical alert banner
+window.focusTransformer = focusTransformer;
 
 function showInfoPanel(transformer) {
     const panel = document.getElementById('info-panel');

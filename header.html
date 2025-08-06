@@ -1,66 +1,519 @@
 <!-- PowerGridX Header Component -->
-<header class="bg-slate-700 shadow-sm">
+<header class="bg-slate-700 shadow-lg transition-all duration-300" id="main-header">
     <!-- Top Navigation Bar -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo and Title -->
             <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">⚡</span>
+                <div class="flex items-center space-x-3 cursor-pointer logo-container" onclick="window.location.href='index.html'">
+                    <!-- New PowerGridX Logo -->
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center logo-glow transition-all duration-300 hover:scale-110 p-1">
+                        <svg class="w-8 h-8" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Grid lines -->
+                            <g stroke="#334155" stroke-width="3" stroke-linecap="round">
+                                <!-- Left diagonal lines -->
+                                <line x1="10" y1="15" x2="25" y2="30" />
+                                <line x1="10" y1="25" x2="30" y2="45" />
+                                <line x1="10" y1="35" x2="35" y2="60" />
+                                <line x1="10" y1="45" x2="40" y2="75" />
+                                <line x1="10" y1="55" x2="35" y2="80" />
+                                <line x1="15" y1="65" x2="30" y2="80" />
+
+                                <!-- Right diagonal lines -->
+                                <line x1="90" y1="15" x2="75" y2="30" />
+                                <line x1="90" y1="25" x2="70" y2="45" />
+                                <line x1="90" y1="35" x2="65" y2="60" />
+                                <line x1="90" y1="45" x2="60" y2="75" />
+                                <line x1="90" y1="55" x2="65" y2="80" />
+                                <line x1="85" y1="65" x2="70" y2="80" />
+
+                                <!-- Corner dots -->
+                                <circle cx="50" cy="10" r="2" fill="#334155" />
+                                <circle cx="10" cy="85" r="2" fill="#334155" />
+                                <circle cx="90" cy="85" r="2" fill="#334155" />
+                            </g>
+
+                            <!-- Lightning bolt -->
+                            <path d="M35 20 L55 20 L45 45 L60 45 L40 80 L50 55 L35 55 Z" fill="#f1491d" class="energy-pulse-svg"/>
+                        </svg>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
-                        <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
+                    <div class="brand-text">
+                        <h1 class="text-xl font-bold text-white hover:text-orange-300 transition-colors duration-300">
+                            <span style="color: #044080;">PowerGrid</span><span style="color: #f1491d;">X</span>
+                        </h1>
+                        <p class="text-xs text-gray-300 hover:text-gray-200 transition-colors duration-300">Smart Infrastructure Platform</p>
                     </div>
                 </div>
             </div>
 
             <!-- Navigation Buttons -->
             <nav class="hidden md:flex space-x-1">
-                <a href="index.html" id="nav-dashboard" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Dashboard
+                <a href="index.html" id="nav-dashboard" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95">
+                    <span class="nav-text">Dashboard</span>
                 </a>
-                <a href="smart-grid.html" id="nav-smart-grid" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Smart Grid Management
+                <a href="smart-grid.html" id="nav-smart-grid" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95">
+                    <span class="nav-text">Smart Grid</span>
                 </a>
-                <a href="transformers.html" id="nav-transformers" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Transformers
+                <a href="transformers.html" id="nav-transformers" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95">
+                    <span class="nav-text">Transformers</span>
                 </a>
-                <a href="audit-log.html" id="nav-audit" class="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Audit Log
+                <a href="audit-log.html" id="nav-audit" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95">
+                    <span class="nav-text">Audit Log</span>
                 </a>
-                <a href="dispatch.html" id="nav-dispatch" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Dispatch Request
+                <a href="dispatch.html" id="nav-dispatch" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95">
+                    <span class="nav-text">Dispatch Request</span>
                 </a>
             </nav>
 
-            <!-- Status -->
+            <!-- Right Side: Status, Theme Toggle, and Profile -->
             <div class="flex items-center space-x-4">
-                <div class="text-sm text-gray-300">
-                    Last updated: <span id="last-update">7:22:59 PM</span>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 theme-btn">
+                    <span class="text-yellow-400 text-sm theme-icon">☀️</span>
+                </button>
+
+                <!-- Status -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-300 hover:text-gray-200 transition-colors duration-300">
+                        Last updated: <span id="last-update" class="font-medium">5:43:20 AM</span>
+                    </div>
+                    <div class="flex items-center space-x-2 status-container">
+                        <span class="w-2 h-2 bg-green-500 rounded-full heartbeat-pulse"></span>
+                        <span class="text-sm text-gray-300 live-text">Cloud Connected • Live Data</span>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                    <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+
+                <!-- User Profile -->
+                <div class="relative">
+                    <button id="profile-toggle" class="flex items-center space-x-2 bg-slate-600 hover:bg-slate-500 rounded-lg px-3 py-2 transition-all duration-300 hover:scale-105 active:scale-95">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">A</span>
+                        </div>
+                        <div class="hidden lg:block text-left">
+                            <div class="text-sm font-medium text-white">Admin</div>
+                            <div class="text-xs text-gray-300">System Administrator</div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-300 transition-transform duration-200" id="profile-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div id="profile-dropdown" class="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-gray-200 dark:border-slate-600 hidden z-50">
+                        <div class="p-4 border-b border-gray-200 dark:border-slate-600">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-lg font-bold">A</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Administrator</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">System Administrator</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 space-y-3">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500 dark:text-gray-400">ID Number:</span>
+                                    <div class="font-medium text-gray-900 dark:text-white">ADM-001</div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 dark:text-gray-400">Role:</span>
+                                    <div class="font-medium text-gray-900 dark:text-white">Super Admin</div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 dark:text-gray-400">Login Time:</span>
+                                    <div class="font-medium text-gray-900 dark:text-white">5:43:20 AM</div>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500 dark:text-gray-400">Last Logout:</span>
+                                    <div class="font-medium text-gray-900 dark:text-white">Yesterday 11:30 PM</div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-slate-600 pt-3">
+                                <div class="text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400">Access Control:</span>
+                                    <div class="mt-1 space-y-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-gray-900 dark:text-white">Full System Access</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-gray-900 dark:text-white">User Management</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-gray-900 dark:text-white">Grid Control</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span class="text-gray-900 dark:text-white">Audit Logs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-slate-600 pt-3">
+                                <button class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 </header>
 
+<style>
+    /* Energy-themed animations and effects */
+
+    /* Logo glow effect */
+    @keyframes energy-glow {
+        0%, 100% {
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.5), 0 0 20px rgba(249, 115, 22, 0.3), 0 0 30px rgba(249, 115, 22, 0.1);
+        }
+        50% {
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.8), 0 0 30px rgba(249, 115, 22, 0.5), 0 0 45px rgba(249, 115, 22, 0.2);
+        }
+    }
+
+    .logo-glow {
+        animation: energy-glow 3s ease-in-out infinite;
+    }
+
+    /* Energy pulse for lightning bolt */
+    @keyframes energy-pulse {
+        0%, 100% {
+            transform: scale(1);
+            filter: brightness(1);
+        }
+        50% {
+            transform: scale(1.1);
+            filter: brightness(1.3);
+        }
+    }
+
+    .energy-pulse {
+        animation: energy-pulse 2s ease-in-out infinite;
+    }
+
+    /* SVG Lightning bolt pulse */
+    @keyframes energy-pulse-svg {
+        0%, 100% {
+            transform: scale(1);
+            filter: brightness(1) drop-shadow(0 0 3px #f1491d);
+        }
+        50% {
+            transform: scale(1.05);
+            filter: brightness(1.2) drop-shadow(0 0 6px #f1491d);
+        }
+    }
+
+    .energy-pulse-svg {
+        animation: energy-pulse-svg 2s ease-in-out infinite;
+    }
+
+    /* Heartbeat pulse for live indicator */
+    @keyframes heartbeat {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        25% {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+        50% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        75% {
+            transform: scale(1.1);
+            opacity: 0.9;
+        }
+    }
+
+    .heartbeat-pulse {
+        animation: heartbeat 2s ease-in-out infinite;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+    }
+
+    /* Live data text pulse */
+    @keyframes text-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .live-text {
+        animation: text-pulse 3s ease-in-out infinite;
+    }
+
+    /* Navigation button hover effects */
+    .nav-btn {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .nav-btn:hover::before {
+        left: 100%;
+    }
+
+    .nav-btn:hover {
+        box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+        border: 1px solid rgba(249, 115, 22, 0.3);
+    }
+
+    .nav-btn.active {
+        background: linear-gradient(135deg, #f97316, #ea580c) !important;
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+        border: 1px solid rgba(249, 115, 22, 0.5);
+    }
+
+    /* Theme toggle animations */
+    @keyframes theme-rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .theme-btn:hover .theme-icon {
+        animation: theme-rotate 0.8s ease-in-out;
+    }
+
+    .theme-btn {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(circle, rgba(249, 115, 22, 0.3), transparent);
+        transition: all 0.3s ease;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .theme-btn:hover::after {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Logo container hover effect */
+    .logo-container:hover .brand-text h1 {
+        text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    }
+
+    /* Status container hover effect */
+    .status-container:hover {
+        transform: translateY(-1px);
+        transition: transform 0.2s ease;
+    }
+
+    /* Dark theme styles */
+    .dark-theme {
+        background: linear-gradient(135deg, #1e293b, #334155) !important;
+    }
+
+    .dark-theme .nav-btn {
+        background: #475569 !important;
+    }
+
+    .dark-theme .nav-btn:hover {
+        background: #64748b !important;
+    }
+
+    /* Global dark theme for body */
+    body.dark-mode {
+        background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .bg-white {
+        background: #1e293b !important;
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .text-gray-900 {
+        color: #f1f5f9 !important;
+    }
+
+    body.dark-mode .text-gray-600 {
+        color: #94a3b8 !important;
+    }
+
+    body.dark-mode .text-gray-500 {
+        color: #64748b !important;
+    }
+
+    body.dark-mode .border-gray-200 {
+        border-color: #475569 !important;
+    }
+
+    body.dark-mode .shadow-sm {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Profile dropdown styles */
+    .profile-dropdown-enter {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+
+    .profile-dropdown-enter-active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        transition: all 0.2s ease-out;
+    }
+
+    .profile-dropdown-exit {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    .profile-dropdown-exit-active {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+        transition: all 0.15s ease-in;
+    }
+
+    /* Microinteraction ripple effect */
+    @keyframes ripple {
+        0% {
+            transform: scale(0);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+
+    .ripple-effect {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ripple-effect::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+    }
+
+    /* Smooth transitions for all interactive elements */
+    .nav-btn, .theme-btn, .logo-container, .status-container {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Glow effect for active elements */
+    .glow-active {
+        box-shadow: 0 0 20px rgba(249, 115, 22, 0.6), 0 0 40px rgba(249, 115, 22, 0.4);
+    }
+</style>
+
 <script>
-// Header functionality
+// Enhanced Header functionality with interactive features
 document.addEventListener('DOMContentLoaded', function() {
+    // Theme management
+    let isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+    const header = document.getElementById('main-header');
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+
+    // Apply saved theme
+    if (isDarkTheme) {
+        header.classList.add('dark-theme');
+        document.body.classList.add('dark-mode');
+        themeIcon.textContent = '🌙';
+    }
+
+    // Profile dropdown functionality
+    const profileToggle = document.getElementById('profile-toggle');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    const profileArrow = document.getElementById('profile-arrow');
+    let isProfileOpen = false;
+
+    profileToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        isProfileOpen = !isProfileOpen;
+
+        if (isProfileOpen) {
+            profileDropdown.classList.remove('hidden');
+            profileDropdown.classList.add('profile-dropdown-enter');
+            profileArrow.style.transform = 'rotate(180deg)';
+        } else {
+            profileDropdown.classList.add('profile-dropdown-exit');
+            profileArrow.style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                profileDropdown.classList.add('hidden');
+                profileDropdown.classList.remove('profile-dropdown-enter', 'profile-dropdown-exit');
+            }, 150);
+        }
+
+        createRipple(this, e);
+    });
+
+    // Close profile dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (isProfileOpen && !profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+            isProfileOpen = false;
+            profileDropdown.classList.add('profile-dropdown-exit');
+            profileArrow.style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                profileDropdown.classList.add('hidden');
+                profileDropdown.classList.remove('profile-dropdown-enter', 'profile-dropdown-exit');
+            }, 150);
+        }
+    });
+
+    // Theme toggle functionality
+    themeToggle.addEventListener('click', function() {
+        isDarkTheme = !isDarkTheme;
+        localStorage.setItem('darkTheme', isDarkTheme);
+
+        if (isDarkTheme) {
+            header.classList.add('dark-theme');
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '🌙';
+        } else {
+            header.classList.remove('dark-theme');
+            document.body.classList.remove('dark-mode');
+            themeIcon.textContent = '☀️';
+        }
+
+        // Add ripple effect
+        createRipple(this, event);
+    });
+
     // Update active navigation based on current page
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navButtons = document.querySelectorAll('.nav-btn');
-    
+
     // Remove active class from all nav items
     document.querySelectorAll('nav a').forEach(btn => {
-        btn.classList.remove('bg-orange-500');
+        btn.classList.remove('bg-orange-500', 'active');
         btn.classList.add('bg-slate-600', 'hover:bg-slate-500');
     });
 
@@ -89,38 +542,124 @@ document.addEventListener('DOMContentLoaded', function() {
         const activeNav = document.getElementById(activeNavId);
         if (activeNav) {
             activeNav.classList.remove('bg-slate-600', 'hover:bg-slate-500');
-            activeNav.classList.add('bg-orange-500');
+            activeNav.classList.add('bg-orange-500', 'active');
         }
     }
-    
-    // Update timestamp every minute
+
+    // Add click ripple effect to navigation buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            createRipple(this, e);
+        });
+
+        // Add hover glow effect
+        btn.addEventListener('mouseenter', function() {
+            this.classList.add('glow-active');
+        });
+
+        btn.addEventListener('mouseleave', function() {
+            this.classList.remove('glow-active');
+        });
+    });
+
+    // Logo click effect
+    document.querySelector('.logo-container').addEventListener('click', function(e) {
+        createRipple(this, e);
+    });
+
+    // Ripple effect function
+    function createRipple(element, event) {
+        const ripple = document.createElement('span');
+        const rect = element.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple-effect');
+
+        element.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+
+    // Update timestamp every minute with smooth transition
     function updateTimestamp() {
         const now = new Date();
-        const timeString = now.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour12: true,
+            hour: 'numeric',
             minute: '2-digit',
-            hour12: true 
+            second: '2-digit'
         });
-        const timestampEl = document.getElementById('last-updated');
-        if (timestampEl) {
-            timestampEl.textContent = timeString;
+        const timestampElement = document.querySelector('#last-update');
+        if (timestampElement) {
+            // Add fade effect during update
+            timestampElement.style.opacity = '0.5';
+            setTimeout(() => {
+                timestampElement.textContent = timeString;
+                timestampElement.style.opacity = '1';
+            }, 150);
         }
     }
-    
+
+    // Enhanced navigation with smooth page transitions
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+                e.preventDefault();
+
+                // Add loading state
+                this.style.opacity = '0.7';
+                this.style.transform = 'scale(0.95)';
+
+                // Simulate smooth transition
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 200);
+            }
+        });
+    });
+
+    // Update immediately and then every minute
     updateTimestamp();
-    setInterval(updateTimestamp, 60000); // Update every minute
-    
-    // Simulate live meter count updates
-    function updateMeterCount() {
-        const metersEl = document.getElementById('meters-online');
-        if (metersEl) {
-            const currentCount = parseInt(metersEl.textContent.replace(',', ''));
-            const variation = Math.floor(Math.random() * 10) - 5; // ±5 variation
-            const newCount = Math.max(1200, currentCount + variation);
-            metersEl.textContent = newCount.toLocaleString();
+    setInterval(updateTimestamp, 60000);
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey) {
+            switch(e.key) {
+                case '1':
+                    e.preventDefault();
+                    document.getElementById('nav-dashboard').click();
+                    break;
+                case '2':
+                    e.preventDefault();
+                    document.getElementById('nav-smart-grid').click();
+                    break;
+                case '3':
+                    e.preventDefault();
+                    document.getElementById('nav-transformers').click();
+                    break;
+                case '4':
+                    e.preventDefault();
+                    document.getElementById('nav-audit').click();
+                    break;
+                case '5':
+                    e.preventDefault();
+                    document.getElementById('nav-dispatch').click();
+                    break;
+                case 't':
+                    e.preventDefault();
+                    themeToggle.click();
+                    break;
+            }
         }
-    }
-    
-    setInterval(updateMeterCount, 30000); // Update every 30 seconds
+    });
 });
 </script>

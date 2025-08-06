@@ -111,45 +111,190 @@
             background: #FF6B00;
             border-radius: 3px;
         }
+
+        /* Enhanced navigation styles */
+        .nav-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Heartbeat animation */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            25% { transform: scale(1.1); opacity: 0.8; }
+            50% { transform: scale(1); opacity: 1; }
+            75% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .heartbeat {
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        /* Profile dropdown */
+        .profile-dropdown {
+            transform: translateY(-10px) scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease-out;
+        }
+
+        .profile-dropdown.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
-    <!-- Fixed Navigation Header -->
-    <header class="bg-slate-700 shadow-sm fixed top-0 left-0 right-0 z-40">
+    <!-- Navigation Header -->
+    <header class="bg-slate-700 shadow-lg fixed top-0 left-0 right-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo and Title -->
-                <div class="flex items-center space-x-4">
-                    <img src="logo.svg" alt="PowerGridX" class="w-8 h-8">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold">⚡</span>
+                    </div>
                     <div>
-                        <h1 class="text-xl font-bold text-white">PowerGridX</h1>
-                        <p class="text-sm text-gray-300">Smart Infrastructure Platform</p>
+                        <h1 class="text-xl font-bold text-white">
+                            <span style="color: #044080;">PowerGrid</span><span style="color: #f1491d;">X</span>
+                        </h1>
+                        <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
                     </div>
                 </div>
 
                 <!-- Navigation -->
-                <nav class="hidden md:flex space-x-2">
-                    <a href="index.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <nav class="hidden md:flex space-x-1">
+                    <a href="index.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Dashboard
                     </a>
-                    <a href="smart-grid.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <a href="smart-grid.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Smart Grid
                     </a>
-                    <a href="transformers.html" class="bg-pgx-orange text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <a href="transformers.html" class="nav-btn bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Transformers
                     </a>
-                    <a href="audit-log.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <a href="audit-log.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
                         Audit Log
                     </a>
-                    <a href="dispatch.html" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                        Dispatch Request
+                    <a href="dispatch.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        Dispatch
+                    </a>
+                    <a href="notifications.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium relative">
+                        Notifications
+                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">3</span>
+                    </a>
+                    <a href="history.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        History
                     </a>
                 </nav>
 
-                <!-- Status -->
-                <div class="flex items-center space-x-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
-                    <span class="text-sm text-gray-300">Cloud Connected � Live Data</span>
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                        <span class="text-yellow-400 text-sm">☀️</span>
+                    </button>
+
+                    <!-- Status -->
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full heartbeat"></span>
+                        <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+                    </div>
+
+                    <!-- Profile -->
+                    <div class="relative">
+                        <button id="profile-toggle" class="flex items-center space-x-2 bg-slate-600 hover:bg-slate-500 px-3 py-2 rounded-lg transition-all duration-300">
+                            <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">A</span>
+                            </div>
+                            <span class="text-white text-sm">Admin</span>
+                            <svg class="w-4 h-4 text-gray-300 transition-transform duration-200" id="profile-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Profile Dropdown -->
+                        <div id="profile-dropdown" class="profile-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 hidden z-50">
+                            <div class="p-4 border-b border-gray-200">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-lg font-bold">A</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">Administrator</h3>
+                                        <p class="text-sm text-gray-500">ADM-001</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 space-y-3">
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-gray-500">Role:</span>
+                                        <p class="font-medium">Super Admin</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Login Time:</span>
+                                        <p class="font-medium">5:43:20 AM</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Last Logout:</span>
+                                        <p class="font-medium">Yesterday 11:30 PM</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Session:</span>
+                                        <p class="font-medium text-green-600">Active</p>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-3">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Access Control</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Full System Access</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>User Management</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Grid Control</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Audit Logs</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -342,138 +487,10 @@
                 </div>
             </div>
 
-            <!-- Analytics Dashboard -->
-            <div class="p-6 space-y-6">
-                <!-- Top Metrics Row -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Revenue Card -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-600">Monthly Revenue</p>
-                                <p class="text-2xl font-bold text-gray-900">₵ 1,198,870</p>
-                                <p class="text-sm text-green-600 mt-1">+12.5% from last month</p>
-                            </div>
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Districts Grid -->
+            <div class="p-6">
 
-                    <!-- Energy Consumption Card -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-600">Energy Consumption</p>
-                                <p class="text-2xl font-bold text-gray-900">32,372 kWh</p>
-                                <p class="text-sm text-blue-600 mt-1">+8.2% efficiency</p>
-                            </div>
-                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Power Generation Card -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-600">Power Generation</p>
-                                <p class="text-2xl font-bold text-gray-900">211 MWh</p>
-                                <p class="text-sm text-yellow-600 mt-1">Peak: 245 MWh</p>
-                            </div>
-                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Performance Overview -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Performance Metrics -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Overview</h3>
-                        <div class="grid grid-cols-3 gap-4">
-                            <!-- Grid Performance -->
-                            <div class="text-center">
-                                <div class="relative w-16 h-16 mx-auto mb-2">
-                                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E5E7EB" stroke-width="2"/>
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#F59E0B" stroke-width="2" stroke-dasharray="75, 100"/>
-                                    </svg>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="text-sm font-bold text-gray-900">75%</span>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-600">Grid Performance</p>
-                            </div>
-
-                            <!-- Efficiency -->
-                            <div class="text-center">
-                                <div class="relative w-16 h-16 mx-auto mb-2">
-                                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E5E7EB" stroke-width="2"/>
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#EC4899" stroke-width="2" stroke-dasharray="88, 100"/>
-                                    </svg>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="text-sm font-bold text-gray-900">88%</span>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-600">Efficiency</p>
-                            </div>
-
-                            <!-- Reliability -->
-                            <div class="text-center">
-                                <div class="relative w-16 h-16 mx-auto mb-2">
-                                    <svg class="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#E5E7EB" stroke-width="2"/>
-                                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10B981" stroke-width="2" stroke-dasharray="94, 100"/>
-                                    </svg>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <span class="text-sm font-bold text-gray-900">94%</span>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-600">Reliability</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Real-time Chart Placeholder -->
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Power Generation</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    Live
-                                </span>
-                                <span class="text-sm text-gray-500">1,738 kW</span>
-                            </div>
-                        </div>
-                        <div class="h-48 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg flex items-center justify-center">
-                            <div class="text-center">
-                                <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                </svg>
-                                <p class="text-sm text-gray-500">Real-time Power Generation Chart</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Districts Grid -->
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">District Overview</h3>
-                        <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="districts-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="districts-grid">
                     <!-- Districts will be populated by JavaScript -->
                 </div>
             </div>
@@ -524,6 +541,67 @@
         </div>
     </main>
 
+    <!-- Interactive JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('span');
+            let isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+
+            // Apply saved theme
+            if (isDarkTheme) {
+                document.body.classList.add('dark-mode');
+                themeIcon.textContent = '🌙';
+            }
+
+            themeToggle.addEventListener('click', function() {
+                isDarkTheme = !isDarkTheme;
+                localStorage.setItem('darkTheme', isDarkTheme);
+
+                if (isDarkTheme) {
+                    document.body.classList.add('dark-mode');
+                    themeIcon.textContent = '🌙';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    themeIcon.textContent = '☀️';
+                }
+            });
+
+            // Profile dropdown functionality
+            const profileToggle = document.getElementById('profile-toggle');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            const profileArrow = document.getElementById('profile-arrow');
+            let isProfileOpen = false;
+
+            profileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                isProfileOpen = !isProfileOpen;
+
+                if (isProfileOpen) {
+                    profileDropdown.classList.remove('hidden');
+                    setTimeout(() => profileDropdown.classList.add('show'), 10);
+                    profileArrow.style.transform = 'rotate(180deg)';
+                } else {
+                    profileDropdown.classList.remove('show');
+                    profileArrow.style.transform = 'rotate(0deg)';
+                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
+                }
+            });
+
+            // Close profile dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (isProfileOpen && !profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    isProfileOpen = false;
+                    profileDropdown.classList.remove('show');
+                    profileArrow.style.transform = 'rotate(0deg)';
+                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
+                }
+            });
+        });
+    </script>
+
+    <!-- Transformers JavaScript -->
     <script src="transformers.js"></script>
 </body>
 </html>
