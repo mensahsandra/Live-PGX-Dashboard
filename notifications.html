@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications - PowerGridX</title>
+    <title>Notifications - PowerGridX Dashboard</title>
     <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Custom Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
                     colors: {
-                        'pgx-orange': '#FF6B00',
-                        'pgx-orange-light': '#FF8533',
-                        'pgx-orange-dark': '#E55A00'
+                        'pgx-green': '#10b981',
+                        'pgx-blue': '#3b82f6',
+                        'pgx-gray': '#f8fafc',
                     }
                 }
             }
@@ -25,284 +31,69 @@
     </script>
     
     <style>
-        /* Enhanced navigation styles */
-        .nav-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        .notification-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
         }
         
-        .nav-btn:hover {
+        .notification-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
         
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
+        .notification-card.unread {
+            background: #f0f9ff;
+            border-left-color: #3b82f6;
         }
         
-        .nav-btn:hover::before {
-            left: 100%;
+        .notification-card.in_progress {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
         }
         
-        /* Heartbeat animation */
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .heartbeat {
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-        
-        /* Profile dropdown */
-        .profile-dropdown {
-            transform: translateY(-10px) scale(0.95);
-            opacity: 0;
-            transition: all 0.2s ease-out;
-        }
-        
-        .profile-dropdown.show {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-        
-        /* Notification animations */
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .notification-item {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .notification-unread {
-            border-left: 4px solid #f59e0b;
-            background: #fffbeb;
-        }
-        
-        .notification-read {
-            border-left: 4px solid #e5e7eb;
-            background: white;
-        }
-        
-        .notification-critical {
-            border-left: 4px solid #ef4444;
-            background: #fef2f2;
-        }
-        
-        .notification-success {
-            border-left: 4px solid #10b981;
+        .notification-card.completed {
             background: #f0fdf4;
+            border-left-color: #10b981;
         }
-
-        /* Dark mode styles */
-        .dark-mode {
-            background-color: #1a1a1a !important;
-            color: #e5e5e5 !important;
+        
+        .priority-high { border-right: 4px solid #ef4444; }
+        .priority-medium { border-right: 4px solid #f59e0b; }
+        .priority-low { border-right: 4px solid #10b981; }
+        
+        .ai-monitor {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
         }
-
-        .dark-mode header {
-            background-color: #2d3748 !important;
+        
+        .pulse-ai {
+            animation: pulse 2s infinite;
         }
-
-        .dark-mode .bg-white {
-            background-color: #2d3748 !important;
-            color: #e5e5e5 !important;
-        }
-
-        .dark-mode .bg-gray-50 {
-            background-color: #1a1a1a !important;
-        }
-
-        .dark-mode .text-gray-900 {
-            color: #e5e5e5 !important;
-        }
-
-        .dark-mode .text-gray-600 {
-            color: #a0a0a0 !important;
-        }
-
-        .dark-mode .text-gray-500 {
-            color: #888888 !important;
-        }
-
-        .dark-mode .border-gray-200 {
-            border-color: #4a5568 !important;
-        }
-
-        .dark-mode .border-gray-300 {
-            border-color: #4a5568 !important;
-        }
-
-        .dark-mode .bg-slate-700 {
-            background-color: #1a202c !important;
-        }
-
-        .dark-mode .bg-slate-600 {
-            background-color: #2d3748 !important;
-        }
-
-        .dark-mode .bg-slate-500 {
-            background-color: #4a5568 !important;
-        }
-
-        .dark-mode input, .dark-mode select, .dark-mode textarea {
-            background-color: #2d3748 !important;
-            color: #e5e5e5 !important;
-            border-color: #4a5568 !important;
-        }
-
-        .dark-mode .shadow-sm, .dark-mode .shadow-lg, .dark-mode .shadow-xl {
-            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
+
 <body class="bg-gray-50 font-sans">
-    <!-- Navigation Header -->
-    <header class="bg-slate-700 shadow-lg">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo and Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-lg overflow-hidden">
-                        <video autoplay loop muted class="w-full h-full object-cover">
-                            <source src="PGXLogo.webm" type="video/webm">
-                            <!-- Fallback for browsers that don't support video -->
-                            <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                                <span class="text-white font-bold">⚡</span>
-                            </div>
-                        </video>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-white">
-                            PowerGridX
-                        </h1>
-                        <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
-                    </div>
-                </div>
-                
-                <!-- Navigation -->
-                <nav class="hidden lg:flex items-center space-x-2">
-                    <a href="index.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        Dashboard
-                    </a>
-                    <a href="smart-grid.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        Smart Grid
-                    </a>
-                    <a href="transformers.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        Transformers
-                    </a>
-                    <a href="audit-log.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        Audit Log
-                    </a>
-                    <a href="dispatch.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        Dispatch
-                    </a>
-                    <a href="notifications.html" class="nav-btn bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-medium">
-                        Notifications
-                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
-                    </a>
-                    <a href="history.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
-                        History
-                    </a>
-                </nav>
-                
-                <!-- Right Side Controls -->
+            <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-4">
-                    <!-- Theme Toggle -->
-                    <button id="theme-toggle" class="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
-                        <span class="text-yellow-400 text-sm">☀️</span>
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">⚡ PowerGridX</a>
+                    <span class="text-gray-400">|</span>
+                    <h1 class="text-xl font-semibold text-gray-900">🔔 Notifications & Alerts</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="current-admin" class="text-sm text-gray-600">Admin: John Doe</span>
+                    <button onclick="markAllAsRead()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        Mark All Read
                     </button>
-                    
-                    <!-- Status -->
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 bg-green-500 rounded-full heartbeat"></span>
-                        <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
-                    </div>
-                    
-                    <!-- Profile -->
-                    <div class="relative">
-                        <button id="profile-toggle" class="flex items-center space-x-2 bg-slate-600 hover:bg-slate-500 px-3 py-2 rounded-lg transition-all duration-300">
-                            <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <span class="text-white text-xs font-bold">A</span>
-                            </div>
-                            <span class="text-white text-sm">Admin</span>
-                            <svg class="w-4 h-4 text-gray-300 transition-transform duration-200" id="profile-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        
-                        <!-- Profile Dropdown -->
-                        <div id="profile-dropdown" class="profile-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 hidden z-50">
-                            <div class="p-4 border-b border-gray-200">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                        <span class="text-white text-lg font-bold">A</span>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">Administrator</h3>
-                                        <p class="text-sm text-gray-500">ADM-001</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="p-4 space-y-3">
-                                <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <span class="text-gray-500">Role:</span>
-                                        <p class="font-medium">Super Admin</p>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500">Login Time:</span>
-                                        <p class="font-medium">5:43:20 AM</p>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500">Last Logout:</span>
-                                        <p class="font-medium">Yesterday 11:30 PM</p>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500">Session:</span>
-                                        <p class="font-medium text-green-600">Active</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="border-t pt-3">
-                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Access Control</h4>
-                                    <div class="grid grid-cols-2 gap-2 text-xs">
-                                        <div class="flex items-center space-x-1">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                            <span>Full System Access</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                            <span>User Management</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                            <span>Grid Control</span>
-                                        </div>
-                                        <div class="flex items-center space-x-1">
-                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                            <span>Audit Logs</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                                    Sign Out
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -310,309 +101,279 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Page Header -->
-        <div class="flex justify-between items-center mb-8">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Notifications Center</h1>
-                <p class="text-gray-600 mt-2">Mission-critical alerts and system updates</p>
+        <!-- AI Monitoring Section -->
+        <div class="ai-monitor">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2">🤖 AI Task Monitor</h2>
+                    <p class="text-blue-100">Monitoring pending tasks and alerting for delays</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold" id="pending-count">0</div>
+                    <div class="text-sm text-blue-200">Pending Tasks</div>
+                </div>
             </div>
-            <div class="flex space-x-3">
-                <button id="mark-all-read" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Mark All Read
-                </button>
-                <button id="clear-all" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                    Clear All
-                </button>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                    <div class="text-lg font-semibold" id="avg-response-time">2.3 min</div>
+                    <div class="text-sm text-blue-200">Avg Response Time</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                    <div class="text-lg font-semibold" id="completion-rate">94%</div>
+                    <div class="text-sm text-blue-200">Completion Rate</div>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                    <div class="text-lg font-semibold pulse-ai" id="ai-status">Active</div>
+                    <div class="text-sm text-blue-200">AI Monitor Status</div>
+                </div>
             </div>
         </div>
 
-        <!-- Notification Filters -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-            <div class="flex flex-wrap gap-4">
-                <button class="filter-btn active bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium" data-filter="all">
-                    All (23)
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium" data-filter="critical">
-                    Critical (3)
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium" data-filter="maintenance">
-                    Maintenance (8)
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium" data-filter="security">
-                    Security (2)
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium" data-filter="connection">
-                    Connections (7)
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-medium" data-filter="efficiency">
-                    Performance (3)
-                </button>
+        <!-- Filter and Stats -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">📊 Notification Overview</h2>
+                <div class="flex space-x-2">
+                    <button onclick="filterNotifications('all')" class="filter-btn active px-3 py-1 rounded-lg text-sm font-medium bg-blue-500 text-white">All</button>
+                    <button onclick="filterNotifications('unread')" class="filter-btn px-3 py-1 rounded-lg text-sm font-medium bg-gray-200 text-gray-700">Unread</button>
+                    <button onclick="filterNotifications('in_progress')" class="filter-btn px-3 py-1 rounded-lg text-sm font-medium bg-gray-200 text-gray-700">In Progress</button>
+                    <button onclick="filterNotifications('completed')" class="filter-btn px-3 py-1 rounded-lg text-sm font-medium bg-gray-200 text-gray-700">Completed</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600" id="total-notifications">0</div>
+                    <div class="text-sm text-gray-600">Total Notifications</div>
+                </div>
+                <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                    <div class="text-2xl font-bold text-yellow-600" id="unread-notifications">0</div>
+                    <div class="text-sm text-gray-600">Unread</div>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                    <div class="text-2xl font-bold text-orange-600" id="in-progress-notifications">0</div>
+                    <div class="text-sm text-gray-600">In Progress</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600" id="completed-notifications">0</div>
+                    <div class="text-sm text-gray-600">Completed</div>
+                </div>
             </div>
         </div>
 
         <!-- Notifications List -->
-        <div id="notifications-container" class="space-y-4">
-            <!-- Critical Notifications -->
-            <div class="notification-item notification-critical p-6 rounded-lg shadow-sm" data-category="critical" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">CRITICAL ALERT: Transformer T-14 High Load Risk</h3>
-                            <p class="text-gray-600 mt-1">Transformer T-14 Abuakwa Tanoso operating at 94% capacity. Immediate attention required to prevent overload.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Abuakwa Tanoso, Kumasi</span>
-                                <span>⏰ 2 minutes ago</span>
-                                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">URGENT</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">📋 All Notifications</h2>
             </div>
-
-            <!-- Security Alert -->
-            <div class="notification-item notification-critical p-6 rounded-lg shadow-sm" data-category="security" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">SECURITY ALERT: Suspicious Activity Detected</h3>
-                            <p class="text-gray-600 mt-1">Unauthorized access attempt detected near Transformer T-09. Security protocols activated.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Transformer T-09 Vicinity</span>
-                                <span>⏰ 15 minutes ago</span>
-                                <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">SECURITY</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Maintenance Success -->
-            <div class="notification-item notification-success p-6 rounded-lg shadow-sm" data-category="maintenance" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">Maintenance Completed Successfully</h3>
-                            <p class="text-gray-600 mt-1">Scheduled maintenance on Transformer TR-KMA-005 completed. System restored to full operational capacity.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Kumasi Metropolitan</span>
-                                <span>⏰ 32 minutes ago</span>
-                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">COMPLETED</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Smart Meter Connection -->
-            <div class="notification-item notification-unread p-6 rounded-lg shadow-sm" data-category="connection" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">Smart Meter Connected Successfully</h3>
-                            <p class="text-gray-600 mt-1">Smart meter SM-2847 has been successfully connected to the grid. Real-time monitoring now active.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Obuasi Municipal</span>
-                                <span>⏰ 1 hour ago</span>
-                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">CONNECTION</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Performance Improvement -->
-            <div class="notification-item notification-success p-6 rounded-lg shadow-sm" data-category="efficiency" data-read="true">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">Grid Efficiency Improved</h3>
-                            <p class="text-gray-600 mt-1">Grid efficiency in Kumasi district improved by 2.3% following optimization protocols.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Kumasi District</span>
-                                <span>⏰ 2 hours ago</span>
-                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">PERFORMANCE</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Base Station Reconnection -->
-            <div class="notification-item notification-unread p-6 rounded-lg shadow-sm" data-category="connection" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">Base Station Reconnected</h3>
-                            <p class="text-gray-600 mt-1">Base station BS-007 has been successfully reconnected to the network after maintenance.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Ejisu District</span>
-                                <span>⏰ 3 hours ago</span>
-                                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">NETWORK</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Maintenance Due -->
-            <div class="notification-item notification-unread p-6 rounded-lg shadow-sm" data-category="maintenance" data-read="false">
-                <div class="flex items-start justify-between">
-                    <div class="flex items-start space-x-4">
-                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900">Scheduled Maintenance Due</h3>
-                            <p class="text-gray-600 mt-1">Transformer T-12 requires scheduled maintenance within the next 48 hours. Please coordinate with field team.</p>
-                            <div class="flex items-center space-x-4 mt-3 text-sm text-gray-500">
-                                <span>📍 Asante Akim North</span>
-                                <span>⏰ 4 hours ago</span>
-                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">SCHEDULED</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="text-gray-400 hover:text-gray-600" onclick="markAsRead(this)">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+            <div id="notifications-list" class="divide-y divide-gray-200">
+                <!-- Notifications will be loaded here -->
             </div>
         </div>
     </main>
 
-    <!-- Interactive JavaScript -->
     <script>
+        let allNotifications = JSON.parse(localStorage.getItem('pgx_notifications') || '[]');
+        let currentFilter = 'all';
+
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Theme toggle functionality
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('span');
-            let isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+            loadNotifications();
+            updateStats();
+            updateAIMonitor();
             
-            if (isDarkTheme) {
-                document.body.classList.add('dark-mode');
-                themeIcon.textContent = '🌙';
-            }
-            
-            themeToggle.addEventListener('click', function() {
-                isDarkTheme = !isDarkTheme;
-                localStorage.setItem('darkTheme', isDarkTheme);
-                
-                if (isDarkTheme) {
-                    document.body.classList.add('dark-mode');
-                    themeIcon.textContent = '🌙';
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    themeIcon.textContent = '☀️';
-                }
-            });
-            
-            // Profile dropdown functionality
-            const profileToggle = document.getElementById('profile-toggle');
-            const profileDropdown = document.getElementById('profile-dropdown');
-            const profileArrow = document.getElementById('profile-arrow');
-            let isProfileOpen = false;
-            
-            profileToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                isProfileOpen = !isProfileOpen;
-                
-                if (isProfileOpen) {
-                    profileDropdown.classList.remove('hidden');
-                    setTimeout(() => profileDropdown.classList.add('show'), 10);
-                    profileArrow.style.transform = 'rotate(180deg)';
-                } else {
-                    profileDropdown.classList.remove('show');
-                    profileArrow.style.transform = 'rotate(0deg)';
-                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
-                }
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (isProfileOpen && !profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
-                    isProfileOpen = false;
-                    profileDropdown.classList.remove('show');
-                    profileArrow.style.transform = 'rotate(0deg)';
-                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
-                }
-            });
-            
-            // Load all notifications
-            loadAllNotifications();
+            // Update AI monitor every 2 minutes
+            setInterval(updateAIMonitor, 120000);
         });
-        
-        function markAsRead(button) {
-            const notification = button.closest('.notification-item');
-            notification.classList.remove('notification-unread', 'notification-critical');
-            notification.classList.add('notification-read');
-            notification.dataset.read = 'true';
+
+        function loadNotifications() {
+            const container = document.getElementById('notifications-list');
+            const filteredNotifications = currentFilter === 'all' 
+                ? allNotifications 
+                : allNotifications.filter(n => n.status === currentFilter);
+
+            if (filteredNotifications.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <div class="text-4xl mb-4">📭</div>
+                        <p>No notifications found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredNotifications.map(notification => `
+                <div class="notification-card ${notification.status} priority-${notification.priority} p-6">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4 flex-1">
+                            <span class="text-2xl">${notification.icon}</span>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <h3 class="font-semibold text-gray-900">${notification.message}</h3>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getPriorityClass(notification.priority)}">
+                                        ${notification.priority}
+                                    </span>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getStatusClass(notification.status)}">
+                                        ${notification.status.replace('_', ' ')}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">Category: ${notification.category}</p>
+                                <p class="text-xs text-gray-500">
+                                    ${new Date(notification.timestamp).toLocaleString()}
+                                    ${notification.assignedTo ? ` • Assigned to: ${notification.assignedTo}` : ''}
+                                </p>
+                                ${notification.workStarted ? `
+                                    <p class="text-xs text-blue-600 mt-1">
+                                        Work started: ${new Date(notification.workStarted).toLocaleString()}
+                                    </p>
+                                ` : ''}
+                                ${notification.completed ? `
+                                    <p class="text-xs text-green-600 mt-1">
+                                        Completed: ${new Date(notification.completed).toLocaleString()}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            ${notification.status === 'unread' ? `
+                                <button onclick="startWork(${notification.id})" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors">
+                                    Start Work
+                                </button>
+                            ` : ''}
+                            ${notification.status === 'in_progress' ? `
+                                <button onclick="completeWork(${notification.id})" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors">
+                                    Complete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
-        
-        function loadAllNotifications() {
-            // This will be expanded with more notifications
+
+        function updateStats() {
+            document.getElementById('total-notifications').textContent = allNotifications.length;
+            document.getElementById('unread-notifications').textContent = allNotifications.filter(n => n.status === 'unread').length;
+            document.getElementById('in-progress-notifications').textContent = allNotifications.filter(n => n.status === 'in_progress').length;
+            document.getElementById('completed-notifications').textContent = allNotifications.filter(n => n.status === 'completed').length;
+        }
+
+        function updateAIMonitor() {
+            const pendingTasks = allNotifications.filter(n => n.status === 'in_progress');
+            const completedTasks = allNotifications.filter(n => n.status === 'completed');
+            
+            document.getElementById('pending-count').textContent = pendingTasks.length;
+            
+            // Calculate average response time
+            const responseTimes = completedTasks
+                .filter(n => n.workStarted && n.completed)
+                .map(n => (new Date(n.completed) - new Date(n.workStarted)) / 60000);
+            
+            const avgResponseTime = responseTimes.length > 0 
+                ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1)
+                : '0';
+            
+            document.getElementById('avg-response-time').textContent = `${avgResponseTime} min`;
+            
+            // Calculate completion rate
+            const totalTasks = allNotifications.filter(n => n.status !== 'unread').length;
+            const completionRate = totalTasks > 0 
+                ? Math.round((completedTasks.length / totalTasks) * 100)
+                : 0;
+            
+            document.getElementById('completion-rate').textContent = `${completionRate}%`;
+        }
+
+        function filterNotifications(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            event.target.classList.add('active', 'bg-blue-500', 'text-white');
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            loadNotifications();
+        }
+
+        function startWork(id) {
+            const notification = allNotifications.find(n => n.id === id);
+            if (notification) {
+                notification.status = 'in_progress';
+                notification.assignedTo = 'John Doe';
+                notification.workStarted = new Date().toISOString();
+                
+                localStorage.setItem('pgx_notifications', JSON.stringify(allNotifications));
+                loadNotifications();
+                updateStats();
+                updateAIMonitor();
+                
+                addToHistory('started_work', notification);
+            }
+        }
+
+        function completeWork(id) {
+            const notification = allNotifications.find(n => n.id === id);
+            if (notification) {
+                notification.status = 'completed';
+                notification.completed = new Date().toISOString();
+                
+                localStorage.setItem('pgx_notifications', JSON.stringify(allNotifications));
+                loadNotifications();
+                updateStats();
+                updateAIMonitor();
+                
+                addToHistory('completed_work', notification);
+            }
+        }
+
+        function addToHistory(action, notification) {
+            let history = JSON.parse(localStorage.getItem('pgx_admin_history') || '[]');
+            
+            const historyEntry = {
+                id: Date.now(),
+                admin: 'John Doe',
+                action: action,
+                notification: notification,
+                timestamp: new Date().toISOString()
+            };
+            
+            history.unshift(historyEntry);
+            localStorage.setItem('pgx_admin_history', JSON.stringify(history));
+        }
+
+        function markAllAsRead() {
+            allNotifications.forEach(n => {
+                if (n.status === 'unread') {
+                    n.status = 'read';
+                }
+            });
+            
+            localStorage.setItem('pgx_notifications', JSON.stringify(allNotifications));
+            loadNotifications();
+            updateStats();
+        }
+
+        function getPriorityClass(priority) {
+            const classes = {
+                'high': 'bg-red-100 text-red-800',
+                'medium': 'bg-yellow-100 text-yellow-800',
+                'low': 'bg-green-100 text-green-800'
+            };
+            return classes[priority] || classes.low;
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'unread': 'bg-blue-100 text-blue-800',
+                'read': 'bg-gray-100 text-gray-800',
+                'in_progress': 'bg-orange-100 text-orange-800',
+                'completed': 'bg-green-100 text-green-800'
+            };
+            return classes[status] || classes.unread;
         }
     </script>
 </body>
