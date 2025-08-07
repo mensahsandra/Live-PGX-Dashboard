@@ -8,9 +8,12 @@
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- PGX Notification System -->
+    <script src="js/notifications.js"></script>
     
     <!-- Custom Tailwind Config -->
     <script>
@@ -124,6 +127,18 @@
 
         .pulse-dot {
             animation: pulse-dot 2s infinite;
+        }
+
+        /* Heartbeat animation for district markers */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+        }
+
+        .heartbeat {
+            animation: heartbeat 2s infinite;
         }
 
         /* Critical transformer pulse animation */
@@ -451,37 +466,40 @@
             <!-- Panel Header -->
             <div class="p-6 border-b border-slate-600">
                 <div class="flex items-center space-x-2 mb-2">
-                    <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
-                    <h2 class="text-lg font-semibold text-orange-500">Ashanti Region</h2>
+                    <div class="w-3 h-3 bg-orange-500 rounded-full pulse-dot"></div>
+                    <h2 id="region-name" class="text-lg font-semibold text-orange-500">Ashanti Region</h2>
                 </div>
-                <p class="text-sm text-gray-300">Overview</p>
+                <p class="text-sm text-gray-300">Regional Grid Overview</p>
+                <div class="mt-2 text-xs text-gray-400">
+                    <span id="grid-status">Operational</span> • Last updated: <span id="last-updated">2 min ago</span>
+                </div>
             </div>
 
             <!-- Key Metrics Grid -->
             <div class="p-6 grid grid-cols-2 gap-4">
                 <!-- Transformers -->
                 <div class="bg-slate-600 rounded-lg p-4 text-center cursor-pointer hover:bg-slate-500 transition-colors" onclick="window.location.href='transformers.html'">
-                    <div class="text-2xl font-bold text-orange-500 mb-1">77</div>
+                    <div id="active-transformers" class="text-2xl font-bold text-orange-500 mb-1">77</div>
                     <div class="text-xs text-gray-300">Transformers</div>
                 </div>
 
                 <!-- Active Nodes -->
                 <div class="bg-slate-600 rounded-lg p-4 text-center cursor-pointer hover:bg-slate-500 transition-colors" onclick="window.location.href='nodes.html'">
-                    <div class="text-2xl font-bold text-green-500 mb-1">8</div>
+                    <div id="active-nodes" class="text-2xl font-bold text-green-500 mb-1">8</div>
                     <div class="text-xs text-gray-300">Active</div>
                     <div class="text-xs text-gray-300">Nodes</div>
                 </div>
 
                 <!-- Smart Meters -->
                 <div class="bg-slate-600 rounded-lg p-4 text-center cursor-pointer hover:bg-slate-500 transition-colors" onclick="window.location.href='smart-meters.html'">
-                    <div class="text-2xl font-bold text-blue-500 mb-1">14,801</div>
+                    <div id="smart-meters" class="text-2xl font-bold text-blue-500 mb-1">14,801</div>
                     <div class="text-xs text-gray-300">Smart</div>
                     <div class="text-xs text-gray-300">Meters</div>
                 </div>
 
                 <!-- Coverage -->
                 <div class="bg-slate-600 rounded-lg p-4 text-center">
-                    <div class="text-2xl font-bold text-green-500 mb-1">85%</div>
+                    <div id="coverage-percentage" class="text-2xl font-bold text-green-500 mb-1">85%</div>
                     <div class="text-xs text-gray-300">Coverage</div>
                 </div>
             </div>
@@ -831,6 +849,100 @@
             badge.textContent = newCount;
             badge.classList.remove('hidden');
         }
+
+        // Regional Data for Overview Updates
+        const regionalData = {
+            'ashanti': {
+                name: 'Ashanti Region',
+                transformers: 77,
+                nodes: 8,
+                smartMeters: '14,801',
+                coverage: '85%',
+                gridStatus: 'Operational',
+                districts: 43
+            },
+            'greater-accra': {
+                name: 'Greater Accra',
+                transformers: 95,
+                nodes: 12,
+                smartMeters: '18,500',
+                coverage: '92%',
+                gridStatus: 'Operational',
+                districts: 29
+            },
+            'western': {
+                name: 'Western Region',
+                transformers: 62,
+                nodes: 6,
+                smartMeters: '11,200',
+                coverage: '78%',
+                gridStatus: 'Maintenance',
+                districts: 22
+            },
+            'central': {
+                name: 'Central Region',
+                transformers: 45,
+                nodes: 5,
+                smartMeters: '8,900',
+                coverage: '82%',
+                gridStatus: 'Operational',
+                districts: 20
+            },
+            'northern': {
+                name: 'Northern Region',
+                transformers: 38,
+                nodes: 4,
+                smartMeters: '6,500',
+                coverage: '65%',
+                gridStatus: 'Operational',
+                districts: 27
+            }
+        };
+
+        // Function to update overview based on region selection
+        function updateOverviewForRegion(regionKey) {
+            const data = regionalData[regionKey] || regionalData['ashanti'];
+
+            // Update overview elements
+            document.getElementById('region-name').textContent = data.name;
+            document.getElementById('active-transformers').textContent = data.transformers;
+            document.getElementById('active-nodes').textContent = data.nodes;
+            document.getElementById('smart-meters').textContent = data.smartMeters;
+            document.getElementById('coverage-percentage').textContent = data.coverage;
+            document.getElementById('grid-status').textContent = data.gridStatus;
+
+            // Update last updated time
+            document.getElementById('last-updated').textContent = 'Just now';
+
+            // Update status indicator color based on grid status
+            const statusIndicator = document.querySelector('.w-3.h-3.bg-orange-500');
+            if (statusIndicator) {
+                statusIndicator.className = `w-3 h-3 rounded-full pulse-dot ${
+                    data.gridStatus === 'Operational' ? 'bg-green-500' :
+                    data.gridStatus === 'Maintenance' ? 'bg-yellow-500' : 'bg-red-500'
+                }`;
+            }
+        }
+
+        // Listen for region changes from map interactions
+        document.addEventListener('regionChanged', function(event) {
+            updateOverviewForRegion(event.detail.region);
+        });
+
+        // Initialize with default region
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOverviewForRegion('ashanti');
+
+            // Add heartbeat animation to green district markers
+            setTimeout(() => {
+                const greenMarkers = document.querySelectorAll('.leaflet-marker-icon');
+                greenMarkers.forEach(marker => {
+                    if (marker.style.backgroundColor === 'green' || marker.src.includes('green')) {
+                        marker.classList.add('heartbeat');
+                    }
+                });
+            }, 2000);
+        });
     </script>
 
     <!-- Smart Grid JavaScript -->
