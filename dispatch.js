@@ -29,7 +29,6 @@ const personnelDatabase = [
         experience: '12 years',
         status: 'available',
         currentLocation: 'Obuasi Mining Area',
-        rating: 4.9,
         completedTasks: 203
     },
     {
@@ -44,7 +43,6 @@ const personnelDatabase = [
         experience: '6 years',
         status: 'on-assignment',
         currentLocation: 'Ejisu Industrial Zone',
-        rating: 4.6,
         completedTasks: 98
     },
     {
@@ -59,7 +57,6 @@ const personnelDatabase = [
         experience: '4 years',
         status: 'available',
         currentLocation: 'Agogo Township',
-        rating: 4.7,
         completedTasks: 67
     },
     {
@@ -74,7 +71,6 @@ const personnelDatabase = [
         experience: '10 years',
         status: 'available',
         currentLocation: 'Kuntanase',
-        rating: 4.8,
         completedTasks: 134
     },
     {
@@ -89,12 +85,12 @@ const personnelDatabase = [
         experience: '15 years',
         status: 'available',
         currentLocation: 'Kumasi Tech Park',
-        rating: 4.9,
         completedTasks: 287
     }
 ];
 
-let selectedPersonnel = null;
+let selectedPersonnel = [];
+let currentTask = null;
 let pendingRequest = null;
 
 // Initialize dispatch page
@@ -197,8 +193,8 @@ function createPersonnelCard(person) {
                             <span>${person.experience}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="font-medium">Rating:</span>
-                            <span>⭐ ${person.rating}/5.0 (${person.completedTasks} tasks)</span>
+                            <span class="font-medium">Completed Tasks:</span>
+                            <span>${person.completedTasks} tasks</span>
                         </div>
                     </div>
                     
@@ -214,41 +210,77 @@ function createPersonnelCard(person) {
                     <div class="mt-2 text-xs text-gray-500">
                         📍 Current Location: ${person.currentLocation}
                     </div>
+
+                    <div class="mt-3 pt-3 border-t border-gray-200">
+                        <button onclick="toggleContractorSelection('${person.id}')"
+                                class="contractor-select-btn w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors
+                                       ${person.status === 'available' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
+                                ${person.status !== 'available' ? 'disabled' : ''}>
+                            <span class="select-text">Select Contractor</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `;
 }
 
-function selectPersonnel(person) {
-    if (person.status !== 'available') {
-        alert(`${person.name} is currently ${person.status.replace('-', ' ')} and cannot be assigned to new tasks.`);
+function toggleContractorSelection(personId) {
+    const person = personnelDatabase.find(p => p.id === personId);
+    if (!person || person.status !== 'available') {
+        alert('This contractor is not available for assignment.');
         return;
     }
 
-    selectedPersonnel = person;
-
-    // Update UI to show selection
-    document.querySelectorAll('.personnel-card').forEach(card => {
-        card.classList.remove('border-blue-500', 'bg-blue-100');
-        card.classList.add('border-gray-200');
-    });
-
-    const selectedCard = document.querySelector(`[data-personnel-id="${person.id}"]`);
-    if (selectedCard) {
-        selectedCard.classList.remove('border-gray-200');
-        selectedCard.classList.add('border-blue-500', 'bg-blue-100');
+    const index = selectedPersonnel.findIndex(p => p.id === personId);
+    if (index > -1) {
+        // Remove from selection
+        selectedPersonnel.splice(index, 1);
+    } else {
+        // Add to selection
+        selectedPersonnel.push(person);
     }
 
-    // Show selected personnel summary
+    updateContractorSelectionUI();
     showSelectedPersonnelSummary();
+    updateSubmitButton();
+}
 
-    // Enable submit button
+function updateContractorSelectionUI() {
+    document.querySelectorAll('.contractor-select-btn').forEach(btn => {
+        const card = btn.closest('.personnel-card');
+        const personId = card.getAttribute('data-personnel-id');
+        const isSelected = selectedPersonnel.some(p => p.id === personId);
+        const selectText = btn.querySelector('.select-text');
+
+        if (isSelected) {
+            btn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            btn.classList.add('bg-green-500', 'hover:bg-green-600');
+            selectText.textContent = '✓ Selected';
+            card.classList.add('border-green-500', 'bg-green-50');
+            card.classList.remove('border-gray-200');
+        } else {
+            btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            btn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            selectText.textContent = 'Select Contractor';
+            card.classList.remove('border-green-500', 'bg-green-50');
+            card.classList.add('border-gray-200');
+        }
+    });
+}
+
+function updateSubmitButton() {
     const submitBtn = document.getElementById('submit-dispatch');
     if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.className = 'flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors cursor-pointer';
-        submitBtn.textContent = 'Submit Dispatch Request';
+        if (selectedPersonnel.length > 0) {
+            submitBtn.disabled = false;
+            submitBtn.className = 'flex-1 bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition-colors cursor-pointer';
+            submitBtn.textContent = `Assign Task to ${selectedPersonnel.length} Contractor${selectedPersonnel.length > 1 ? 's' : ''}`;
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.className = 'flex-1 bg-gray-400 text-white px-4 py-2 rounded-lg font-medium cursor-not-allowed';
+            submitBtn.textContent = 'Submit Dispatch Request';
+        }
     }
 }
 
@@ -256,24 +288,34 @@ function showSelectedPersonnelSummary() {
     const summaryDiv = document.getElementById('selected-personnel');
     const detailsDiv = document.getElementById('selected-personnel-details');
 
-    if (summaryDiv && detailsDiv && selectedPersonnel) {
-        summaryDiv.classList.remove('hidden');
-        detailsDiv.innerHTML = `
-            <div class="flex items-center space-x-3 mb-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                    ${selectedPersonnel.name.split(' ').map(n => n[0]).join('')}
+    if (summaryDiv && detailsDiv) {
+        if (selectedPersonnel.length > 0) {
+            summaryDiv.classList.remove('hidden');
+            detailsDiv.innerHTML = `
+                <div class="space-y-2">
+                    ${selectedPersonnel.map(person => `
+                        <div class="flex items-center space-x-3 p-2 bg-white rounded border">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                ${person.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium">${person.name} (${person.id})</div>
+                                <div class="text-xs text-gray-600">${person.phone} • ${person.districtName}</div>
+                                <div class="text-xs text-gray-500">
+                                    <strong>Specialization:</strong> ${person.specialization.charAt(0).toUpperCase() + person.specialization.slice(1)} •
+                                    <strong>Experience:</strong> ${person.experience}
+                                </div>
+                            </div>
+                            <button onclick="toggleContractorSelection('${person.id}')" class="text-red-500 hover:text-red-700 text-sm">
+                                ✕
+                            </button>
+                        </div>
+                    `).join('')}
                 </div>
-                <div>
-                    <div class="font-medium">${selectedPersonnel.name} (${selectedPersonnel.id})</div>
-                    <div class="text-xs">${selectedPersonnel.phone} • ${selectedPersonnel.districtName}</div>
-                </div>
-            </div>
-            <div class="text-xs">
-                <strong>Specialization:</strong> ${selectedPersonnel.specialization.charAt(0).toUpperCase() + selectedPersonnel.specialization.slice(1)} •
-                <strong>Experience:</strong> ${selectedPersonnel.experience} •
-                <strong>Rating:</strong> ⭐ ${selectedPersonnel.rating}/5.0
-            </div>
-        `;
+            `;
+        } else {
+            summaryDiv.classList.add('hidden');
+        }
     }
 }
 
@@ -315,41 +357,112 @@ function applyFilters() {
 }
 
 function submitDispatchRequest() {
-    if (!selectedPersonnel) {
-        alert('Please select personnel to assign to this request.');
+    if (selectedPersonnel.length === 0) {
+        alert('Please select at least one contractor to assign to this request.');
         return;
     }
 
+    // Get task details
+    const taskType = document.getElementById('issue-type').value || 'Maintenance Task';
+    const location = document.getElementById('location-coords').value || 'Ashanti Region';
+
+    // Show assignment confirmation modal
+    showAssignmentConfirmation(taskType, location);
+}
+
+function showAssignmentConfirmation(taskName, location) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Assignment</h3>
+                    <button onclick="closeAssignmentModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-gray-700 mb-4">
+                        Are you sure you want to assign <strong>${selectedPersonnel.length} contractor${selectedPersonnel.length > 1 ? 's' : ''}</strong> to:
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="font-medium text-gray-900">${taskName}</p>
+                        <p class="text-sm text-gray-600 mt-1">📍 ${location}</p>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Selected Contractors:</p>
+                        <div class="space-y-1">
+                            ${selectedPersonnel.map(person => `
+                                <div class="text-sm text-gray-600">• ${person.name} (${person.specialization})</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button onclick="confirmAssignment()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        Yes, Assign
+                    </button>
+                    <button onclick="closeAssignmentModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    window.currentAssignmentModal = modal;
+}
+
+function closeAssignmentModal() {
+    if (window.currentAssignmentModal) {
+        document.body.removeChild(window.currentAssignmentModal);
+        window.currentAssignmentModal = null;
+    }
+}
+
+function confirmAssignment() {
     const additionalNotes = document.getElementById('additional-notes').value;
     const estimatedDuration = document.getElementById('estimated-duration').value;
+    const taskType = document.getElementById('issue-type').value || 'Maintenance Task';
+    const location = document.getElementById('location-coords').value || 'Ashanti Region';
 
-    // Create dispatch request
-    const dispatchRequest = {
-        id: 'DISP-' + Date.now(),
+    // Create dispatch request for each contractor
+    const dispatchRequests = selectedPersonnel.map(person => ({
+        id: 'DISP-' + Date.now() + '-' + person.id,
         timestamp: new Date().toISOString(),
         dateTime: new Date().toLocaleString(),
-        location: pendingRequest ? pendingRequest.location : { lat: 0, lng: 0 },
+        location: pendingRequest ? pendingRequest.location : { lat: 6.6885, lng: -1.6244 },
         type: pendingRequest ? pendingRequest.type : 'maintenance',
-        message: pendingRequest ? pendingRequest.message : 'Manual dispatch request',
-        assignedPersonnel: selectedPersonnel.id,
-        personnelName: selectedPersonnel.name,
-        personnelPhone: selectedPersonnel.phone,
+        message: pendingRequest ? pendingRequest.message : taskType,
+        assignedPersonnel: person.id,
+        personnelName: person.name,
+        personnelPhone: person.phone,
         priority: document.getElementById('priority-level').value,
         notes: additionalNotes,
         estimatedDuration: estimatedDuration,
         status: 'dispatched'
-    };
+    }));
 
     // Store in localStorage
     let dispatchLogs = JSON.parse(localStorage.getItem('dispatchLogs') || '[]');
-    dispatchLogs.push(dispatchRequest);
+    dispatchLogs.push(...dispatchRequests);
     localStorage.setItem('dispatchLogs', JSON.stringify(dispatchLogs));
 
     // Clear session storage
     sessionStorage.removeItem('pendingDispatchRequest');
 
+    // Close modal
+    closeAssignmentModal();
+
     // Show success message
-    alert(`Dispatch request submitted successfully!\n\nRequest ID: ${dispatchRequest.id}\nAssigned to: ${selectedPersonnel.name} (${selectedPersonnel.id})\nPhone: ${selectedPersonnel.phone}\nDistrict: ${selectedPersonnel.districtName}\n\nThe personnel has been notified and will respond shortly.`);
+    alert(`Dispatch request submitted successfully!\n\n${selectedPersonnel.length} contractor${selectedPersonnel.length > 1 ? 's have' : ' has'} been assigned to: ${taskType}\n\nLocation: ${location}\n\nThe personnel have been notified and will respond shortly.`);
 
     // Redirect to audit log or back to map
     const choice = confirm('Would you like to view the audit log to track this request?\n\nClick OK for Audit Log or Cancel to return to the map.');
