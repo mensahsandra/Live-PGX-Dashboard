@@ -15,7 +15,6 @@ const personnelDatabase = [
         experience: '8 years',
         status: 'available',
         currentLocation: 'Kumasi Central',
-        rating: 4.8,
         completedTasks: 156
     },
     {
