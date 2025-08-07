@@ -8,16 +8,16 @@ class PGXNotificationSystem {
         this.allNotifications = JSON.parse(localStorage.getItem('pgx_notifications') || '[]');
         
         this.notificationTemplates = [
-            { type: 'error', message: 'Transformer TXF-003 offline in Kumasi Metro', icon: '⚡', priority: 'high', category: 'infrastructure' },
-            { type: 'warning', message: '12 smart meters pending validation in Ashanti', icon: '⚠️', priority: 'medium', category: 'validation' },
-            { type: 'error', message: 'Energy theft detected – Est. 8.7 kWh in Sector 5', icon: '🚨', priority: 'high', category: 'security' },
-            { type: 'info', message: 'LoRa Base Station BS-002 maintenance scheduled', icon: '🔧', priority: 'low', category: 'maintenance' },
-            { type: 'warning', message: 'Grid load exceeding 85% capacity in Greater Accra', icon: '📊', priority: 'medium', category: 'capacity' },
-            { type: 'error', message: 'Communication lost with 3 smart poles in Western', icon: '📡', priority: 'high', category: 'communication' },
-            { type: 'info', message: 'Scheduled backup to PGX Cloud completed', icon: '☁️', priority: 'low', category: 'system' },
-            { type: 'warning', message: 'Voltage fluctuation detected in Central Region', icon: '⚡', priority: 'medium', category: 'power_quality' },
-            { type: 'error', message: 'District substation DS-007 requires immediate attention', icon: '🔴', priority: 'high', category: 'infrastructure' },
-            { type: 'warning', message: 'Load balancing required in Northern Region', icon: '⚖️', priority: 'medium', category: 'load_management' }
+            { type: 'error', message: 'Transformer TXF-003 offline in Kumasi Metro District', priority: 'high', category: 'infrastructure' },
+            { type: 'warning', message: '12 smart meters pending validation in Ashanti Region', priority: 'medium', category: 'validation' },
+            { type: 'error', message: 'Energy theft detected - Est. 8.7 kWh unaccounted in Sector 5', priority: 'high', category: 'security' },
+            { type: 'info', message: 'LoRa Base Station BS-002 maintenance scheduled for tomorrow', priority: 'low', category: 'maintenance' },
+            { type: 'warning', message: 'Grid load exceeding 85% capacity in Greater Accra', priority: 'medium', category: 'capacity' },
+            { type: 'error', message: 'Communication lost with 3 smart poles in Western Region', priority: 'high', category: 'communication' },
+            { type: 'info', message: 'Scheduled backup to PGX Cloud completed successfully', priority: 'low', category: 'system' },
+            { type: 'warning', message: 'Voltage fluctuation detected in Central Region substations', priority: 'medium', category: 'power_quality' },
+            { type: 'error', message: 'District substation DS-007 requires immediate attention', priority: 'high', category: 'infrastructure' },
+            { type: 'warning', message: 'Load balancing required in Northern Region grid', priority: 'medium', category: 'load_management' }
         ];
         
         this.init();
@@ -61,11 +61,12 @@ class PGXNotificationSystem {
                     background: rgba(255, 255, 255, 0.95);
                     backdrop-filter: blur(10px);
                     border: 1px solid #e5e7eb;
-                    border-radius: 8px;
-                    padding: 12px 16px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                    font-size: 14px;
-                    line-height: 1.4;
+                    border-radius: 6px;
+                    padding: 8px 12px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                    font-size: 13px;
+                    line-height: 1.3;
+                    max-width: 280px;
                 }
                 
                 .alert-indicator {
@@ -135,13 +136,12 @@ class PGXNotificationSystem {
         const alertEl = document.createElement('div');
         alertEl.className = `notification light-alert ${this.getNotificationClass(notification.type)}`;
         alertEl.innerHTML = `
-            <div class="flex items-center space-x-3">
-                <span class="text-lg">${notification.icon}</span>
-                <div class="flex-1">
+            <div class="flex items-start justify-between">
+                <div class="flex-1 pr-2">
                     <p class="text-sm font-medium text-gray-800">${notification.message}</p>
-                    <p class="text-xs text-gray-500 mt-1">${notification.category} • ${notification.priority} priority</p>
+                    <p class="text-xs text-gray-500 mt-1">${notification.category} • ${notification.priority}</p>
                 </div>
-                <button onclick="pgxNotifications.viewNotification(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                <button onclick="pgxNotifications.viewNotification(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0">
                     View
                 </button>
             </div>

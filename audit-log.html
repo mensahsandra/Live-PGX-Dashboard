@@ -356,9 +356,70 @@
         <!-- Page Header -->
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Audit Log</h1>
-                <p class="text-gray-600">Blockchain-secured activity tracking and system monitoring</p>
+                <h1 class="text-2xl font-bold text-gray-900">Audit Log & Contractor History</h1>
+                <p class="text-gray-600">Track all system activities, tasks, and contractor assignments</p>
             </div>
+        </div>
+
+        <!-- Advanced Filter Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">📅 Historical Data Access</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Month</label>
+                    <select id="month-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">All Months</option>
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Day</label>
+                    <select id="day-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">All Days</option>
+                        <!-- Days 1-31 will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Time Range</label>
+                    <select id="time-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">All Times</option>
+                        <option value="morning">Morning (6AM-12PM)</option>
+                        <option value="afternoon">Afternoon (12PM-6PM)</option>
+                        <option value="evening">Evening (6PM-12AM)</option>
+                        <option value="night">Night (12AM-6AM)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contractor</label>
+                    <select id="contractor-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">All Contractors</option>
+                        <!-- Contractors will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="applyFilters()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    Apply Filters
+                </button>
+                <button onclick="exportFilteredData()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                    Export Data
+                </button>
+                <button onclick="clearFilters()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
             
             <!-- Controls -->
             <div class="flex items-center space-x-4">
@@ -568,7 +629,57 @@
 
     <!-- Interactive JavaScript -->
     <script>
+        // Sample contractor and task data
+        const contractorData = [
+            { id: 'CTR-001', name: 'Kwame Asante', company: 'Ghana Power Solutions', specialization: 'Transformers' },
+            { id: 'CTR-002', name: 'Ama Osei', company: 'ElectroTech Ghana', specialization: 'Smart Meters' },
+            { id: 'CTR-003', name: 'Kofi Mensah', company: 'Grid Maintenance Ltd', specialization: 'Infrastructure' },
+            { id: 'CTR-004', name: 'Akosua Boateng', company: 'Power Systems Ghana', specialization: 'LoRaWAN' },
+            { id: 'CTR-005', name: 'Yaw Oppong', company: 'Energy Solutions Co', specialization: 'Maintenance' }
+        ];
+
+        const taskHistory = [
+            {
+                id: 'TASK-001',
+                date: '2024-08-07T10:30:00Z',
+                task: 'Transformer TXF-003 maintenance',
+                contractor: 'CTR-001',
+                admin: 'John Doe',
+                status: 'completed',
+                duration: '2.5 hours',
+                location: 'Kumasi Metro',
+                priority: 'high'
+            },
+            {
+                id: 'TASK-002',
+                date: '2024-08-06T14:15:00Z',
+                task: 'Smart meter validation - Batch 12',
+                contractor: 'CTR-002',
+                admin: 'Jane Smith',
+                status: 'completed',
+                duration: '4 hours',
+                location: 'Ashanti Region',
+                priority: 'medium'
+            },
+            {
+                id: 'TASK-003',
+                date: '2024-08-05T08:45:00Z',
+                task: 'LoRa Base Station BS-002 installation',
+                contractor: 'CTR-004',
+                admin: 'Mike Johnson',
+                status: 'completed',
+                duration: '6 hours',
+                location: 'Greater Accra',
+                priority: 'high'
+            }
+        ];
+
+        let filteredData = [...taskHistory];
+
         document.addEventListener('DOMContentLoaded', function() {
+            initializeFilters();
+            loadTaskHistory();
+
             // Theme toggle functionality
             const themeToggle = document.getElementById('theme-toggle');
             const themeIcon = themeToggle.querySelector('span');
@@ -624,6 +735,112 @@
                 }
             });
         });
+
+        // Initialize filter dropdowns
+        function initializeFilters() {
+            // Populate days dropdown
+            const dayFilter = document.getElementById('day-filter');
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i.toString().padStart(2, '0');
+                option.textContent = i;
+                dayFilter.appendChild(option);
+            }
+
+            // Populate contractors dropdown
+            const contractorFilter = document.getElementById('contractor-filter');
+            contractorData.forEach(contractor => {
+                const option = document.createElement('option');
+                option.value = contractor.id;
+                option.textContent = `${contractor.name} (${contractor.company})`;
+                contractorFilter.appendChild(option);
+            });
+        }
+
+        // Apply filters to task history
+        function applyFilters() {
+            const monthFilter = document.getElementById('month-filter').value;
+            const dayFilter = document.getElementById('day-filter').value;
+            const timeFilter = document.getElementById('time-filter').value;
+            const contractorFilter = document.getElementById('contractor-filter').value;
+
+            filteredData = taskHistory.filter(task => {
+                const taskDate = new Date(task.date);
+
+                // Month filter
+                if (monthFilter && (taskDate.getMonth() + 1).toString().padStart(2, '0') !== monthFilter) {
+                    return false;
+                }
+
+                // Day filter
+                if (dayFilter && taskDate.getDate().toString().padStart(2, '0') !== dayFilter) {
+                    return false;
+                }
+
+                // Time filter
+                if (timeFilter) {
+                    const hour = taskDate.getHours();
+                    switch (timeFilter) {
+                        case 'morning':
+                            if (hour < 6 || hour >= 12) return false;
+                            break;
+                        case 'afternoon':
+                            if (hour < 12 || hour >= 18) return false;
+                            break;
+                        case 'evening':
+                            if (hour < 18 || hour >= 24) return false;
+                            break;
+                        case 'night':
+                            if (hour >= 6) return false;
+                            break;
+                    }
+                }
+
+                // Contractor filter
+                if (contractorFilter && task.contractor !== contractorFilter) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            loadTaskHistory();
+        }
+
+        // Export filtered data
+        function exportFilteredData() {
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Task ID,Date,Task Description,Contractor,Company,Admin,Status,Duration,Location,Priority\n"
+                + filteredData.map(task => {
+                    const contractor = contractorData.find(c => c.id === task.contractor);
+                    return `"${task.id}","${new Date(task.date).toLocaleString()}","${task.task}","${contractor.name}","${contractor.company}","${task.admin}","${task.status}","${task.duration}","${task.location}","${task.priority}"`;
+                }).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `contractor_history_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('month-filter').value = '';
+            document.getElementById('day-filter').value = '';
+            document.getElementById('time-filter').value = '';
+            document.getElementById('contractor-filter').value = '';
+
+            filteredData = [...taskHistory];
+            loadTaskHistory();
+        }
+
+        // Load and display task history
+        function loadTaskHistory() {
+            console.log('Filtered task history:', filteredData);
+            // Implementation would integrate with existing audit log display
+        }
     </script>
 
     <!-- Scripts -->

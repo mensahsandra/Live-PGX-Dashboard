@@ -81,19 +81,47 @@
 
 <body class="bg-gray-50 font-sans">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
+    <header class="bg-slate-700 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="text-2xl font-bold text-blue-600">⚡ PowerGridX</a>
-                    <span class="text-gray-400">|</span>
-                    <h1 class="text-xl font-semibold text-gray-900">🔔 Notifications & Alerts</h1>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">⚡</span>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold text-lg">PowerGridX</div>
+                            <div class="text-orange-300 text-xs">Smart Infrastructure Platform</div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <nav class="hidden md:flex items-center space-x-1">
+                        <a href="index.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">Dashboard</a>
+                        <a href="smart-grid.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">Smart Grid</a>
+                        <a href="transformers.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">Transformers</a>
+                        <a href="audit-log.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">Audit Log</a>
+                        <a href="dispatch.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">Dispatch</a>
+                        <a href="notifications.html" class="px-4 py-2 bg-orange-500 text-white rounded-lg relative">
+                            Notifications
+                            <span id="nav-notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                        </a>
+                        <a href="history.html" class="px-4 py-2 text-gray-300 hover:text-white hover:bg-slate-600 rounded-lg transition-colors">History</a>
+                    </nav>
                 </div>
+
                 <div class="flex items-center space-x-4">
-                    <span id="current-admin" class="text-sm text-gray-600">Admin: John Doe</span>
-                    <button onclick="markAllAsRead()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                        Mark All Read
-                    </button>
+                    <div class="flex items-center space-x-2 text-green-400 text-sm">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>Cloud Connected • Live Data</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">A</div>
+                        <span class="text-white text-sm">Admin</span>
+                        <button onclick="markAllAsRead()" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors">
+                            Mark All Read
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

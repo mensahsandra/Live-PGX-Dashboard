@@ -456,11 +456,12 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            font-size: 14px;
-            line-height: 1.4;
+            border-radius: 6px;
+            padding: 8px 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            line-height: 1.3;
+            max-width: 280px;
         }
 
         .alert-indicator {
@@ -678,8 +679,70 @@
     <!-- Notification Container -->
     <div id="notification-container"></div>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
+    <!-- Main Content with Sidebar -->
+    <div class="flex min-h-screen bg-gray-50">
+        <!-- Sidebar Panel -->
+        <aside class="w-80 bg-slate-800 text-white flex flex-col">
+            <!-- Sidebar Header -->
+            <div class="p-6 border-b border-slate-700">
+                <h2 class="text-lg font-semibold text-white mb-2">Grid Control Panel</h2>
+                <p class="text-slate-300 text-sm">Quick access to key metrics</p>
+            </div>
+
+            <!-- Sidebar Navigation -->
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#regional-performance" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-600 text-white">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <span class="text-sm">📊</span>
+                    </div>
+                    <span class="font-medium">Regional Performance</span>
+                </a>
+
+                <a href="#grid-performance" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                    <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
+                        <span class="text-sm">⚡</span>
+                    </div>
+                    <span class="font-medium">Grid Performance</span>
+                </a>
+
+                <a href="#network-coverage" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                    <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
+                        <span class="text-sm">🌐</span>
+                    </div>
+                    <span class="font-medium">Network Coverage</span>
+                </a>
+
+                <a href="#lorawan-infrastructure" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                    <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
+                        <span class="text-sm">📡</span>
+                    </div>
+                    <span class="font-medium">LoRaWAN Infrastructure</span>
+                </a>
+
+                <a href="#system-health" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                    <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
+                        <span class="text-sm">🔧</span>
+                    </div>
+                    <span class="font-medium">System Health</span>
+                </a>
+            </nav>
+
+            <!-- Admin Profile -->
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">JD</span>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium">John Doe</div>
+                        <div class="text-xs text-slate-400">Grid Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 px-8 py-8 overflow-auto">
         <!-- Region Selector -->
         <div class="dashboard-section">
             <div class="metric-card card-hover slide-up">
@@ -691,16 +754,16 @@
                     <div class="flex items-center space-x-4">
                         <label class="text-sm font-medium text-gray-700">📍 Current Region:</label>
                         <select id="dashboard-region-selector" class="border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium bg-white hover:border-pgx-blue transition-colors" onchange="updateDashboardRegion()">
-                            <option value="ashanti">🏛️ Ashanti Region</option>
-                            <option value="greater-accra">🏙️ Greater Accra</option>
-                            <option value="western">🌊 Western Region</option>
-                            <option value="central">🏖️ Central Region</option>
-                            <option value="northern">🌾 Northern Region</option>
-                            <option value="eastern">🌲 Eastern Region</option>
-                            <option value="upper-east">⛰️ Upper East</option>
-                            <option value="upper-west">🏔️ Upper West</option>
-                            <option value="volta">🏞️ Volta Region</option>
-                            <option value="brong-ahafo">🌳 Brong Ahafo</option>
+                            <option value="ashanti">Ashanti Region</option>
+                            <option value="greater-accra">Greater Accra</option>
+                            <option value="western">Western Region</option>
+                            <option value="central">Central Region</option>
+                            <option value="northern">Northern Region</option>
+                            <option value="eastern">Eastern Region</option>
+                            <option value="upper-east">Upper East</option>
+                            <option value="upper-west">Upper West</option>
+                            <option value="volta">Volta Region</option>
+                            <option value="brong-ahafo">Brong Ahafo</option>
                         </select>
                     </div>
                 </div>
@@ -760,8 +823,8 @@
             </div>
         </div>
 
-        <!-- Regional Performance and System Health -->
-        <div class="dashboard-section">
+        <!-- Regional Performance Section -->
+        <section id="regional-performance" class="dashboard-section">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Regional Performance Chart -->
                 <div class="metric-card card-hover slide-up">
@@ -792,8 +855,8 @@
             </div>
 
                 <!-- System Health -->
-                <div class="metric-card card-hover slide-up">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-1">🔧 System Health</h2>
+                <div id="system-health" class="metric-card card-hover slide-up">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-1">System Health</h2>
                     <p class="text-sm text-gray-600 mb-6">Overall infrastructure status</p>
 
                 <div class="space-y-6" id="system-health-content">
@@ -905,10 +968,11 @@
         </div>
 
         <!-- Performance Overview and Live Power Generation -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Grid Performance Metrics -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Grid Performance</h3>
+        <section id="grid-performance" class="dashboard-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Grid Performance Metrics -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Grid Performance</h3>
                 <div class="space-y-6">
                     <!-- Grid Performance -->
                     <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showPerformanceDetails('grid')">
@@ -1021,11 +1085,12 @@
         </div>
 
         <!-- Network Coverage and LoRaWAN Infrastructure -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Network Coverage -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">Network Coverage</h3>
+        <section id="network-coverage" class="dashboard-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Network Coverage -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Network Coverage</h3>
                     <select id="region-selector" class="border border-gray-300 rounded-lg px-3 py-1 text-sm" onchange="updateNetworkCoverage()">
                         <option value="ashanti">Ashanti Region</option>
                         <option value="greater-accra">Greater Accra</option>
@@ -1089,7 +1154,7 @@
             </div>
 
             <!-- LoRaWAN Infrastructure Overview -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div id="lorawan-infrastructure" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900">LoRaWAN Infrastructure</h3>
                     <button class="text-blue-600 text-sm hover:text-blue-800 transition-colors">View All</button>
@@ -1526,14 +1591,16 @@
         let allNotifications = JSON.parse(localStorage.getItem('pgx_notifications') || '[]');
 
         const notificationTemplates = [
-            { type: 'error', message: 'Transformer TXF-003 offline in Kumasi Metro', icon: '⚡', priority: 'high', category: 'infrastructure' },
-            { type: 'warning', message: '12 smart meters pending validation in Ashanti', icon: '⚠️', priority: 'medium', category: 'validation' },
-            { type: 'error', message: 'Energy theft detected – Est. 8.7 kWh in Sector 5', icon: '🚨', priority: 'high', category: 'security' },
-            { type: 'info', message: 'LoRa Base Station BS-002 maintenance scheduled', icon: '🔧', priority: 'low', category: 'maintenance' },
-            { type: 'warning', message: 'Grid load exceeding 85% capacity in Greater Accra', icon: '📊', priority: 'medium', category: 'capacity' },
-            { type: 'error', message: 'Communication lost with 3 smart poles in Western', icon: '📡', priority: 'high', category: 'communication' },
-            { type: 'info', message: 'Scheduled backup to PGX Cloud completed', icon: '☁️', priority: 'low', category: 'system' },
-            { type: 'warning', message: 'Voltage fluctuation detected in Central Region', icon: '⚡', priority: 'medium', category: 'power_quality' }
+            { type: 'error', message: 'Transformer TXF-003 offline in Kumasi Metro District', priority: 'high', category: 'infrastructure' },
+            { type: 'warning', message: '12 smart meters pending validation in Ashanti Region', priority: 'medium', category: 'validation' },
+            { type: 'error', message: 'Energy theft detected - Est. 8.7 kWh unaccounted in Sector 5', priority: 'high', category: 'security' },
+            { type: 'info', message: 'LoRa Base Station BS-002 maintenance scheduled for tomorrow', priority: 'low', category: 'maintenance' },
+            { type: 'warning', message: 'Grid load exceeding 85% capacity in Greater Accra', priority: 'medium', category: 'capacity' },
+            { type: 'error', message: 'Communication lost with 3 smart poles in Western Region', priority: 'high', category: 'communication' },
+            { type: 'info', message: 'Scheduled backup to PGX Cloud completed successfully', priority: 'low', category: 'system' },
+            { type: 'warning', message: 'Voltage fluctuation detected in Central Region substations', priority: 'medium', category: 'power_quality' },
+            { type: 'error', message: 'District substation DS-007 requires immediate attention', priority: 'high', category: 'infrastructure' },
+            { type: 'warning', message: 'Load balancing required in Northern Region grid', priority: 'medium', category: 'load_management' }
         ];
 
         function showLightAlert(notification) {
@@ -1560,13 +1627,12 @@
             const alertEl = document.createElement('div');
             alertEl.className = `notification light-alert ${getNotificationClass(notification.type)}`;
             alertEl.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <span class="text-lg">${notification.icon}</span>
-                    <div class="flex-1">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1 pr-2">
                         <p class="text-sm font-medium text-gray-800">${notification.message}</p>
-                        <p class="text-xs text-gray-500 mt-1">${notification.category} • ${notification.priority} priority</p>
+                        <p class="text-xs text-gray-500 mt-1">${notification.category} • ${notification.priority}</p>
                     </div>
-                    <button onclick="viewNotification(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                    <button onclick="viewNotification(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0">
                         View
                     </button>
                 </div>
@@ -2605,5 +2671,6 @@
             });
         });
     </script>
+    </div> <!-- End of main layout flex container -->
 </body>
 </html>
