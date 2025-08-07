@@ -314,6 +314,67 @@
             transform: translateY(0) scale(1);
             opacity: 1;
         }
+
+        /* Dark mode styles */
+        .dark-mode {
+            background-color: #1a1a1a !important;
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode header {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .bg-white {
+            background-color: #2d3748 !important;
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #1a1a1a !important;
+        }
+
+        .dark-mode .text-gray-900 {
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode .text-gray-600 {
+            color: #a0a0a0 !important;
+        }
+
+        .dark-mode .text-gray-500 {
+            color: #888888 !important;
+        }
+
+        .dark-mode .border-gray-200 {
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .border-gray-300 {
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .bg-slate-700 {
+            background-color: #1a202c !important;
+        }
+
+        .dark-mode .bg-slate-600 {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .bg-slate-500 {
+            background-color: #4a5568 !important;
+        }
+
+        .dark-mode input, .dark-mode select, .dark-mode textarea {
+            background-color: #2d3748 !important;
+            color: #e5e5e5 !important;
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .shadow-sm, .dark-mode .shadow-lg, .dark-mode .shadow-xl {
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -323,8 +384,14 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo and Title -->
                 <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold">⚡</span>
+                    <div class="w-8 h-8 rounded-lg overflow-hidden">
+                        <video autoplay loop muted class="w-full h-full object-cover">
+                            <source src="PGXLogo.webm" type="video/webm">
+                            <!-- Fallback for browsers that don't support video -->
+                            <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold">⚡</span>
+                            </div>
+                        </video>
                     </div>
                     <div>
                         <h1 class="text-xl font-bold text-white">
@@ -335,27 +402,27 @@
                 </div>
 
                 <!-- Navigation -->
-                <nav class="hidden md:flex space-x-1">
-                    <a href="index.html" class="nav-btn bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                <nav class="hidden lg:flex items-center space-x-2">
+                    <a href="index.html" class="nav-btn bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-medium">
                         Dashboard
                     </a>
-                    <a href="smart-grid.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="smart-grid.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         Smart Grid
                     </a>
-                    <a href="transformers.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="transformers.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         Transformers
                     </a>
-                    <a href="audit-log.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="audit-log.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         Audit Log
                     </a>
-                    <a href="dispatch.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="dispatch.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         Dispatch
                     </a>
-                    <a href="notifications.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium relative">
+                    <a href="notifications.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium relative transition-all duration-300">
                         Notifications
-                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">3</span>
+                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
                     </a>
-                    <a href="history.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    <a href="history.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         History
                     </a>
                 </nav>
@@ -454,51 +521,51 @@
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <!-- Top Metrics Row -->
+        <!-- System Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Monthly Revenue Card -->
+            <!-- System Status Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Monthly Revenue</p>
-                        <p class="text-2xl font-bold text-gray-900">₵ 1,198,870</p>
-                        <p class="text-sm text-green-600 mt-1">+12.5% from last month</p>
+                        <p class="text-sm font-medium text-gray-600">System Status</p>
+                        <p class="text-2xl font-bold text-green-600">Operational</p>
+                        <p class="text-sm text-gray-500 mt-1">All systems running</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Energy Consumption Card -->
+            <!-- Active Transformers Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Energy Consumption</p>
-                        <p class="text-2xl font-bold text-gray-900">32,372 kWh</p>
-                        <p class="text-sm text-blue-600 mt-1">+8.2% efficiency</p>
+                        <p class="text-sm font-medium text-gray-600">Active Transformers</p>
+                        <p class="text-2xl font-bold text-gray-900">77</p>
+                        <p class="text-sm text-blue-600 mt-1">1 Critical Alert</p>
                     </div>
-                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Power Transmitted Card -->
+            <!-- Smart Meters Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Power Transmitted</p>
-                        <p class="text-2xl font-bold text-gray-900">211 MWh</p>
-                        <p class="text-sm text-yellow-600 mt-1">Peak: 245 MWh</p>
+                        <p class="text-sm font-medium text-gray-600">Smart Meters</p>
+                        <p class="text-2xl font-bold text-gray-900">14,801</p>
+                        <p class="text-sm text-green-600 mt-1">85% Coverage</p>
                     </div>
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                     </div>
                 </div>

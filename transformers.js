@@ -406,7 +406,61 @@ function showTransformerDetails(transformerId) {
 
     modalTitle.textContent = `${transformer.name} (${transformer.id})`;
 
+    // Generate revenue and energy metrics for this transformer
+    const revenueMetrics = generateTransformerMetrics(transformer);
+
     modalContent.innerHTML = `
+        <!-- Revenue and Energy Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Monthly Revenue Card -->
+            <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-green-700">Monthly Revenue</p>
+                        <p class="text-2xl font-bold text-green-900">₵ ${revenueMetrics.monthlyRevenue.toLocaleString()}</p>
+                        <p class="text-sm text-green-600 mt-1">${revenueMetrics.revenueChange} from last month</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Energy Consumption Card -->
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-purple-700">Energy Consumption</p>
+                        <p class="text-2xl font-bold text-purple-900">${revenueMetrics.energyConsumption.toLocaleString()} kWh</p>
+                        <p class="text-sm text-purple-600 mt-1">${revenueMetrics.efficiencyChange} efficiency</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-200 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power Transmitted Card -->
+            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-yellow-700">Power Transmitted</p>
+                        <p class="text-2xl font-bold text-yellow-900">${revenueMetrics.powerTransmitted} MWh</p>
+                        <p class="text-sm text-yellow-600 mt-1">Peak: ${revenueMetrics.peakPower} MWh</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-200 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Basic Information -->
             <div class="space-y-4">
@@ -939,4 +993,39 @@ function exportCustomerData(transformerId) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+}
+
+function generateTransformerMetrics(transformer) {
+    // Generate realistic metrics based on transformer characteristics
+    const baseRevenue = {
+        'Distribution': { min: 45000, max: 85000 },
+        'Power': { min: 120000, max: 250000 },
+        'Step-up': { min: 80000, max: 150000 },
+        'Step-down': { min: 60000, max: 120000 }
+    };
+
+    const transformerType = transformer.technicalSpecs?.transformerType || 'Distribution';
+    const revenueRange = baseRevenue[transformerType] || baseRevenue['Distribution'];
+
+    // Calculate base metrics
+    const monthlyRevenue = Math.floor(Math.random() * (revenueRange.max - revenueRange.min) + revenueRange.min);
+    const energyConsumption = Math.floor(monthlyRevenue * 0.025 + Math.random() * 5000); // Roughly correlate with revenue
+    const powerTransmitted = Math.floor(energyConsumption / 1000 * 0.8); // Convert to MWh
+    const peakPower = Math.floor(powerTransmitted * 1.15); // Peak is typically 15% higher
+
+    // Generate change percentages
+    const revenueChangeValue = (Math.random() * 30 - 5).toFixed(1); // -5% to +25%
+    const efficiencyChangeValue = (Math.random() * 15 + 2).toFixed(1); // +2% to +17%
+
+    const revenueChange = revenueChangeValue > 0 ? `+${revenueChangeValue}%` : `${revenueChangeValue}%`;
+    const efficiencyChange = `+${efficiencyChangeValue}%`;
+
+    return {
+        monthlyRevenue,
+        energyConsumption,
+        powerTransmitted,
+        peakPower,
+        revenueChange,
+        efficiencyChange
+    };
 }

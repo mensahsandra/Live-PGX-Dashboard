@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - PowerGridX</title>
+    <link rel="icon" href="favicon/favicon.svg" type="image/svg+xml">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pgx-orange': '#FF6B00',
+                        'pgx-orange-light': '#FF8533',
+                        'pgx-orange-dark': '#E55A00'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Enhanced navigation styles */
+        .nav-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Heartbeat animation */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        /* Profile dropdown */
+        .profile-dropdown {
+            transform: translateY(-10px) scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease-out;
+        }
+        
+        .profile-dropdown.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        
+        /* Contractor hover effects */
+        .contractor-tag {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .contractor-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Task status indicators */
+        .status-completed { background: #dcfce7; color: #166534; }
+        .status-in-progress { background: #dbeafe; color: #1e40af; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-overdue { background: #fee2e2; color: #dc2626; }
+        
+        /* Timeline styles */
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 0.25rem;
+            top: 0.75rem;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #3b82f6;
+            border-radius: 50%;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        /* Dark mode styles */
+        .dark-mode {
+            background-color: #1a1a1a !important;
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode header {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .bg-white {
+            background-color: #2d3748 !important;
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode .bg-gray-50 {
+            background-color: #1a1a1a !important;
+        }
+
+        .dark-mode .text-gray-900 {
+            color: #e5e5e5 !important;
+        }
+
+        .dark-mode .text-gray-600 {
+            color: #a0a0a0 !important;
+        }
+
+        .dark-mode .text-gray-500 {
+            color: #888888 !important;
+        }
+
+        .dark-mode .border-gray-200 {
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .border-gray-300 {
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .bg-slate-700 {
+            background-color: #1a202c !important;
+        }
+
+        .dark-mode .bg-slate-600 {
+            background-color: #2d3748 !important;
+        }
+
+        .dark-mode .bg-slate-500 {
+            background-color: #4a5568 !important;
+        }
+
+        .dark-mode input, .dark-mode select, .dark-mode textarea {
+            background-color: #2d3748 !important;
+            color: #e5e5e5 !important;
+            border-color: #4a5568 !important;
+        }
+
+        .dark-mode .shadow-sm, .dark-mode .shadow-lg, .dark-mode .shadow-xl {
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Navigation Header -->
+    <header class="bg-slate-700 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg overflow-hidden">
+                        <video autoplay loop muted class="w-full h-full object-cover">
+                            <source src="PGXLogo.webm" type="video/webm">
+                            <!-- Fallback for browsers that don't support video -->
+                            <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold">⚡</span>
+                            </div>
+                        </video>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">
+                            <span style="color: #044080;">PowerGrid</span><span style="color: #f1491d;">X</span>
+                        </h1>
+                        <p class="text-xs text-gray-300">Smart Infrastructure Platform</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden lg:flex items-center space-x-2">
+                    <a href="index.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
+                        Dashboard
+                    </a>
+                    <a href="smart-grid.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
+                        Smart Grid
+                    </a>
+                    <a href="transformers.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
+                        Transformers
+                    </a>
+                    <a href="audit-log.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
+                        Audit Log
+                    </a>
+                    <a href="dispatch.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
+                        Dispatch
+                    </a>
+                    <a href="notifications.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium relative transition-all duration-300">
+                        Notifications
+                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+                    </a>
+                    <a href="history.html" class="nav-btn bg-orange-500 text-white px-3 py-2 rounded-lg text-xs font-medium">
+                        History
+                    </a>
+                </nav>
+                
+                <!-- Right Side Controls -->
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="w-8 h-8 bg-slate-600 hover:bg-slate-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                        <span class="text-yellow-400 text-sm">☀️</span>
+                    </button>
+                    
+                    <!-- Status -->
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full heartbeat"></span>
+                        <span class="text-sm text-gray-300">Cloud Connected • Live Data</span>
+                    </div>
+                    
+                    <!-- Profile -->
+                    <div class="relative">
+                        <button id="profile-toggle" class="flex items-center space-x-2 bg-slate-600 hover:bg-slate-500 px-3 py-2 rounded-lg transition-all duration-300">
+                            <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">A</span>
+                            </div>
+                            <span class="text-white text-sm">Admin</span>
+                            <svg class="w-4 h-4 text-gray-300 transition-transform duration-200" id="profile-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Profile Dropdown -->
+                        <div id="profile-dropdown" class="profile-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 hidden z-50">
+                            <div class="p-4 border-b border-gray-200">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-lg font-bold">A</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">Administrator</h3>
+                                        <p class="text-sm text-gray-500">ADM-001</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 space-y-3">
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-gray-500">Role:</span>
+                                        <p class="font-medium">Super Admin</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Login Time:</span>
+                                        <p class="font-medium">5:43:20 AM</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Last Logout:</span>
+                                        <p class="font-medium">Yesterday 11:30 PM</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">Session:</span>
+                                        <p class="font-medium text-green-600">Active</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t pt-3">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-2">Access Control</h4>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Full System Access</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>User Management</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Grid Control</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                            <span>Audit Logs</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Mission History & Performance</h1>
+                <p class="text-gray-600 mt-2">Admin task tracking and performance monitoring for secure grid operations</p>
+            </div>
+            <div class="flex space-x-3">
+                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Export Report
+                </button>
+                <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    Generate Summary
+                </button>
+            </div>
+        </div>
+
+        <!-- Session Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Current Session</p>
+                        <p class="text-2xl font-bold text-green-600">7h 42m</p>
+                        <p class="text-sm text-gray-500 mt-1">Since 5:43:20 AM</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Tasks Completed</p>
+                        <p class="text-2xl font-bold text-blue-600">12</p>
+                        <p class="text-sm text-gray-500 mt-1">Today</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Critical Responses</p>
+                        <p class="text-2xl font-bold text-orange-600">3</p>
+                        <p class="text-sm text-gray-500 mt-1">Avg: 4.2 min</p>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Performance Score</p>
+                        <p class="text-2xl font-bold text-green-600">98.5%</p>
+                        <p class="text-sm text-gray-500 mt-1">Excellent</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task History Timeline -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Today's Tasks -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Today's Mission Log</h2>
+                <div class="space-y-6">
+                    <!-- Task 1 -->
+                    <div class="timeline-item">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Critical Alert Response - T-14 Transformer</h3>
+                                <p class="text-sm text-gray-600 mt-1">Responded to high load risk alert at Abuakwa Tanoso transformer. Coordinated with field team for immediate assessment.</p>
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <span class="text-xs text-gray-500">13:25:42</span>
+                                    <span class="px-2 py-1 text-xs font-medium status-completed rounded-full">COMPLETED</span>
+                                    <div class="contractor-tag px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+                                         onclick="showContractorInfo('TechCorp Solutions', 'Field Operations', 'Kumasi Metropolitan', 'ENG-001')">
+                                        TechCorp Solutions
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 2 -->
+                    <div class="timeline-item">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Smart Meter Integration - SM-2847</h3>
+                                <p class="text-sm text-gray-600 mt-1">Successfully integrated new smart meter into grid monitoring system. Real-time data collection active.</p>
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <span class="text-xs text-gray-500">11:15:33</span>
+                                    <span class="px-2 py-1 text-xs font-medium status-completed rounded-full">COMPLETED</span>
+                                    <div class="contractor-tag px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+                                         onclick="showContractorInfo('GridTech Ghana', 'Smart Meter Installation', 'Obuasi Municipal', 'SMI-003')">
+                                        GridTech Ghana
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 3 -->
+                    <div class="timeline-item">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Security Protocol Activation</h3>
+                                <p class="text-sm text-gray-600 mt-1">Activated security protocols following suspicious activity detection near T-09. Coordinated with security team.</p>
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <span class="text-xs text-gray-500">09:42:18</span>
+                                    <span class="px-2 py-1 text-xs font-medium status-completed rounded-full">COMPLETED</span>
+                                    <div class="contractor-tag px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium"
+                                         onclick="showContractorInfo('SecureGrid Security', 'Security Operations', 'Kumasi Central', 'SEC-007')">
+                                        SecureGrid Security
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 4 -->
+                    <div class="timeline-item">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">Maintenance Coordination - TR-KMA-005</h3>
+                                <p class="text-sm text-gray-600 mt-1">Coordinated scheduled maintenance completion. System restored to full operational capacity.</p>
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <span class="text-xs text-gray-500">08:30:45</span>
+                                    <span class="px-2 py-1 text-xs font-medium status-completed rounded-full">COMPLETED</span>
+                                    <div class="contractor-tag px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium"
+                                         onclick="showContractorInfo('PowerMaint Ltd', 'Maintenance Services', 'Kumasi Metropolitan', 'MNT-012')">
+                                        PowerMaint Ltd
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 5 -->
+                    <div class="timeline-item">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="font-medium text-gray-900">System Login & Daily Briefing</h3>
+                                <p class="text-sm text-gray-600 mt-1">Initiated daily operations. Reviewed overnight alerts and system status reports.</p>
+                                <div class="flex items-center space-x-4 mt-3">
+                                    <span class="text-xs text-gray-500">05:43:20</span>
+                                    <span class="px-2 py-1 text-xs font-medium status-completed rounded-full">COMPLETED</span>
+                                    <div class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+                                        System Admin
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Analytics -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Performance Analytics</h2>
+
+                <!-- Response Time Chart -->
+                <div class="mb-8">
+                    <h3 class="text-sm font-medium text-gray-700 mb-4">Critical Response Times (Today)</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">T-14 Alert Response</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-green-600">3.2 min</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Security Alert Response</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 90%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-blue-600">2.8 min</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Maintenance Coordination</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-32 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 95%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-purple-600">1.5 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Summary -->
+                <div class="mb-8">
+                    <h3 class="text-sm font-medium text-gray-700 mb-4">Weekly Performance Summary</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <p class="text-2xl font-bold text-green-600">47</p>
+                            <p class="text-sm text-gray-600">Tasks Completed</p>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <p class="text-2xl font-bold text-blue-600">2.1 min</p>
+                            <p class="text-sm text-gray-600">Avg Response</p>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <p class="text-2xl font-bold text-purple-600">99.2%</p>
+                            <p class="text-sm text-gray-600">Uptime</p>
+                        </div>
+                        <div class="text-center p-4 bg-orange-50 rounded-lg">
+                            <p class="text-2xl font-bold text-orange-600">15</p>
+                            <p class="text-sm text-gray-600">Critical Alerts</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission Status -->
+                <div>
+                    <h3 class="text-sm font-medium text-gray-700 mb-4">Mission Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-900">Grid Security</span>
+                            </div>
+                            <span class="text-sm font-medium text-green-600">SECURE</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-900">System Performance</span>
+                            </div>
+                            <span class="text-sm font-medium text-blue-600">OPTIMAL</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-900">Maintenance Schedule</span>
+                            </div>
+                            <span class="text-sm font-medium text-yellow-600">ON TRACK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contractor Info Modal -->
+    <div id="contractor-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Contractor Information</h3>
+                    <button onclick="closeContractorModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="contractor-details" class="space-y-4">
+                    <!-- Contractor details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('span');
+            let isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+            
+            if (isDarkTheme) {
+                document.body.classList.add('dark-mode');
+                themeIcon.textContent = '🌙';
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                isDarkTheme = !isDarkTheme;
+                localStorage.setItem('darkTheme', isDarkTheme);
+                
+                if (isDarkTheme) {
+                    document.body.classList.add('dark-mode');
+                    themeIcon.textContent = '🌙';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    themeIcon.textContent = '☀️';
+                }
+            });
+            
+            // Profile dropdown functionality
+            const profileToggle = document.getElementById('profile-toggle');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            const profileArrow = document.getElementById('profile-arrow');
+            let isProfileOpen = false;
+            
+            profileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                isProfileOpen = !isProfileOpen;
+                
+                if (isProfileOpen) {
+                    profileDropdown.classList.remove('hidden');
+                    setTimeout(() => profileDropdown.classList.add('show'), 10);
+                    profileArrow.style.transform = 'rotate(180deg)';
+                } else {
+                    profileDropdown.classList.remove('show');
+                    profileArrow.style.transform = 'rotate(0deg)';
+                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (isProfileOpen && !profileToggle.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    isProfileOpen = false;
+                    profileDropdown.classList.remove('show');
+                    profileArrow.style.transform = 'rotate(0deg)';
+                    setTimeout(() => profileDropdown.classList.add('hidden'), 200);
+                }
+            });
+
+            // Initialize performance tracking
+            updatePerformanceMetrics();
+        });
+
+        function showContractorInfo(name, specialization, location, id) {
+            const modal = document.getElementById('contractor-modal');
+            const details = document.getElementById('contractor-details');
+
+            // Contractor database
+            const contractors = {
+                'TechCorp Solutions': {
+                    name: 'TechCorp Solutions',
+                    specialization: 'Field Operations & Emergency Response',
+                    location: 'Kumasi Metropolitan',
+                    id: 'ENG-001',
+                    contact: '+233 24 123 4567',
+                    email: 'ops@techcorp.gh',
+                    rating: '4.9/5.0',
+                    completedTasks: 247,
+                    responseTime: '3.2 min avg',
+                    certification: 'ISO 9001:2015 Certified'
+                },
+                'GridTech Ghana': {
+                    name: 'GridTech Ghana',
+                    specialization: 'Smart Meter Installation & IoT Integration',
+                    location: 'Obuasi Municipal',
+                    id: 'SMI-003',
+                    contact: '+233 20 987 6543',
+                    email: 'install@gridtech.gh',
+                    rating: '4.8/5.0',
+                    completedTasks: 189,
+                    responseTime: '2.8 min avg',
+                    certification: 'Smart Grid Certified'
+                },
+                'SecureGrid Security': {
+                    name: 'SecureGrid Security',
+                    specialization: 'Infrastructure Security & Threat Response',
+                    location: 'Kumasi Central',
+                    id: 'SEC-007',
+                    contact: '+233 26 555 0123',
+                    email: 'security@securegrid.gh',
+                    rating: '5.0/5.0',
+                    completedTasks: 156,
+                    responseTime: '1.8 min avg',
+                    certification: 'Security Clearance Level A'
+                },
+                'PowerMaint Ltd': {
+                    name: 'PowerMaint Ltd',
+                    specialization: 'Transformer Maintenance & Repair',
+                    location: 'Kumasi Metropolitan',
+                    id: 'MNT-012',
+                    contact: '+233 24 777 8899',
+                    email: 'service@powermaint.gh',
+                    rating: '4.7/5.0',
+                    completedTasks: 312,
+                    responseTime: '4.1 min avg',
+                    certification: 'Electrical Safety Certified'
+                }
+            };
+
+            const contractor = contractors[name];
+            if (contractor) {
+                details.innerHTML = `
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white text-xl font-bold">${contractor.name.charAt(0)}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">${contractor.name}</h4>
+                            <p class="text-sm text-gray-600">${contractor.specialization}</p>
+                            <p class="text-xs text-gray-500">ID: ${contractor.id}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-gray-500">Location:</span>
+                            <p class="font-medium">${contractor.location}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Rating:</span>
+                            <p class="font-medium text-green-600">${contractor.rating}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Contact:</span>
+                            <p class="font-medium">${contractor.contact}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Email:</span>
+                            <p class="font-medium">${contractor.email}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Completed Tasks:</span>
+                            <p class="font-medium">${contractor.completedTasks}</p>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Avg Response:</span>
+                            <p class="font-medium">${contractor.responseTime}</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm font-medium text-blue-900">Certification</p>
+                        <p class="text-sm text-blue-700">${contractor.certification}</p>
+                    </div>
+
+                    <div class="mt-4 flex space-x-3">
+                        <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                            Contact
+                        </button>
+                        <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                            View History
+                        </button>
+                    </div>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeContractorModal() {
+            document.getElementById('contractor-modal').classList.add('hidden');
+        }
+
+        function updatePerformanceMetrics() {
+            // Simulate real-time performance updates
+            const currentTime = new Date();
+            const loginTime = new Date();
+            loginTime.setHours(5, 43, 20, 0);
+
+            const sessionDuration = Math.floor((currentTime - loginTime) / 1000 / 60); // minutes
+            const hours = Math.floor(sessionDuration / 60);
+            const minutes = sessionDuration % 60;
+
+            // Update session time if element exists
+            const sessionElement = document.querySelector('.text-2xl.font-bold.text-green-600');
+            if (sessionElement) {
+                sessionElement.textContent = `${hours}h ${minutes}m`;
+            }
+        }
+
+        // Update performance metrics every minute
+        setInterval(updatePerformanceMetrics, 60000);
+    </script>
+</body>
+</html>
