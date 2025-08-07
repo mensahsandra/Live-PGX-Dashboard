@@ -9,8 +9,29 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
+                    },
+                    colors: {
+                        'pgx-green': '#10b981',
+                        'pgx-blue': '#3b82f6',
+                        'pgx-gray': '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Custom Tailwind Config -->
     <script>
@@ -375,6 +396,91 @@
         .dark-mode .shadow-sm, .dark-mode .shadow-lg, .dark-mode .shadow-xl {
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
         }
+
+        /* Custom Animations */
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes slide-up {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .pulse-soft { animation: pulse-soft 2s infinite; }
+        .slide-up { animation: slide-up 0.5s ease-out; }
+        .fade-in { animation: fade-in 0.3s ease-out; }
+
+        /* Card Hover Effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Better spacing */
+        .dashboard-section {
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            padding: 1.5rem;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -519,10 +625,42 @@
         </div>
     </header>
 
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans">
+        <!-- Region Selector -->
+        <div class="dashboard-section">
+            <div class="metric-card card-hover slide-up">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-1">⚡ Grid Monitoring Dashboard</h2>
+                        <p class="text-sm text-gray-600">Select a region to view detailed infrastructure data</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <label class="text-sm font-medium text-gray-700">📍 Current Region:</label>
+                        <select id="dashboard-region-selector" class="border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium bg-white hover:border-pgx-blue transition-colors" onchange="updateDashboardRegion()">
+                            <option value="ashanti">🏛️ Ashanti Region</option>
+                            <option value="greater-accra">🏙️ Greater Accra</option>
+                            <option value="western">🌊 Western Region</option>
+                            <option value="central">🏖️ Central Region</option>
+                            <option value="northern">🌾 Northern Region</option>
+                            <option value="eastern">🌲 Eastern Region</option>
+                            <option value="upper-east">⛰️ Upper East</option>
+                            <option value="upper-west">🏔️ Upper West</option>
+                            <option value="volta">🏞️ Volta Region</option>
+                            <option value="brong-ahafo">🌳 Brong Ahafo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- System Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="dashboard-section">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="system-overview"></div>
+        </div>
             <!-- System Status Card -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
@@ -572,12 +710,403 @@
             </div>
         </div>
 
-        <!-- Performance Overview -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Performance Metrics -->
+        <!-- Regional Performance and System Health -->
+        <div class="dashboard-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Regional Performance Chart -->
+                <div class="metric-card card-hover slide-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-1">📊 Regional Performance</h2>
+                            <p class="text-sm text-gray-600">Energy output by region (MW)</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="chart-type-bar" onclick="switchChartType('bar')" class="px-3 py-2 bg-pgx-blue text-white rounded-lg text-sm font-medium transition-all hover:bg-blue-600">
+                                📊 Bar
+                            </button>
+                            <button id="chart-type-line" onclick="switchChartType('line')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-all hover:bg-gray-300">
+                                📈 Line
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="chart-container">
+                        <canvas id="regional-performance-chart"></canvas>
+                    </div>
+
+                    <div class="text-xs text-gray-500 mt-4 flex items-center justify-between">
+                        <span>📅 Weekly energy output • Last updated: 2 minutes ago</span>
+                        <span class="text-pgx-blue">Click bars for details</span>
+                    </div>
+            </div>
+
+                <!-- System Health -->
+                <div class="metric-card card-hover slide-up">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-1">🔧 System Health</h2>
+                    <p class="text-sm text-gray-600 mb-6">Overall infrastructure status</p>
+
+                <div class="space-y-6" id="system-health-content">
+                    <!-- Online Transformers -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('transformers')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Online Transformers</span>
+                            <span class="text-lg font-bold text-green-600">94%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 94%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">72 of 77 transformers online</div>
+                    </div>
+
+                    <!-- Active Smart Nodes -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('nodes')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Active Smart Nodes</span>
+                            <span class="text-lg font-bold text-blue-600">89%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 89%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">156 of 175 nodes active</div>
+                    </div>
+
+                    <!-- Meter Connectivity -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('meters')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Meter Connectivity</span>
+                            <span class="text-lg font-bold text-purple-600">97%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" style="width: 97%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">14,357 of 14,801 meters connected</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Metrics -->
+        <div class="dashboard-section">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Total Energy Tracked -->
+                <div class="metric-card card-hover slide-up">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">⚡ Total Energy Tracked</p>
+                            <p class="text-2xl font-bold text-gray-900"><span id="total-energy">2,862.7</span> <span class="text-sm font-normal text-gray-500">kWh</span></p>
+                            <p class="text-sm text-pgx-green mt-1">📈 2.1% from last hour</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center pulse-soft">
+                            <span class="text-2xl">⚡</span>
+                        </div>
+                    </div>
+            </div>
+
+            <!-- Energy Theft Detected -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Overview</h3>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Energy Theft Detected</p>
+                        <p class="text-2xl font-bold text-gray-900"><span id="energy-theft">12.5</span> <span class="text-sm font-normal text-gray-500">%</span></p>
+                        <p class="text-sm text-green-600 mt-1">↘ 0.8% from last hour</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Poles Connected -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Smart Poles Connected</p>
+                        <p class="text-2xl font-bold text-gray-900"><span id="smart-poles">65</span></p>
+                        <p class="text-sm text-green-600 mt-1">↗ 1.2% from last hour</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Alerts with AI Predictions -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:bg-gray-50 transition-colors" onclick="showAIPredictions()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Active Alerts</p>
+                        <p class="text-2xl font-bold text-gray-900"><span id="active-alerts">2</span></p>
+                        <p class="text-sm text-gray-500 mt-1">Current system notifications</p>
+                        <p class="text-xs text-blue-600 mt-1">🤖 AI Predictions Available</p>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Overview and Live Power Generation -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Grid Performance Metrics -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Grid Performance</h3>
+                <div class="space-y-6">
+                    <!-- Grid Performance -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showPerformanceDetails('grid')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Grid Performance</span>
+                            <span class="text-lg font-bold text-blue-600">75%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-blue-500 h-3 rounded-full transition-all duration-300" style="width: 75%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Load balancing and distribution efficiency</div>
+                    </div>
+
+                    <!-- Efficiency -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showPerformanceDetails('efficiency')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Efficiency</span>
+                            <span class="text-lg font-bold text-green-600">88%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-green-500 h-3 rounded-full transition-all duration-300" style="width: 88%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">Energy transmission and conversion efficiency</div>
+                    </div>
+
+                    <!-- Reliability -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showPerformanceDetails('reliability')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Reliability</span>
+                            <span class="text-lg font-bold text-purple-600">94%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-purple-500 h-3 rounded-full transition-all duration-300" style="width: 94%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">System uptime and fault tolerance</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Power Generation -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Power Generation</h3>
+                        <p class="text-sm text-gray-600">Based on LoRa Base Towers near transmission stations</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <button id="power-chart-bar" onclick="switchPowerChart('bar')" class="px-2 py-1 bg-blue-500 text-white rounded text-xs transition-colors">
+                                Bar
+                            </button>
+                            <button id="power-chart-line" onclick="switchPowerChart('line')" class="px-2 py-1 bg-gray-300 text-gray-700 rounded text-xs transition-colors">
+                                Line
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-xs text-green-600 font-medium">Live</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-6">
+                    <div class="text-3xl font-bold text-gray-900" id="live-power-generation">1,738</div>
+                    <div class="text-sm text-gray-500">kW</div>
+                    <div class="text-xs text-blue-600 mt-1">Real-time Power Generation</div>
+                </div>
+
+                <!-- Interactive Power Chart -->
+                <div id="power-chart-container" class="relative h-32 mb-4">
+                    <!-- Bar Chart -->
+                    <div id="power-bar-chart" class="flex items-end justify-between h-full">
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t transition-all duration-1000"
+                                 id="power-bar-1" style="height: 60%"></div>
+                            <span class="text-xs text-gray-500 mt-1">1h ago</span>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t transition-all duration-1000"
+                                 id="power-bar-2" style="height: 75%"></div>
+                            <span class="text-xs text-gray-500 mt-1">45m</span>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t transition-all duration-1000"
+                                 id="power-bar-3" style="height: 85%"></div>
+                            <span class="text-xs text-gray-500 mt-1">30m</span>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t transition-all duration-1000"
+                                 id="power-bar-4" style="height: 70%"></div>
+                            <span class="text-xs text-gray-500 mt-1">15m</span>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="w-8 bg-gradient-to-t from-green-500 to-green-300 rounded-t transition-all duration-1000 animate-pulse"
+                                 id="power-bar-5" style="height: 90%"></div>
+                            <span class="text-xs text-green-600 mt-1 font-medium">Now</span>
+                        </div>
+                    </div>
+
+                    <!-- Line Chart -->
+                    <div id="power-line-chart" class="hidden h-full">
+                        <canvas id="power-line-canvas" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <div class="text-xs text-gray-500 text-center">
+                    Auto-refresh every hour • Next update: <span id="next-update-time">59:42</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Coverage and LoRaWAN Infrastructure -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Network Coverage -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Network Coverage</h3>
+                    <select id="region-selector" class="border border-gray-300 rounded-lg px-3 py-1 text-sm" onchange="updateNetworkCoverage()">
+                        <option value="ashanti">Ashanti Region</option>
+                        <option value="greater-accra">Greater Accra</option>
+                        <option value="western">Western Region</option>
+                        <option value="central">Central Region</option>
+                        <option value="northern">Northern Region</option>
+                        <option value="eastern">Eastern Region</option>
+                        <option value="upper-east">Upper East</option>
+                        <option value="upper-west">Upper West</option>
+                        <option value="volta">Volta Region</option>
+                        <option value="brong-ahafo">Brong Ahafo</option>
+                    </select>
+                </div>
+
+                <div id="network-coverage-content">
+                    <div class="text-center mb-6">
+                        <div class="text-3xl font-bold text-gray-900">94%</div>
+                        <div class="text-sm text-gray-500">Ashanti Region</div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Urban</span>
+                            <span class="text-lg font-bold text-green-600">98%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Rural</span>
+                            <span class="text-lg font-bold text-yellow-600">87%</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <span class="text-sm font-medium text-gray-700">Peri-Urban</span>
+                            <span class="text-lg font-bold text-blue-600">92%</span>
+                        </div>
+                    </div>
+
+                    <!-- Additional Network Metrics -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h4 class="text-sm font-medium text-gray-900 mb-3">Network Performance</h4>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="bg-gray-50 p-2 rounded">
+                                <div class="text-gray-600">Data Transmission</div>
+                                <div class="font-bold text-gray-900"><span id="data-transmission">1.2</span> TB</div>
+                                <div class="text-xs text-gray-500">Data transmitted today</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <div class="text-gray-600">Success Rate</div>
+                                <div class="font-bold text-green-600"><span id="success-rate">99.8</span>%</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <div class="text-gray-600">Avg Latency</div>
+                                <div class="font-bold text-blue-600"><span id="avg-latency">12</span>ms</div>
+                            </div>
+                            <div class="bg-gray-50 p-2 rounded">
+                                <div class="text-gray-600">Power Monitoring</div>
+                                <div class="font-bold text-purple-600"><span id="total-transmission">211</span> MWh</div>
+                                <div class="text-xs text-gray-500">Total transmission</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LoRaWAN Infrastructure Overview -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">LoRaWAN Infrastructure</h3>
+                    <button class="text-blue-600 text-sm hover:text-blue-800 transition-colors">View All</button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- LoRaWAN Base Stations -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showInfrastructureDetails('base-stations')">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-gray-700">LoRaWAN Base Stations</div>
+                            <div class="text-lg font-bold text-gray-900">5</div>
+                            <div class="text-xs text-green-600">4 Active • 1 Maintenance</div>
+                        </div>
+                    </div>
+
+                    <!-- Smart Meters -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showInfrastructureDetails('smart-meters')">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-gray-700">Smart Meters</div>
+                            <div class="text-lg font-bold text-gray-900">13,743</div>
+                            <div class="text-xs text-blue-600">LoRa-enabled monitoring</div>
+                        </div>
+                    </div>
+
+                    <!-- Monitored Transformers -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showInfrastructureDetails('transformers')">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-gray-700">Monitored Transformers</div>
+                            <div class="text-lg font-bold text-gray-900">77</div>
+                            <div class="text-xs text-purple-600">LoRa sensors attached</div>
+                        </div>
+                    </div>
+
+                    <!-- Telecom Towers -->
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showInfrastructureDetails('telecom-towers')">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-sm font-medium text-gray-700">Telecom Towers</div>
+                            <div class="text-lg font-bold text-gray-900">12</div>
+                            <div class="text-xs text-orange-600">MTN • Vodafone • AirtelTigo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Energy Metrics with AI Predictions -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <!-- Grid Performance -->
                     <div class="text-center">
                         <div class="relative w-16 h-16 mx-auto mb-2">
@@ -693,76 +1222,7 @@
             </div>
         </div>
 
-        <!-- LoRaWAN Network Status -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Network Coverage -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Network Coverage</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Ashanti Region</span>
-                        <span class="text-sm font-medium text-green-600">94%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 94%"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span class="text-gray-500">Urban:</span>
-                            <span class="font-medium text-gray-900">98%</span>
-                        </div>
-                        <div>
-                            <span class="text-gray-500">Rural:</span>
-                            <span class="font-medium text-gray-900">87%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Data Transmission -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Data Transmission</h3>
-                <div class="space-y-4">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-blue-600">1.2 TB</div>
-                        <div class="text-sm text-gray-500">Data transmitted today</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div class="text-center">
-                            <div class="font-medium text-gray-900">99.8%</div>
-                            <div class="text-gray-500">Success Rate</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="font-medium text-gray-900">12ms</div>
-                            <div class="text-gray-500">Avg Latency</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Power Monitoring -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Power Monitoring</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Grid to Base Stations</span>
-                        <span class="text-sm font-medium text-green-600">Normal</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Base to Transformers</span>
-                        <span class="text-sm font-medium text-green-600">Optimal</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-600">Transformer to Meters</span>
-                        <span class="text-sm font-medium text-yellow-600">Monitoring</span>
-                    </div>
-                    <div class="text-center pt-2">
-                        <div class="text-lg font-bold text-gray-900">211 MWh</div>
-                        <div class="text-sm text-gray-500">Total transmission</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- Interactive JavaScript -->
@@ -827,5 +1287,1180 @@
 
     <!-- Dashboard JavaScript -->
     <script src="dashboard.js"></script>
+
+    <!-- Additional Interactive Functions -->
+    <script>
+        // Regional Performance Details
+        function showRegionalDetails(region, output) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">${region} Region</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-medium text-blue-900">Weekly Energy Output</h4>
+                                <p class="text-2xl font-bold text-blue-600">${output} MW</p>
+                                <p class="text-sm text-blue-700">Average daily: ${Math.round(output/7)} MW</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-500">Peak Load:</span>
+                                    <p class="font-medium">${Math.round(output * 1.2)} MW</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Efficiency:</span>
+                                    <p class="font-medium">${Math.round(85 + Math.random() * 10)}%</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Transformers:</span>
+                                    <p class="font-medium">${Math.round(output/50)} units</p>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">Coverage:</span>
+                                    <p class="font-medium">${Math.round(80 + Math.random() * 15)}%</p>
+                                </div>
+                            </div>
+
+                            <div class="border-t pt-4">
+                                <h4 class="text-sm font-medium text-gray-900 mb-2">Weekly Trend</h4>
+                                <div class="text-xs text-gray-600">
+                                    <p>• Monday: ${Math.round(output * 0.9)} MW</p>
+                                    <p>• Tuesday: ${Math.round(output * 0.95)} MW</p>
+                                    <p>• Wednesday: ${Math.round(output * 1.1)} MW</p>
+                                    <p>• Thursday: ${Math.round(output * 1.05)} MW</p>
+                                    <p>• Friday: ${Math.round(output * 1.15)} MW</p>
+                                    <p>• Saturday: ${Math.round(output * 0.8)} MW</p>
+                                    <p>• Sunday: ${Math.round(output * 0.75)} MW</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // System Health Details
+        function showSystemDetails(type) {
+            let title, data;
+
+            if (type === 'transformers') {
+                title = 'Online Transformers';
+                data = [
+                    { name: 'TXF-001', region: 'Greater Accra', district: 'Accra Metropolitan', gps: '5.6037, -0.1870', health: 98 },
+                    { name: 'TXF-002', region: 'Greater Accra', district: 'Tema Metropolitan', gps: '5.6698, -0.0166', health: 95 },
+                    { name: 'TXF-003', region: 'Ashanti', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', health: 92 },
+                    { name: 'TXF-004', region: 'Ashanti', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', health: 89 },
+                    { name: 'TXF-005', region: 'Western', district: 'Sekondi-Takoradi', gps: '4.9344, -1.7719', health: 96 },
+                    { name: 'TXF-006', region: 'Central', district: 'Cape Coast Metropolitan', gps: '5.1053, -1.2466', health: 94 },
+                    { name: 'TXF-007', region: 'Northern', district: 'Tamale Metropolitan', gps: '9.4034, -0.8424', health: 87 },
+                    { name: 'TXF-008', region: 'Eastern', district: 'Koforidua Municipal', gps: '6.0898, -0.2594', health: 91 }
+                ];
+            } else if (type === 'nodes') {
+                title = 'Active Smart Nodes';
+                data = [
+                    { name: 'NODE-001', region: 'Greater Accra', district: 'Accra Metropolitan', gps: '5.6037, -0.1870', health: 97 },
+                    { name: 'NODE-002', region: 'Greater Accra', district: 'Ga East Municipal', gps: '5.7413, -0.1995', health: 94 },
+                    { name: 'NODE-003', region: 'Ashanti', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', health: 89 },
+                    { name: 'NODE-004', region: 'Ashanti', district: 'Ejisu Municipal', gps: '6.7394, -1.3692', health: 92 },
+                    { name: 'NODE-005', region: 'Western', district: 'Tarkwa-Nsuaem', gps: '5.3006, -1.9969', health: 88 },
+                    { name: 'NODE-006', region: 'Central', district: 'Awutu Senya East', gps: '5.4503, -0.6731', health: 95 },
+                    { name: 'NODE-007', region: 'Northern', district: 'Tamale Metropolitan', gps: '9.4034, -0.8424', health: 86 },
+                    { name: 'NODE-008', region: 'Eastern', district: 'New-Juaben Municipal', gps: '6.0898, -0.2594', health: 93 }
+                ];
+            } else {
+                title = 'Meter Connectivity';
+                data = [
+                    { name: 'METER-ZONE-001', region: 'Greater Accra', district: 'Accra Metropolitan', gps: '5.6037, -0.1870', health: 99 },
+                    { name: 'METER-ZONE-002', region: 'Greater Accra', district: 'Tema Metropolitan', gps: '5.6698, -0.0166', health: 97 },
+                    { name: 'METER-ZONE-003', region: 'Ashanti', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', health: 96 },
+                    { name: 'METER-ZONE-004', region: 'Ashanti', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', health: 94 },
+                    { name: 'METER-ZONE-005', region: 'Western', district: 'Sekondi-Takoradi', gps: '4.9344, -1.7719', health: 98 },
+                    { name: 'METER-ZONE-006', region: 'Central', district: 'Cape Coast Metropolitan', gps: '5.1053, -1.2466', health: 95 },
+                    { name: 'METER-ZONE-007', region: 'Northern', district: 'Tamale Metropolitan', gps: '9.4034, -0.8424', health: 92 },
+                    { name: 'METER-ZONE-008', region: 'Eastern', district: 'Koforidua Municipal', gps: '6.0898, -0.2594', health: 97 }
+                ];
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto max-h-[60vh]">
+                        <div class="grid gap-4">
+                            ${data.map(item => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-medium text-gray-900">${item.name}</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-sm font-medium ${item.health >= 95 ? 'text-green-600' : item.health >= 90 ? 'text-yellow-600' : 'text-red-600'}">
+                                                ${item.health}%
+                                            </span>
+                                            <div class="w-16 bg-gray-200 rounded-full h-2">
+                                                <div class="h-2 rounded-full ${item.health >= 95 ? 'bg-green-500' : item.health >= 90 ? 'bg-yellow-500' : 'bg-red-500'}"
+                                                     style="width: ${item.health}%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-4 text-sm text-gray-600">
+                                        <div>
+                                            <span class="font-medium">Region:</span> ${item.region}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">District:</span> ${item.district}
+                                        </div>
+                                        <div>
+                                            <span class="font-medium">GPS:</span> ${item.gps}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // Close Modal Function
+        function closeModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (window.currentModal && e.target === window.currentModal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && window.currentModal) {
+                closeModal();
+            }
+        });
+
+        // Notification System
+        let notificationId = 0;
+        const notifications = [
+            { type: 'info', message: 'Node offline in Sector 2. Retry connection?', icon: '🔌' },
+            { type: 'warning', message: '5 new smart meters pending validation.', icon: '⚠️' },
+            { type: 'error', message: 'Energy loss detected – Est. 4.3 kWh unaccounted for.', icon: '⚡' },
+            { type: 'success', message: 'Send readings to PGX Cloud (auto-sync enabled)', icon: '☁️' },
+            { type: 'info', message: 'Ping device and check last response', icon: '📡' }
+        ];
+
+        function showNotification(notification) {
+            const container = document.getElementById('notification-container');
+            const id = ++notificationId;
+
+            const notificationEl = document.createElement('div');
+            notificationEl.className = `notification ${getNotificationClass(notification.type)}`;
+            notificationEl.innerHTML = `
+                <div class="flex items-start space-x-3 p-4 rounded-lg shadow-lg border">
+                    <span class="text-xl">${notification.icon}</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">${notification.message}</p>
+                        <div class="mt-2 flex space-x-2">
+                            <button onclick="dismissNotification(${id})" class="text-xs px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+                                Dismiss
+                            </button>
+                            ${notification.type === 'info' ? `
+                                <button onclick="retryAction(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+                                    Retry
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(notificationEl);
+
+            // Show notification
+            setTimeout(() => notificationEl.classList.add('show'), 100);
+
+            // Auto-dismiss after 8 seconds
+            setTimeout(() => dismissNotification(id), 8000);
+
+            return id;
+        }
+
+        function getNotificationClass(type) {
+            const classes = {
+                'info': 'bg-blue-50 border-blue-200 text-blue-800',
+                'warning': 'bg-yellow-50 border-yellow-200 text-yellow-800',
+                'error': 'bg-red-50 border-red-200 text-red-800',
+                'success': 'bg-green-50 border-green-200 text-green-800'
+            };
+            return classes[type] || classes.info;
+        }
+
+        function dismissNotification(id) {
+            const notification = document.querySelector(`.notification:nth-child(${id})`);
+            if (notification) {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }
+
+        function retryAction(id) {
+            dismissNotification(id);
+            showNotification({ type: 'success', message: 'Reconnection attempt successful!', icon: '✅' });
+        }
+
+        // Start notification system
+        function startNotificationSystem() {
+            setInterval(() => {
+                const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+                showNotification(randomNotification);
+            }, 5000); // Every 5 seconds
+        }
+
+        // Chart.js Implementation
+        let regionalChart = null;
+        let powerChart = null;
+
+        function initializeCharts() {
+            // Regional Performance Chart
+            const regionalCtx = document.getElementById('regional-performance-chart').getContext('2d');
+
+            const regionalData = {
+                labels: ['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Upper East', 'Upper West', 'Volta', 'Brong Ahafo'],
+                datasets: [{
+                    label: 'Energy Output (MW)',
+                    data: [1200, 1000, 750, 650, 450, 520, 320, 280, 420, 380],
+                    backgroundColor: [
+                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                        '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            };
+
+            regionalChart = new Chart(regionalCtx, {
+                type: 'bar',
+                data: regionalData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y} MW`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e5e7eb',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: {
+                                    family: 'Inter'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                font: {
+                                    family: 'Inter'
+                                },
+                                maxRotation: 45
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const region = regionalData.labels[index];
+                            const value = regionalData.datasets[0].data[index];
+                            showRegionalDetails(region, value);
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // View on Map Function
+        function viewOnMap(equipmentName, gps) {
+            const [lat, lng] = gps.split(', ').map(coord => parseFloat(coord.trim()));
+            const url = `smart-grid.html?equipment=${encodeURIComponent(equipmentName)}&lat=${lat}&lng=${lng}&zoom=15`;
+            window.open(url, '_blank');
+        }
+
+        // Chart Type Switching for Regional Performance
+        function switchChartType(type) {
+            const barBtn = document.getElementById('chart-type-bar');
+            const lineBtn = document.getElementById('chart-type-line');
+
+            if (type === 'bar') {
+                regionalChart.config.type = 'bar';
+                barBtn.classList.add('bg-pgx-blue', 'text-white');
+                barBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                lineBtn.classList.add('bg-gray-200', 'text-gray-700');
+                lineBtn.classList.remove('bg-pgx-blue', 'text-white');
+            } else {
+                regionalChart.config.type = 'line';
+                regionalChart.data.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                regionalChart.data.datasets[0].borderColor = '#3b82f6';
+                regionalChart.data.datasets[0].fill = true;
+                lineBtn.classList.add('bg-pgx-blue', 'text-white');
+                lineBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                barBtn.classList.add('bg-gray-200', 'text-gray-700');
+                barBtn.classList.remove('bg-pgx-blue', 'text-white');
+            }
+            regionalChart.update('active');
+        }
+
+        // Chart Type Switching for Power Generation
+        function switchPowerChart(type) {
+            const barChart = document.getElementById('power-bar-chart');
+            const lineChart = document.getElementById('power-line-chart');
+            const barBtn = document.getElementById('power-chart-bar');
+            const lineBtn = document.getElementById('power-chart-line');
+
+            if (type === 'bar') {
+                barChart.classList.remove('hidden');
+                lineChart.classList.add('hidden');
+                barBtn.classList.add('bg-blue-500', 'text-white');
+                barBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                lineBtn.classList.add('bg-gray-300', 'text-gray-700');
+                lineBtn.classList.remove('bg-blue-500', 'text-white');
+            } else {
+                barChart.classList.add('hidden');
+                lineChart.classList.remove('hidden');
+                lineBtn.classList.add('bg-blue-500', 'text-white');
+                lineBtn.classList.remove('bg-gray-300', 'text-gray-700');
+                barBtn.classList.add('bg-gray-300', 'text-gray-700');
+                barBtn.classList.remove('bg-blue-500', 'text-white');
+                drawPowerLineChart();
+            }
+        }
+
+        // Draw Line Chart for Regional Performance
+        function drawLineChart() {
+            const canvas = document.getElementById('line-chart-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const data = [1200, 1000, 750, 650, 450, 520, 320, 280, 420, 380];
+            const labels = ['Greater Accra', 'Ashanti', 'Western', 'Central', 'Northern', 'Eastern', 'Upper East', 'Upper West', 'Volta', 'Brong Ahafo'];
+
+            const padding = 60;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            const maxValue = Math.max(...data);
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+
+            // Draw line
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = padding + chartHeight - (value / maxValue) * chartHeight;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw points
+            ctx.fillStyle = '#3b82f6';
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = padding + chartHeight - (value / maxValue) * chartHeight;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // Draw labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                ctx.fillText(labels[index].split(' ')[0], x, canvas.height - 20);
+
+                // Draw value labels
+                const y = padding + chartHeight - (value / maxValue) * chartHeight;
+                ctx.fillText(value + ' MW', x, y - 10);
+            });
+
+            // Draw Y-axis labels
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const value = (maxValue / 5) * (5 - i);
+                const y = padding + (chartHeight / 5) * i;
+                ctx.fillText(Math.round(value), padding - 10, y + 4);
+            }
+        }
+
+        // Draw Line Chart for Power Generation
+        function drawPowerLineChart() {
+            const canvas = document.getElementById('power-line-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            const data = [1650, 1720, 1680, 1750, 1738];
+            const labels = ['1h ago', '45m', '30m', '15m', 'Now'];
+
+            const padding = 40;
+            const chartWidth = canvas.width - 2 * padding;
+            const chartHeight = canvas.height - 2 * padding;
+            const maxValue = Math.max(...data) + 100;
+            const minValue = Math.min(...data) - 100;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw line
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = padding + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw points
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                const y = padding + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight;
+
+                ctx.fillStyle = index === data.length - 1 ? '#10b981' : '#3b82f6';
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            // Draw labels
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+
+            data.forEach((value, index) => {
+                const x = padding + (chartWidth / (data.length - 1)) * index;
+                ctx.fillText(labels[index], x, canvas.height - 5);
+            });
+        }
+
+        // Regional Dashboard Data
+        const regionalData = {
+            'ashanti': {
+                name: 'Ashanti Region',
+                systemStatus: 'Operational',
+                transformers: 77,
+                criticalAlerts: 1,
+                smartMeters: 14801,
+                coverage: 85,
+                onlineTransformers: 94,
+                onlineCount: '72 of 77',
+                smartNodes: 89,
+                nodesCount: '156 of 175',
+                meterConnectivity: 97,
+                metersCount: '14,357 of 14,801',
+                energyTracked: 2862.7,
+                energyTheft: 12.5,
+                smartPoles: 65,
+                activeAlerts: 2,
+                dataTransmission: 1.2,
+                successRate: 99.8,
+                avgLatency: 12,
+                totalTransmission: 211
+            },
+            'greater-accra': {
+                name: 'Greater Accra',
+                systemStatus: 'Operational',
+                transformers: 95,
+                criticalAlerts: 0,
+                smartMeters: 18500,
+                coverage: 92,
+                onlineTransformers: 98,
+                onlineCount: '93 of 95',
+                smartNodes: 94,
+                nodesCount: '187 of 199',
+                meterConnectivity: 99,
+                metersCount: '18,315 of 18,500',
+                energyTracked: 3456.2,
+                energyTheft: 8.3,
+                smartPoles: 89,
+                activeAlerts: 1,
+                dataTransmission: 1.8,
+                successRate: 99.9,
+                avgLatency: 8,
+                totalTransmission: 298
+            },
+            'western': {
+                name: 'Western Region',
+                systemStatus: 'Operational',
+                transformers: 62,
+                criticalAlerts: 2,
+                smartMeters: 11200,
+                coverage: 78,
+                onlineTransformers: 89,
+                onlineCount: '55 of 62',
+                smartNodes: 82,
+                nodesCount: '124 of 151',
+                meterConnectivity: 94,
+                metersCount: '10,528 of 11,200',
+                energyTracked: 2145.8,
+                energyTheft: 15.7,
+                smartPoles: 43,
+                activeAlerts: 3,
+                dataTransmission: 0.9,
+                successRate: 99.2,
+                avgLatency: 18,
+                totalTransmission: 167
+            }
+            // Add more regions as needed
+        };
+
+        // Update Dashboard Based on Region
+        function updateDashboardRegion() {
+            const selector = document.getElementById('dashboard-region-selector');
+            const region = selector.value;
+            const data = regionalData[region] || regionalData['ashanti'];
+
+            // Update System Overview
+            const systemOverview = document.getElementById('system-overview');
+            systemOverview.innerHTML = `
+                <!-- System Status Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">System Status</p>
+                            <p class="text-2xl font-bold text-green-600">${data.systemStatus}</p>
+                            <p class="text-sm text-gray-500 mt-1">All systems running</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Transformers Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Active Transformers</p>
+                            <p class="text-2xl font-bold text-gray-900">${data.transformers}</p>
+                            <p class="text-sm ${data.criticalAlerts > 0 ? 'text-red-600' : 'text-green-600'} mt-1">
+                                ${data.criticalAlerts} Critical Alert${data.criticalAlerts !== 1 ? 's' : ''}
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Meters Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Smart Meters</p>
+                            <p class="text-2xl font-bold text-gray-900">${data.smartMeters.toLocaleString()}</p>
+                            <p class="text-sm text-green-600 mt-1">${data.coverage}% Coverage</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Update other sections with regional data
+            updateSystemHealthForRegion(data);
+            updateEnergyMetricsForRegion(data);
+            updateNetworkDataForRegion(data);
+        }
+
+        // Update System Health for Region
+        function updateSystemHealthForRegion(data) {
+            // Update the system health percentages and counts
+            const healthSection = document.querySelector('#system-health-content');
+            if (healthSection) {
+                healthSection.innerHTML = `
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('transformers')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Online Transformers</span>
+                            <span class="text-lg font-bold text-green-600">${data.onlineTransformers}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: ${data.onlineTransformers}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${data.onlineCount} transformers online</div>
+                    </div>
+
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('nodes')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Active Smart Nodes</span>
+                            <span class="text-lg font-bold text-blue-600">${data.smartNodes}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: ${data.smartNodes}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${data.nodesCount} nodes active</div>
+                    </div>
+
+                    <div class="cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors" onclick="showSystemDetails('meters')">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Meter Connectivity</span>
+                            <span class="text-lg font-bold text-purple-600">${data.meterConnectivity}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" style="width: ${data.meterConnectivity}%"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${data.metersCount} meters connected</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update Energy Metrics for Region
+        function updateEnergyMetricsForRegion(data) {
+            // Update energy tracking values
+            const energyElements = {
+                'total-energy': data.energyTracked,
+                'energy-theft': data.energyTheft,
+                'smart-poles': data.smartPoles,
+                'active-alerts': data.activeAlerts
+            };
+
+            Object.keys(energyElements).forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = energyElements[id];
+                }
+            });
+        }
+
+        // Update Network Data for Region
+        function updateNetworkDataForRegion(data) {
+            // Update additional network metrics
+            const networkElements = {
+                'data-transmission': data.dataTransmission,
+                'success-rate': data.successRate,
+                'avg-latency': data.avgLatency,
+                'total-transmission': data.totalTransmission
+            };
+
+            Object.keys(networkElements).forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = networkElements[id];
+                }
+            });
+        }
+
+        // Performance Details
+        function showPerformanceDetails(type) {
+            let title, description, metrics;
+
+            if (type === 'grid') {
+                title = 'Grid Performance - 75%';
+                description = 'Load balancing and distribution efficiency';
+                metrics = [
+                    { name: 'Load Balancing', value: '82%', status: 'Good' },
+                    { name: 'Distribution Efficiency', value: '78%', status: 'Moderate' },
+                    { name: 'Peak Load Management', value: '71%', status: 'Needs Improvement' },
+                    { name: 'Grid Stability', value: '85%', status: 'Excellent' }
+                ];
+            } else if (type === 'efficiency') {
+                title = 'System Efficiency - 88%';
+                description = 'Energy transmission and conversion efficiency';
+                metrics = [
+                    { name: 'Transmission Efficiency', value: '92%', status: 'Excellent' },
+                    { name: 'Conversion Efficiency', value: '89%', status: 'Good' },
+                    { name: 'Power Factor', value: '0.95', status: 'Excellent' },
+                    { name: 'Line Losses', value: '3.2%', status: 'Good' }
+                ];
+            } else {
+                title = 'System Reliability - 94%';
+                description = 'System uptime and fault tolerance';
+                metrics = [
+                    { name: 'System Uptime', value: '99.2%', status: 'Excellent' },
+                    { name: 'Fault Recovery Time', value: '2.3 min', status: 'Good' },
+                    { name: 'Redundancy Level', value: '87%', status: 'Good' },
+                    { name: 'Maintenance Schedule', value: '96%', status: 'Excellent' }
+                ];
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <p class="text-sm text-gray-600 mb-4">${description}</p>
+
+                        <div class="space-y-3">
+                            ${metrics.map(metric => `
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <div class="font-medium text-gray-900">${metric.name}</div>
+                                        <div class="text-sm text-gray-600">${metric.status}</div>
+                                    </div>
+                                    <div class="text-lg font-bold text-blue-600">${metric.value}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                            <div class="text-sm text-blue-800">
+                                <strong>Measurement Method:</strong> Real-time monitoring through LoRaWAN sensors,
+                                SCADA systems, and smart meter data aggregation with 5-minute interval updates.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // Network Coverage Update
+        function updateNetworkCoverage() {
+            const selector = document.getElementById('region-selector');
+            const content = document.getElementById('network-coverage-content');
+            const region = selector.value;
+
+            const coverageData = {
+                'ashanti': { name: 'Ashanti Region', overall: 94, urban: 98, rural: 87, periUrban: 92 },
+                'greater-accra': { name: 'Greater Accra', overall: 97, urban: 99, rural: 92, periUrban: 96 },
+                'western': { name: 'Western Region', overall: 89, urban: 95, rural: 78, periUrban: 88 },
+                'central': { name: 'Central Region', overall: 91, urban: 96, rural: 82, periUrban: 90 },
+                'northern': { name: 'Northern Region', overall: 76, urban: 89, rural: 65, periUrban: 78 },
+                'eastern': { name: 'Eastern Region', overall: 88, urban: 94, rural: 79, periUrban: 87 },
+                'upper-east': { name: 'Upper East', overall: 72, urban: 85, rural: 58, periUrban: 74 },
+                'upper-west': { name: 'Upper West', overall: 69, urban: 82, rural: 55, periUrban: 71 },
+                'volta': { name: 'Volta Region', overall: 84, urban: 91, rural: 73, periUrban: 83 },
+                'brong-ahafo': { name: 'Brong Ahafo', overall: 81, urban: 88, rural: 70, periUrban: 80 }
+            };
+
+            const data = coverageData[region];
+
+            content.innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="text-3xl font-bold text-gray-900">${data.overall}%</div>
+                    <div class="text-sm text-gray-500">${data.name}</div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Urban</span>
+                        <span class="text-lg font-bold text-green-600">${data.urban}%</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Rural</span>
+                        <span class="text-lg font-bold text-yellow-600">${data.rural}%</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <span class="text-sm font-medium text-gray-700">Peri-Urban</span>
+                        <span class="text-lg font-bold text-blue-600">${data.periUrban}%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Infrastructure Details
+        function showInfrastructureDetails(type) {
+            let title, data;
+
+            if (type === 'base-stations') {
+                title = 'LoRaWAN Base Stations';
+                data = [
+                    { name: 'BS-001', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', geocode: 'AK-001-001', lastMaintenance: '2024-07-15', contractors: [{ name: 'Kwame Asante', id: 'PGX-005' }, { name: 'Ama Osei', id: 'PGX-006' }] },
+                    { name: 'BS-002', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', geocode: 'AK-002-001', lastMaintenance: '2024-07-20', contractors: [{ name: 'Mike Johnson', id: 'PGX-003' }] },
+                    { name: 'BS-003', district: 'Ejisu Municipal', gps: '6.7394, -1.3692', geocode: 'AK-003-001', lastMaintenance: '2024-07-10', contractors: [{ name: 'Sarah Wilson', id: 'PGX-004' }] },
+                    { name: 'BS-004', district: 'Bosomtwe', gps: '6.5833, -1.4167', geocode: 'AK-004-001', lastMaintenance: '2024-07-25', contractors: [{ name: 'John Doe', id: 'PGX-001' }] },
+                    { name: 'BS-005', district: 'Asante Akim North', gps: '6.8167, -1.0833', geocode: 'AK-005-001', lastMaintenance: '2024-07-18', contractors: [{ name: 'Jane Smith', id: 'PGX-002' }] }
+                ];
+            } else if (type === 'smart-meters') {
+                title = 'Smart Meters (LoRa-enabled)';
+                data = [
+                    { name: 'SM-ZONE-001', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', geocode: 'AK-SM-001', lastMaintenance: '2024-07-22', contractors: [{ name: 'Kwame Asante', id: 'PGX-005' }] },
+                    { name: 'SM-ZONE-002', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', geocode: 'AK-SM-002', lastMaintenance: '2024-07-19', contractors: [{ name: 'Ama Osei', id: 'PGX-006' }] },
+                    { name: 'SM-ZONE-003', district: 'Ejisu Municipal', gps: '6.7394, -1.3692', geocode: 'AK-SM-003', lastMaintenance: '2024-07-16', contractors: [{ name: 'Mike Johnson', id: 'PGX-003' }] },
+                    { name: 'SM-ZONE-004', district: 'Bosomtwe', gps: '6.5833, -1.4167', geocode: 'AK-SM-004', lastMaintenance: '2024-07-21', contractors: [{ name: 'Sarah Wilson', id: 'PGX-004' }] }
+                ];
+            } else if (type === 'transformers') {
+                title = 'Monitored Transformers (LoRa sensors)';
+                data = [
+                    { name: 'TXF-001', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', geocode: 'AK-TXF-001', lastMaintenance: '2024-07-14', contractors: [{ name: 'John Doe', id: 'PGX-001' }, { name: 'Jane Smith', id: 'PGX-002' }] },
+                    { name: 'TXF-002', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', geocode: 'AK-TXF-002', lastMaintenance: '2024-07-17', contractors: [{ name: 'Kwame Asante', id: 'PGX-005' }] },
+                    { name: 'TXF-003', district: 'Ejisu Municipal', gps: '6.7394, -1.3692', geocode: 'AK-TXF-003', lastMaintenance: '2024-07-23', contractors: [{ name: 'Ama Osei', id: 'PGX-006' }] }
+                ];
+            } else {
+                title = 'Integrated Telecom Towers';
+                data = [
+                    { name: 'MTN-001', district: 'Kumasi Metropolitan', gps: '6.6885, -1.6244', geocode: 'AK-MTN-001', lastMaintenance: '2024-07-12', contractors: [{ name: 'Mike Johnson', id: 'PGX-003' }] },
+                    { name: 'VOD-001', district: 'Obuasi Municipal', gps: '6.2027, -1.6634', geocode: 'AK-VOD-001', lastMaintenance: '2024-07-20', contractors: [{ name: 'Sarah Wilson', id: 'PGX-004' }] },
+                    { name: 'ATL-001', district: 'Ejisu Municipal', gps: '6.7394, -1.3692', geocode: 'AK-ATL-001', lastMaintenance: '2024-07-15', contractors: [{ name: 'Kwame Asante', id: 'PGX-005' }] }
+                ];
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">${title}</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto max-h-[60vh]">
+                        <div class="grid gap-4">
+                            ${data.map(item => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <h4 class="font-medium text-gray-900">${item.name}</h4>
+                                        <div class="flex space-x-2">
+                                            <button onclick="viewOnMap('${item.name}', '${item.gps}')"
+                                                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                                View on Map
+                                            </button>
+                                            <button onclick="showContractors('${item.name}', ${JSON.stringify(item.contractors).replace(/"/g, '&quot;')})"
+                                                    class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                                View Contractors
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
+                                        <div><span class="font-medium">District:</span> ${item.district}</div>
+                                        <div><span class="font-medium">GPS:</span> ${item.gps}</div>
+                                        <div><span class="font-medium">Geocode:</span> ${item.geocode}</div>
+                                        <div><span class="font-medium">Last Maintenance:</span> ${item.lastMaintenance}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // Show Contractors
+        function showContractors(equipmentName, contractors) {
+            // Close any existing modal first
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Contractors - ${equipmentName}</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="space-y-3">
+                            ${contractors.map(contractor => `
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <div class="font-medium text-gray-900">${contractor.name}</div>
+                                        <div class="text-sm text-gray-600">ID: ${contractor.id}</div>
+                                    </div>
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                        ${contractor.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // AI Predictions Modal
+        function showAIPredictions() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">🤖 AI Predictions & Anomaly Detection</h3>
+                            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-6 overflow-y-auto max-h-[60vh]">
+                        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                            <h4 class="font-medium text-blue-900 mb-2">AI Integration Status</h4>
+                            <p class="text-sm text-blue-800">
+                                AI predictions will be activated based on data availability and deployment scale.
+                                We begin with AI anomaly detection and SMS triage tools in the pilot phase.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-green-900">AI Anomaly Detection</h4>
+                                    <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">Ready for Pilot</span>
+                                </div>
+                                <p class="text-sm text-green-800 mb-3">
+                                    AI-powered anomaly detection to flag possible theft or faults automatically.
+                                </p>
+                                <div class="text-xs text-green-700">
+                                    <strong>Features:</strong> Real-time pattern analysis, theft detection algorithms,
+                                    fault prediction models, automated alert generation.
+                                </div>
+                            </div>
+
+                            <div class="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-blue-900">SMS Triage Tool</h4>
+                                    <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">Ready for Pilot</span>
+                                </div>
+                                <p class="text-sm text-blue-800 mb-3">
+                                    Intelligent SMS classification and response system for customer fault reports.
+                                </p>
+                                <div class="text-xs text-blue-700">
+                                    <strong>Features:</strong> Natural language processing, automatic categorization,
+                                    priority assignment, response templates, escalation rules.
+                                </div>
+                            </div>
+
+                            <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-yellow-900">Predictive Maintenance</h4>
+                                    <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">Phase 2</span>
+                                </div>
+                                <p class="text-sm text-yellow-800 mb-3">
+                                    Machine learning models for equipment failure prediction and maintenance scheduling.
+                                </p>
+                                <div class="text-xs text-yellow-700">
+                                    <strong>Planned Features:</strong> Equipment health scoring, failure probability,
+                                    optimal maintenance windows, cost optimization.
+                                </div>
+                            </div>
+
+                            <div class="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-medium text-purple-900">Load Forecasting</h4>
+                                    <span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded">Phase 3</span>
+                                </div>
+                                <p class="text-sm text-purple-800 mb-3">
+                                    Advanced AI models for energy demand prediction and grid optimization.
+                                </p>
+                                <div class="text-xs text-purple-700">
+                                    <strong>Planned Features:</strong> Weather-based forecasting, seasonal patterns,
+                                    economic indicators, demand response optimization.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-medium text-gray-900 mb-2">Current Active Alerts</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-red-600">⚠️ Transformer TXF-003 - Unusual load pattern detected</span>
+                                    <span class="text-xs text-gray-500">2 min ago</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-yellow-600">🔍 Smart Meter Zone SM-007 - Potential theft indicator</span>
+                                    <span class="text-xs text-gray-500">15 min ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        // Live Power Generation Update
+        function updateLivePowerGeneration() {
+            const powerElement = document.getElementById('live-power-generation');
+            const bars = ['power-bar-1', 'power-bar-2', 'power-bar-3', 'power-bar-4', 'power-bar-5'];
+
+            // Generate random power value between 1500-2000 kW
+            const newPower = Math.floor(Math.random() * 500) + 1500;
+            powerElement.textContent = newPower.toLocaleString();
+
+            // Update bars with animation
+            bars.forEach((barId, index) => {
+                const bar = document.getElementById(barId);
+                const height = Math.floor(Math.random() * 40) + 50; // 50-90%
+                bar.style.height = height + '%';
+            });
+        }
+
+        // Update countdown timer
+        function updateCountdown() {
+            const timerElement = document.getElementById('next-update-time');
+            if (!timerElement) return;
+
+            let minutes = 59;
+            let seconds = 59;
+
+            setInterval(() => {
+                seconds--;
+                if (seconds < 0) {
+                    seconds = 59;
+                    minutes--;
+                    if (minutes < 0) {
+                        minutes = 59;
+                        updateLivePowerGeneration();
+                    }
+                }
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Initialize live updates
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCountdown();
+            updateDashboardRegion(); // Load default region data
+            initializeCharts(); // Initialize Chart.js charts
+            startNotificationSystem(); // Start live notifications
+
+            // Update power generation every hour (3600000 ms)
+            setInterval(updateLivePowerGeneration, 3600000);
+
+            // Add loading states
+            document.querySelectorAll('.metric-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('slide-up');
+            });
+        });
+    </script>
 </body>
 </html>
