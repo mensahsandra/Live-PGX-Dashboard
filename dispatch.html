@@ -371,14 +371,232 @@
         <!-- Page Header -->
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Dispatch Request</h1>
-                <p class="text-gray-600">Assign qualified personnel to field tasks</p>
+                <h1 class="text-2xl font-bold text-gray-900">Dispatch Center & Team Management</h1>
+                <p class="text-gray-600">Real-time field operations, emergency response coordination, and team assignments</p>
             </div>
 
             <!-- Back to Map Button -->
             <button onclick="window.location.href='smart-grid.html'" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors">
                 ← Back to Map
             </button>
+        </div>
+
+        <!-- Team Management Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Existing Teams -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Active Field Teams</h2>
+                    <button onclick="showCreateTeamModal()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        Create New Team
+                    </button>
+                </div>
+
+                <div class="space-y-4" id="teams-list">
+                    <!-- Team KONTOR -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-blue-600">Team KONTOR</h3>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">Supervisor:</p>
+                                <p class="font-medium">Kwame Kontor</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Specialization:</p>
+                                <p class="font-medium">Transformer Maintenance</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Members:</p>
+                                <p class="font-medium">5 Technicians</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Current Location:</p>
+                                <p class="font-medium">Kumasi Metro</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="assignTask('KONTOR')" class="px-3 py-1 bg-orange-500 text-white rounded text-sm hover:bg-orange-600 transition-colors">
+                                Assign Task
+                            </button>
+                            <button onclick="viewTeamDetails('KONTOR')" class="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team ELLEN -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-blue-600">Team ELLEN</h3>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">On Assignment</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">Supervisor:</p>
+                                <p class="font-medium">Ellen Asante</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Specialization:</p>
+                                <p class="font-medium">Smart Meter Installation</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Members:</p>
+                                <p class="font-medium">4 Technicians</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Current Location:</p>
+                                <p class="font-medium">Ashanti Region</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="assignTask('ELLEN')" class="px-3 py-1 bg-orange-500 text-white rounded text-sm hover:bg-orange-600 transition-colors">
+                                Assign Task
+                            </button>
+                            <button onclick="viewTeamDetails('ELLEN')" class="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team DEBORAH -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-blue-600">Team DEBORAH</h3>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">Supervisor:</p>
+                                <p class="font-medium">Deborah Mensah</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Specialization:</p>
+                                <p class="font-medium">LoRaWAN Infrastructure</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Members:</p>
+                                <p class="font-medium">6 Technicians</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Current Location:</p>
+                                <p class="font-medium">Greater Accra</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="assignTask('DEBORAH')" class="px-3 py-1 bg-orange-500 text-white rounded text-sm hover:bg-orange-600 transition-colors">
+                                Assign Task
+                            </button>
+                            <button onclick="viewTeamDetails('DEBORAH')" class="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Team WILLIAM -->
+                    <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-blue-600">Team WILLIAM</h3>
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">Emergency Response</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">Supervisor:</p>
+                                <p class="font-medium">William Osei</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Specialization:</p>
+                                <p class="font-medium">Emergency Response</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Members:</p>
+                                <p class="font-medium">8 Technicians</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Current Location:</p>
+                                <p class="font-medium">Western Region</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button onclick="assignTask('WILLIAM')" class="px-3 py-1 bg-orange-500 text-white rounded text-sm hover:bg-orange-600 transition-colors">
+                                Assign Task
+                            </button>
+                            <button onclick="viewTeamDetails('WILLIAM')" class="px-3 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 transition-colors">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Assignment Panel -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Massive Task Assignment</h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Task Type</label>
+                        <select id="task-type" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">Select Task Type</option>
+                            <option value="transformer-maintenance">Transformer Maintenance</option>
+                            <option value="smart-meter-installation">Smart Meter Installation</option>
+                            <option value="lorawan-deployment">LoRaWAN Deployment</option>
+                            <option value="emergency-response">Emergency Response</option>
+                            <option value="grid-inspection">Grid Inspection</option>
+                            <option value="power-restoration">Power Restoration</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Target Area</label>
+                        <select id="target-area" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">Select Area</option>
+                            <option value="ashanti">Ashanti Region</option>
+                            <option value="greater-accra">Greater Accra</option>
+                            <option value="western">Western Region</option>
+                            <option value="central">Central Region</option>
+                            <option value="northern">Northern Region</option>
+                            <option value="eastern">Eastern Region</option>
+                            <option value="upper-east">Upper East</option>
+                            <option value="upper-west">Upper West</option>
+                            <option value="volta">Volta Region</option>
+                            <option value="brong-ahafo">Brong Ahafo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Assign to Team</label>
+                        <select id="assign-team" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="">Select Team</option>
+                            <option value="KONTOR">Team KONTOR</option>
+                            <option value="ELLEN">Team ELLEN</option>
+                            <option value="DEBORAH">Team DEBORAH</option>
+                            <option value="WILLIAM">Team WILLIAM</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority Level</label>
+                        <select id="priority-level" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                            <option value="low">Low Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="high">High Priority</option>
+                            <option value="critical">Critical Priority</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Task Description</label>
+                        <textarea id="task-description" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Describe the massive task requirements..."></textarea>
+                    </div>
+
+                    <button onclick="assignMassiveTask()" class="w-full px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                        Assign Massive Task
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Pending Request Alert (if coming from map) -->
@@ -566,6 +784,97 @@
     </script>
 
     <script src="dispatch.js"></script>
+
+    <!-- Team Management JavaScript -->
+    <script>
+        // Team data
+        const teams = {
+            'KONTOR': {
+                name: 'Team KONTOR',
+                supervisor: 'Kwame Kontor',
+                specialization: 'Transformer Maintenance',
+                members: 5,
+                location: 'Kumasi Metro',
+                status: 'Active'
+            },
+            'ELLEN': {
+                name: 'Team ELLEN',
+                supervisor: 'Ellen Asante',
+                specialization: 'Smart Meter Installation',
+                members: 4,
+                location: 'Ashanti Region',
+                status: 'On Assignment'
+            },
+            'DEBORAH': {
+                name: 'Team DEBORAH',
+                supervisor: 'Deborah Mensah',
+                specialization: 'LoRaWAN Infrastructure',
+                members: 6,
+                location: 'Greater Accra',
+                status: 'Active'
+            },
+            'WILLIAM': {
+                name: 'Team WILLIAM',
+                supervisor: 'William Osei',
+                specialization: 'Emergency Response',
+                members: 8,
+                location: 'Western Region',
+                status: 'Emergency Response'
+            }
+        };
+
+        // Assign task to team
+        function assignTask(teamId) {
+            const team = teams[teamId];
+            if (team) {
+                alert(`Assigning task to ${team.name}\nSupervisor: ${team.supervisor}\nSpecialization: ${team.specialization}\nLocation: ${team.location}`);
+            }
+        }
+
+        // View team details
+        function viewTeamDetails(teamId) {
+            const team = teams[teamId];
+            if (team) {
+                alert(`${team.name} Details:\n\nSupervisor: ${team.supervisor}\nSpecialization: ${team.specialization}\nMembers: ${team.members} Technicians\nCurrent Location: ${team.location}\nStatus: ${team.status}`);
+            }
+        }
+
+        // Show create team modal
+        function showCreateTeamModal() {
+            const teamName = prompt('Enter team name:');
+            const supervisor = prompt('Enter supervisor name:');
+            const specialization = prompt('Enter team specialization:');
+            const members = prompt('Enter number of members:');
+
+            if (teamName && supervisor && specialization && members) {
+                alert(`New team created:\nName: ${teamName}\nSupervisor: ${supervisor}\nSpecialization: ${specialization}\nMembers: ${members}`);
+            }
+        }
+
+        // Assign massive task
+        function assignMassiveTask() {
+            const taskType = document.getElementById('task-type').value;
+            const targetArea = document.getElementById('target-area').value;
+            const assignTeam = document.getElementById('assign-team').value;
+            const priorityLevel = document.getElementById('priority-level').value;
+            const taskDescription = document.getElementById('task-description').value;
+
+            if (!taskType || !targetArea || !assignTeam || !taskDescription) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const team = teams[assignTeam];
+            alert(`Massive Task Assigned!\n\nTask Type: ${taskType}\nTarget Area: ${targetArea}\nAssigned to: ${team.name}\nSupervisor: ${team.supervisor}\nPriority: ${priorityLevel}\nDescription: ${taskDescription}`);
+
+            // Clear form
+            document.getElementById('task-type').value = '';
+            document.getElementById('target-area').value = '';
+            document.getElementById('assign-team').value = '';
+            document.getElementById('priority-level').value = 'medium';
+            document.getElementById('task-description').value = '';
+        }
+    </script>
 </body>
 </html>
 

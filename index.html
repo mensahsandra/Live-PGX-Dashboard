@@ -677,7 +677,7 @@
     </header>
 
     <!-- Notification Container -->
-    <div id="notification-container"></div>
+    <div id="notification-container" style="position: fixed; top: 70px; right: 280px; z-index: 1000; max-width: 350px;"></div>
 
     <!-- Main Content with Sidebar -->
     <div class="flex min-h-screen bg-gray-50">
@@ -691,40 +691,52 @@
 
             <!-- Sidebar Navigation -->
             <nav class="flex-1 p-4 space-y-2">
-                <a href="#regional-performance" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-600 text-white">
+                <button onclick="showSection('regional-performance')" class="flex items-center space-x-3 p-3 rounded-lg bg-blue-600 text-white w-full text-left hover:bg-blue-700 transition-colors">
                     <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <span class="text-sm">📊</span>
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        </svg>
                     </div>
                     <span class="font-medium">Regional Performance</span>
-                </a>
+                </button>
 
-                <a href="#grid-performance" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                <button onclick="showSection('grid-performance')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors w-full text-left">
                     <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
-                        <span class="text-sm">⚡</span>
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <span class="font-medium">Grid Performance</span>
-                </a>
+                </button>
 
-                <a href="#network-coverage" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                <button onclick="showSection('network-coverage')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors w-full text-left">
                     <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
-                        <span class="text-sm">🌐</span>
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M17.778 8.222c-4.296-4.296-11.26-4.296-15.556 0A1 1 0 01.808 6.808c5.076-5.077 13.308-5.077 18.384 0a1 1 0 01-1.414 1.414zM14.95 11.05a7 7 0 00-9.9 0 1 1 0 01-1.414-1.414 9 9 0 0112.728 0 1 1 0 01-1.414 1.414zM12.12 13.88a3 3 0 00-4.242 0 1 1 0 01-1.415-1.415 5 5 0 017.072 0 1 1 0 01-1.415 1.415zM9 16a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <span class="font-medium">Network Coverage</span>
-                </a>
+                </button>
 
-                <a href="#lorawan-infrastructure" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                <button onclick="showSection('lorawan-infrastructure')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors w-full text-left">
                     <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
-                        <span class="text-sm">📡</span>
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"></path>
+                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"></path>
+                        </svg>
                     </div>
                     <span class="font-medium">LoRaWAN Infrastructure</span>
-                </a>
+                </button>
 
-                <a href="#system-health" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors">
+                <button onclick="showSection('system-health')" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700 transition-colors w-full text-left">
                     <div class="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center">
-                        <span class="text-sm">🔧</span>
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <span class="font-medium">System Health</span>
-                </a>
+                </button>
             </nav>
 
             <!-- Admin Profile -->
@@ -748,11 +760,11 @@
             <div class="metric-card card-hover slide-up">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h2 class="text-xl font-semibold text-gray-900 mb-1">⚡ Grid Monitoring Dashboard</h2>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-1">Regional Infrastructure Overview</h2>
                         <p class="text-sm text-gray-600">Select a region to view detailed infrastructure data</p>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <label class="text-sm font-medium text-gray-700">📍 Current Region:</label>
+                        <label class="text-sm font-medium text-gray-700">Current Region:</label>
                         <select id="dashboard-region-selector" class="border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium bg-white hover:border-pgx-blue transition-colors" onchange="updateDashboardRegion()">
                             <option value="ashanti">Ashanti Region</option>
                             <option value="greater-accra">Greater Accra</option>
@@ -2655,6 +2667,9 @@
 
         // Initialize live updates
         document.addEventListener('DOMContentLoaded', function() {
+            // Clear notifications on page reload for simulation
+            localStorage.removeItem('pgx_notifications');
+
             updateCountdown();
             updateDashboardRegion(); // Load default region data
             initializeCharts(); // Initialize Chart.js charts
@@ -2670,6 +2685,35 @@
                 card.classList.add('slide-up');
             });
         });
+
+        // Grid Control Panel Navigation
+        function showSection(sectionId) {
+            // Update sidebar active state
+            document.querySelectorAll('aside button').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('hover:bg-slate-700');
+                btn.querySelector('div').classList.remove('bg-blue-500');
+                btn.querySelector('div').classList.add('bg-slate-600');
+            });
+
+            // Set active button
+            event.target.closest('button').classList.add('bg-blue-600', 'text-white');
+            event.target.closest('button').classList.remove('hover:bg-slate-700');
+            event.target.closest('button').querySelector('div').classList.add('bg-blue-500');
+            event.target.closest('button').querySelector('div').classList.remove('bg-slate-600');
+
+            // Scroll to section
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Highlight section briefly
+                section.style.backgroundColor = '#f0f9ff';
+                setTimeout(() => {
+                    section.style.backgroundColor = '';
+                }, 2000);
+            }
+        }
     </script>
     </div> <!-- End of main layout flex container -->
 </body>
