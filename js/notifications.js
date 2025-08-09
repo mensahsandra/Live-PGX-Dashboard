@@ -5,8 +5,12 @@ class PGXNotificationSystem {
     constructor() {
         this.notificationId = 0;
         this.unreadNotifications = 0;
+
+        // Check if we're on notifications.html page and reset if needed
+        this.checkForSimulationReset();
+
         this.allNotifications = JSON.parse(localStorage.getItem('pgx_notifications') || '[]');
-        
+
         this.notificationTemplates = [
             { type: 'error', message: 'Transformer TXF-003 offline in Kumasi Metro District', priority: 'high', category: 'infrastructure' },
             { type: 'warning', message: '12 smart meters pending validation in Ashanti Region', priority: 'medium', category: 'validation' },
@@ -24,98 +28,34 @@ class PGXNotificationSystem {
     }
     
     init() {
-        this.createNotificationContainer();
         this.initializeNotifications();
         this.startNotificationSystem();
         this.addHeartbeatToDistricts();
     }
-    
-    createNotificationContainer() {
-        if (!document.getElementById('notification-container')) {
-            const container = document.createElement('div');
-            container.id = 'notification-container';
-            document.body.appendChild(container);
-        }
-        
-        // Add notification styles if not already present
-        if (!document.getElementById('pgx-notification-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'pgx-notification-styles';
-            styles.textContent = `
-                .notification {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 1000;
-                    max-width: 350px;
-                    min-width: 300px;
-                    transform: translateX(100%);
-                    transition: transform 0.3s ease;
-                }
-                
-                .notification.show {
-                    transform: translateX(0);
-                }
-                
-                .light-alert {
-                    background: rgba(255, 255, 255, 0.95);
-                    backdrop-filter: blur(10px);
-                    border: 1px solid #e5e7eb;
-                    border-radius: 6px;
-                    padding: 8px 12px;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    font-size: 13px;
-                    line-height: 1.3;
-                    max-width: 280px;
-                }
-                
-                .alert-indicator {
-                    position: fixed;
-                    top: 80px;
-                    right: 20px;
-                    z-index: 999;
-                    background: #ef4444;
-                    color: white;
-                    border-radius: 50%;
-                    width: 24px;
-                    height: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 12px;
-                    font-weight: bold;
-                    animation: pulse-alert 2s infinite;
-                    cursor: pointer;
-                }
-                
-                @keyframes pulse-alert {
-                    0%, 100% { transform: scale(1); opacity: 1; }
-                    50% { transform: scale(1.1); opacity: 0.8; }
-                }
-                
-                @keyframes heartbeat {
-                    0%, 100% { transform: scale(1); }
-                    25% { transform: scale(1.1); }
-                    50% { transform: scale(1); }
-                    75% { transform: scale(1.05); }
-                }
-                
-                .heartbeat {
-                    animation: heartbeat 2s infinite;
-                }
-                
-                .district-marker.heartbeat {
-                    animation: heartbeat 2s infinite;
-                }
-            `;
-            document.head.appendChild(styles);
+
+    checkForSimulationReset() {
+        // Check if we're on notifications.html page
+        const currentPage = window.location.pathname;
+        const isNotificationsPage = currentPage.includes('notifications.html') || currentPage.endsWith('notifications.html');
+
+        if (isNotificationsPage) {
+            // Check if this is a page refresh/reload
+            const navigationEntries = performance.getEntriesByType('navigation');
+            const isReload = navigationEntries.length > 0 &&
+                           (navigationEntries[0].type === 'reload' || navigationEntries[0].type === 'navigate');
+
+            if (isReload) {
+                // Reset the notification system for fresh simulation
+                localStorage.setItem('pgx_notifications', JSON.stringify([]));
+                localStorage.setItem('pgx_notification_count', '0');
+                console.log('Notification system reset for simulation');
+            }
         }
     }
     
-    showLightAlert(notification) {
-        const container = document.getElementById('notification-container');
+    addNotification(notification) {
         const id = ++this.notificationId;
-        
+
         // Create notification object for storage
         const notificationObj = {
             id: id,
@@ -126,57 +66,36 @@ class PGXNotificationSystem {
             workStarted: null,
             completed: null
         };
-        
+
         // Store notification
         this.allNotifications.unshift(notificationObj);
         localStorage.setItem('pgx_notifications', JSON.stringify(this.allNotifications));
         this.unreadNotifications++;
-        this.updateNotificationIndicator();
-        
-        const alertEl = document.createElement('div');
-        alertEl.className = `notification light-alert ${this.getNotificationClass(notification.type)}`;
-        alertEl.innerHTML = `
-            <div class="flex items-start justify-between">
-                <div class="flex-1 pr-2">
-                    <p class="text-sm font-medium text-gray-800">${notification.message}</p>
-                    <p class="text-xs text-gray-500 mt-1">${notification.category} • ${notification.priority}</p>
-                </div>
-                <button onclick="pgxNotifications.viewNotification(${id})" class="text-xs px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex-shrink-0">
-                    View
-                </button>
-            </div>
-        `;
-        
-        container.appendChild(alertEl);
-        
-        // Show alert
-        setTimeout(() => alertEl.classList.add('show'), 100);
-        
-        // Auto-dismiss after 5 seconds
-        setTimeout(() => {
-            alertEl.classList.remove('show');
-            setTimeout(() => alertEl.remove(), 300);
-        }, 5000);
-        
+        this.updateNotificationBadge();
+
         return id;
     }
     
-    updateNotificationIndicator() {
-        let indicator = document.getElementById('notification-indicator');
-        if (!indicator && this.unreadNotifications > 0) {
-            indicator = document.createElement('div');
-            indicator.id = 'notification-indicator';
-            indicator.className = 'alert-indicator';
-            indicator.onclick = () => window.open('notifications.html', '_blank');
-            document.body.appendChild(indicator);
-        }
-        
-        if (indicator) {
+    updateNotificationBadge() {
+        const badge = document.getElementById('notification-badge');
+        if (badge) {
+            // Check if notification count was reset
+            const storedCount = localStorage.getItem('pgx_notification_count');
+            if (storedCount === '0') {
+                this.unreadNotifications = 0;
+            }
+
             if (this.unreadNotifications > 0) {
-                indicator.textContent = this.unreadNotifications > 99 ? '99+' : this.unreadNotifications;
-                indicator.style.display = 'flex';
+                badge.textContent = this.unreadNotifications > 99 ? '99+' : this.unreadNotifications;
+                badge.classList.remove('hidden');
+                badge.classList.remove('bg-red-500');
+                badge.classList.add('bg-green-500');
+
+                // Store the current count
+                localStorage.setItem('pgx_notification_count', this.unreadNotifications.toString());
             } else {
-                indicator.style.display = 'none';
+                badge.classList.add('hidden');
+                localStorage.setItem('pgx_notification_count', '0');
             }
         }
     }
@@ -188,9 +107,9 @@ class PGXNotificationSystem {
             notification.status = 'read';
             this.unreadNotifications--;
             localStorage.setItem('pgx_notifications', JSON.stringify(this.allNotifications));
-            this.updateNotificationIndicator();
+            this.updateNotificationBadge();
         }
-        
+
         // Open notifications page
         window.open('notifications.html', '_blank');
     }
@@ -206,12 +125,12 @@ class PGXNotificationSystem {
     }
     
     startNotificationSystem() {
-        // Show alerts every 1 minute
+        // Add notifications every 2 minutes (120 seconds)
         setInterval(() => {
             const randomNotification = this.notificationTemplates[Math.floor(Math.random() * this.notificationTemplates.length)];
-            this.showLightAlert(randomNotification);
-        }, 60000); // Every 1 minute
-        
+            this.addNotification(randomNotification);
+        }, 120000); // Every 2 minutes
+
         // AI monitoring system - check pending tasks every 2 minutes
         setInterval(() => {
             this.checkPendingTasks();
@@ -219,12 +138,12 @@ class PGXNotificationSystem {
     }
     
     checkPendingTasks() {
-        const pendingTasks = this.allNotifications.filter(n => 
-            n.status === 'in_progress' && 
-            n.workStarted && 
+        const pendingTasks = this.allNotifications.filter(n =>
+            n.status === 'in_progress' &&
+            n.workStarted &&
             (new Date() - new Date(n.workStarted)) > 600000 // 10 minutes
         );
-        
+
         pendingTasks.forEach(task => {
             if (!task.aiAlerted) {
                 const aiAlert = {
@@ -234,8 +153,8 @@ class PGXNotificationSystem {
                     priority: 'high',
                     category: 'ai_monitoring'
                 };
-                this.showLightAlert(aiAlert);
-                
+                this.addNotification(aiAlert);
+
                 // Mark as AI alerted
                 task.aiAlerted = true;
                 localStorage.setItem('pgx_notifications', JSON.stringify(this.allNotifications));
@@ -244,8 +163,14 @@ class PGXNotificationSystem {
     }
     
     initializeNotifications() {
-        this.unreadNotifications = this.allNotifications.filter(n => n.status === 'unread').length;
-        this.updateNotificationIndicator();
+        // Check if count was reset
+        const storedCount = localStorage.getItem('pgx_notification_count');
+        if (storedCount === '0') {
+            this.unreadNotifications = 0;
+        } else {
+            this.unreadNotifications = this.allNotifications.filter(n => n.status === 'unread').length;
+        }
+        this.updateNotificationBadge();
     }
     
     addHeartbeatToDistricts() {
@@ -270,13 +195,40 @@ class PGXNotificationSystem {
             'coverage-percentage': regionData.coverage,
             'grid-status': regionData.gridStatus
         };
-        
+
         Object.keys(overviewElements).forEach(id => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = overviewElements[id];
             }
         });
+    }
+
+    // Method to manually trigger a notification (for testing)
+    triggerTestNotification() {
+        const randomNotification = this.notificationTemplates[Math.floor(Math.random() * this.notificationTemplates.length)];
+        this.addNotification(randomNotification);
+    }
+
+    // Method to reset notification simulation
+    resetSimulation() {
+        this.allNotifications = [];
+        this.unreadNotifications = 0;
+        localStorage.setItem('pgx_notifications', JSON.stringify([]));
+        localStorage.setItem('pgx_notification_count', '0');
+        this.updateNotificationBadge();
+        console.log('Notification simulation reset from external call');
+    }
+
+    // Method to check if notifications page was accessed and reset accordingly
+    checkNotificationsPageAccess() {
+        const currentPage = window.location.pathname;
+        const isNotificationsPage = currentPage.includes('notifications.html') || currentPage.endsWith('notifications.html');
+
+        if (isNotificationsPage) {
+            // Reset when notifications page is accessed
+            this.resetSimulation();
+        }
     }
 }
 
@@ -285,6 +237,30 @@ let pgxNotifications;
 
 document.addEventListener('DOMContentLoaded', function() {
     pgxNotifications = new PGXNotificationSystem();
+
+    // Check if we're on notifications page and reset if needed
+    const currentPage = window.location.pathname;
+    const isNotificationsPage = currentPage.includes('notifications.html') || currentPage.endsWith('notifications.html');
+
+    if (isNotificationsPage) {
+        // Add a small delay to ensure the page is fully loaded
+        setTimeout(() => {
+            pgxNotifications.resetSimulation();
+        }, 100);
+    }
+});
+
+// Listen for page visibility changes (when user switches tabs or returns to page)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && pgxNotifications) {
+        const currentPage = window.location.pathname;
+        const isNotificationsPage = currentPage.includes('notifications.html') || currentPage.endsWith('notifications.html');
+
+        if (isNotificationsPage) {
+            // Reset when returning to notifications page
+            pgxNotifications.resetSimulation();
+        }
+    }
 });
 
 // Export for use in other scripts

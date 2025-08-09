@@ -212,29 +212,7 @@
             animation: blink-exclamation 1s infinite;
         }
 
-        /* Live alert notifications */
-        .alert-notification {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: white;
-            border-left: 4px solid #10b981;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            padding: 12px 16px;
-            max-width: 300px;
-            z-index: 1000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-out;
-        }
 
-        .alert-notification.show {
-            transform: translateX(0);
-        }
-
-        .alert-notification.hide {
-            transform: translateX(100%);
-        }
 
         /* Profile dropdown */
         .profile-dropdown {
@@ -355,7 +333,7 @@
                     </a>
                     <a href="notifications.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium relative transition-all duration-300">
                         Notifications
-                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
+                        <span id="notification-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
                     </a>
                     <a href="history.html" class="nav-btn bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300">
                         History
@@ -708,8 +686,7 @@
 
     </main>
 
-    <!-- Live Alert Notifications Container -->
-    <div id="alert-notifications-container"></div>
+
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -773,11 +750,7 @@
                 }
             });
 
-            // Live alert notifications system
-            startLiveAlertSystem();
 
-            // Update notification badge
-            updateNotificationBadge();
         });
 
         // Focus on critical transformer when alert banner is clicked
@@ -788,67 +761,7 @@
             }
         }
 
-        // Live alert system
-        function startLiveAlertSystem() {
-            const alerts = [
-                { type: 'maintenance', message: 'Maintenance completed on Transformer TR-KMA-005', icon: '🔧', color: '#10b981' },
-                { type: 'connection', message: 'Smart meter SM-2847 connected successfully', icon: '📊', color: '#3b82f6' },
-                { type: 'alert', message: 'High voltage detected at Substation SS-North', icon: '⚠️', color: '#f59e0b' },
-                { type: 'security', message: 'Suspicious activity detected near Transformer T-09', icon: '🔒', color: '#ef4444' },
-                { type: 'efficiency', message: 'Grid efficiency improved by 2.3% in Kumasi district', icon: '📈', color: '#10b981' },
-                { type: 'connection', message: 'Base station BS-007 reconnected to network', icon: '📡', color: '#8b5cf6' },
-                { type: 'maintenance', message: 'Scheduled maintenance due for Transformer T-12', icon: '🔧', color: '#f59e0b' }
-            ];
 
-            let alertIndex = 0;
-
-            setInterval(() => {
-                showLiveAlert(alerts[alertIndex]);
-                alertIndex = (alertIndex + 1) % alerts.length;
-                updateNotificationBadge();
-            }, 30000); // Every 30 seconds
-        }
-
-        function showLiveAlert(alert) {
-            const container = document.getElementById('alert-notifications-container');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert-notification';
-            alertDiv.style.borderLeftColor = alert.color;
-
-            alertDiv.innerHTML = `
-                <div class="flex items-start space-x-3">
-                    <span class="text-lg">${alert.icon}</span>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-gray-900">${alert.message}</p>
-                        <p class="text-xs text-gray-500 mt-1">${new Date().toLocaleTimeString()}</p>
-                    </div>
-                    <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            `;
-
-            container.appendChild(alertDiv);
-
-            // Show animation
-            setTimeout(() => alertDiv.classList.add('show'), 100);
-
-            // Auto hide after 8 seconds
-            setTimeout(() => {
-                alertDiv.classList.add('hide');
-                setTimeout(() => alertDiv.remove(), 300);
-            }, 8000);
-        }
-
-        function updateNotificationBadge() {
-            const badge = document.getElementById('notification-badge');
-            const currentCount = parseInt(badge.textContent) || 0;
-            const newCount = currentCount + 1;
-            badge.textContent = newCount;
-            badge.classList.remove('hidden');
-        }
 
         // Regional Data for Overview Updates
         const regionalData = {
